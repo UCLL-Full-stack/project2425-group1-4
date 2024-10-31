@@ -1,0 +1,96 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              Int        @id @default(autoincrement())
+  firstName       String
+  lastName        String
+  password        String
+  birthDate       DateTime
+  email           String     @unique
+  username        String     @unique
+  description     String
+  role            Role
+
+  coachOfTeam     Team?      @relation("CoachTeam", fields: [coachOfTeamId], references: [id])
+  coachOfTeamId   Int?       @unique
+
+  captainOfTeam   Team?      @relation("CaptainTeam", fields: [captainOfTeamId], references: [id])
+  captainOfTeamId Int?       @unique
+
+  playerOfTeam    Team?      @relation("PlayerTeam", fields: [playerOfTeamId], references: [id])
+  playerOfTeamId  Int?       @unique
+
+  goals           Goal[]
+}
+
+model Team {
+  id              Int         @id @default(autoincrement())
+  name            String
+  description     String
+
+  captain         User?       @relation("CaptainTeam")
+  coach           User?       @relation("CoachTeam")
+  players         User[]      @relation("PlayerTeam")
+
+  matches         MatchTeam[]
+}
+
+model Match {
+  id              Int         @id @default(autoincrement())
+  date            DateTime
+  score           String
+
+  teams           MatchTeam[]
+  goals           Goal[]
+
+  location        Location    @relation(fields: [locationId], references: [id])
+  locationId      Int
+}
+
+model MatchTeam {
+  match           Match       @relation(fields: [matchId], references: [id])
+  matchId         Int
+
+  team            Team        @relation(fields: [teamId], references: [id])
+  teamId          Int
+
+  @@id([matchId, teamId])
+}
+
+model Goal {
+  id              Int         @id @default(autoincrement())
+  time            Int
+
+  match           Match       @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  matchId         Int
+
+  player          User        @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  playerId        Int
+}
+
+model Location {
+  id              Int         @id @default(autoincrement())
+  country         String
+  city            String
+  streetName      String
+  zipCode         String
+  number          Int
+
+  matches         Match[]
+}
+
+enum Role {
+  ADMIN
+  COACH
+  CAPTAIN
+  PLAYER
+  USER
+}
