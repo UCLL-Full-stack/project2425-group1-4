@@ -3,10 +3,10 @@ import { Match as MatchPrisma } from '@prisma/client';
 export class Match {
     private id: number;
     private date: Date;
-    private goals: Goal[];
-    private 
+    // private goals: Goal[];
+    // private location: Location;
 
-    constructor(match: { id: number; date: Date}) {
+    constructor(match: { id: number; date: Date }) {
         this.validate(match);
 
         this.id = match.id;
@@ -21,7 +21,6 @@ export class Match {
         if (!match.date) {
             throw new Error('Match date is required');
         }
-
     }
 
     // Getters
@@ -51,9 +50,6 @@ export class Match {
     }
 
     equals(match: Match): boolean {
-        return (
-            this.id === match.getId() &&
-            this.date === match.getDate()
-        );
+        return this.id === match.getId() && this.date === match.getDate();
     }
 }

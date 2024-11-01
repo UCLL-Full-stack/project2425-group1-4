@@ -1,5 +1,3 @@
-import { User as UserPrisma } from '@prisma/client';
-
 export class User {
     private id?: number;
     private firstName: string;

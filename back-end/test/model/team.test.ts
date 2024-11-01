@@ -1,48 +1,105 @@
-import { error } from "console";
-import { User } from "../../model/user";
-import { Team } from "../../model/team";
+import { Team } from '../../model/team';
+import { User } from '../../model/user';
 
+const validUser = new User({
+    id: 1,
+    firstName: 'John',
+    lastName: 'Doe',
+    password: 'password',
+    birthDate: new Date(),
+    email: '',
+    username: 'john_doe',
+    description: 'description',
+    role: 'role',
+});
 
+const validId = 1;
+const validName = 'team1';
+const validCaptain = validUser;
+const validCoach = validUser;
+const validPlayers = [validUser];
+const validDescription = 'description';
 
+const emptyName = '';
+const negativeId = -1;
+const nullCaptain = null;
+const nullCoach = null;
+const nullPlayers = null;
+const emptyDescription = '';
 
 test(`given: valid parameters, when: create a team, then: team should be created`, () => {
-    // Given
-    const user = new User({
-        id: 1,
-        firstName: 'John',
-        lastName: 'Doe',
-        password: 'password',
-        birthDate: new Date(),
-        email: '',
-        username: 'john_doe',
-        description: 'description',
-        role: 'role',
-    });
-
-    const id = 1;
-    const name = 'team1'
-    const captain = user;
-    const coach = user;
-    const players = [user];
-    const description = 'description';
-
     // When
     const team = new Team({
-        id,
-        name,
-        captain,
-        coach,
-        players,
-        description,
-});
+        id: validId,
+        name: validName,
+        captain: validCaptain,
+        coach: validCoach,
+        players: validPlayers,
+        description: validDescription,
+    });
 
     // Then
     expect(team).toBeDefined();
-    expect(team.getId()).toBe(id);
-    expect(team.getName()).toBe(name);
-    expect(team.getCaptain()).toBe(captain);
-    expect(team.getCoach()).toBe(coach);
-    expect(team.getPlayers()).toBe(players);
-    expect(team.getDescription()).toBe(description);
+    expect(team.getId()).toBe(1);
+    expect(team.getName()).toBe('team1');
+    expect(team.getCaptain()).toBe(validUser);
+    expect(team.getCoach()).toBe(validUser);
+    expect(team.getPlayers()).toBe(validPlayers);
+    expect(team.getDescription()).toBe('description');
 });
 
+test(`given: negative id, when: create team, then: error is thrown`, () => {
+    expect(
+        () =>
+            new Team({
+                id: negativeId,
+                name: validName,
+                captain: validCaptain,
+                coach: validCoach,
+                players: validPlayers,
+                description: validDescription,
+            })
+    ).toThrow('Id cannot be negative');
+});
+
+test(`given: empty name, when: create team, then: error is thrown`, () => {
+    expect(
+        () =>
+            new Team({
+                id: validId,
+                name: emptyName,
+                captain: validCaptain,
+                coach: validCoach,
+                players: validPlayers,
+                description: validDescription,
+            })
+    ).toThrow('Invalid name');
+});
+
+// test(`given: no captain, when: create team, then: error is thrown`, () => {
+//     expect(
+//         () =>
+//             new Team({
+//                 id: validId,
+//                 name: validName,
+//                 captain: nullCaptain,
+//                 coach: validCoach,
+//                 players: validPlayers,
+//                 description: validDescription,
+//             })
+//     ).toThrow('Invalid name');
+// });
+
+test(`given: empty description, when: create team, then: error is thrown`, () => {
+    expect(
+        () =>
+            new Team({
+                id: validId,
+                name: validName,
+                captain: validCaptain,
+                coach: validCoach,
+                players: validPlayers,
+                description: emptyDescription,
+            })
+    ).toThrow('Invalid description');
+});

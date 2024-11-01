@@ -1,16 +1,22 @@
-import {Team as TeamPrisa} from '@prisma/client';
+import { Team as TeamPrisa } from '@prisma/client';
 import { User } from './user';
 
 export class Team {
-
-    private id : number;
-    private name : string;
+    private id: number;
+    private name: string;
     private captain: User;
     private coach: User;
     private players: User[];
     private description: string;
 
-    constructor(team: {id: number, name: string, captain: User, coach: User, players: User[], description: string}) {
+    constructor(team: {
+        id: number;
+        name: string;
+        captain: User;
+        coach: User;
+        players: User[];
+        description: string;
+    }) {
         this.validate(team);
 
         this.id = team.id;
@@ -22,11 +28,18 @@ export class Team {
     }
 
     // Needs to be properly implemented
-    validate(team:{id: number, name: string, captain: User, coach: User, players: User[], description: string}) {
+    validate(team: {
+        id: number;
+        name: string;
+        captain: User;
+        coach: User;
+        players: User[];
+        description: string;
+    }) {
         if (team.id < 0) {
             throw new Error('Id cannot be negative');
         }
-        if (team.name === '') {
+        if (team.name === '' || team.name === null) {
             throw new Error('Invalid name');
         }
         if (team.captain === null) {
@@ -38,7 +51,7 @@ export class Team {
         if (team.players === null) {
             throw new Error('Invalid players');
         }
-        if (team.description === '') {
+        if (team.description === '' || team.description === null) {
             throw new Error('Invalid description');
         }
     }
@@ -94,15 +107,7 @@ export class Team {
     }
 
     // Prisma Team to Team
-    static from({
-        id,
-        name,
-        captain,
-        coach,
-        players,
-        description,
-
-    }: Team) {
+    static from({ id, name, captain, coach, players, description }: Team) {
         return new Team({
             id,
             name,
@@ -110,7 +115,7 @@ export class Team {
             coach,
             players,
             description,
-    });
+        });
     }
 
     equals(team: Team): boolean {
@@ -121,6 +126,6 @@ export class Team {
             this.coach === team.getCoach() &&
             this.players === team.getPlayers() &&
             this.description === team.getDescription()
-        )
+        );
     }
 }

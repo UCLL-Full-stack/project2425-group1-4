@@ -3,7 +3,7 @@ export class Location {
     private country: string;
     private city: string;
     private streetName: string;
-    private zipCode: string;
+    private zipCode: number;
     private number: number;
 
     constructor(location: {
@@ -11,15 +11,45 @@ export class Location {
         country: string;
         city: string;
         streetName: string;
-        zipCode: string;
+        zipCode: number;
         number: number;
     }) {
+        this.validate(location);
+
         this.id = location.id;
         this.country = location.country;
         this.city = location.city;
         this.streetName = location.streetName;
         this.zipCode = location.zipCode;
         this.number = location.number;
+    }
+
+    validate(location: {
+        id: number;
+        country: string;
+        city: string;
+        streetName: string;
+        zipCode: number;
+        number: number;
+    }) {
+        if (location.id < 0 || location.id === null) {
+            throw new Error('Id cannot be negative');
+        }
+        if (location.country === '' || location.country === null) {
+            throw new Error('Invalid country');
+        }
+        if (location.city === '' || location.city === null) {
+            throw new Error('Invalid city');
+        }
+        if (location.streetName == '' || location.streetName === null) {
+            throw new Error('Invalid street name');
+        }
+        if (location.zipCode < 1 || location.zipCode === null) {
+            throw new Error('Invalid zip code');
+        }
+        if (location.number <= 0 || location.number === null) {
+            throw new Error('Invalid number');
+        }
     }
 
     // Getters
@@ -39,7 +69,7 @@ export class Location {
         return this.streetName;
     }
 
-    getZipCode(): string {
+    getZipCode(): number {
         return this.zipCode;
     }
 
@@ -60,7 +90,7 @@ export class Location {
         this.streetName = streetName;
     }
 
-    setZipCode(zipCode: string): void {
+    setZipCode(zipCode: number): void {
         this.zipCode = zipCode;
     }
 

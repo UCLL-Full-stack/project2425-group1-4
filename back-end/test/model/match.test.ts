@@ -1,18 +1,15 @@
-import { Match } from "../../model/match";
+import { Match } from '../../model/match';
+
+const validId = 1;
+const validDate = new Date('2021-01-01');
 
 test('given: valid values for match, when: creating a new match, then: match is created with those values', () => {
-    // given
-    const id = 1;
-    const date = new Date('2021-01-01');
-
-
     // when
-    const match = new Match(id, date, );
+    const match = new Match({ id: validId, date: validDate });
 
     // then
     expect(match).toBeDefined();
 
-    expect(match.getId()).toBe(id);
-    expect(match.getDate()).toBe(date);
-
+    expect(match.getId()).toBe(1);
+    expect(match.getDate()).toBe('2021-01-01');
 });

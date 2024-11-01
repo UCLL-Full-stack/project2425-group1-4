@@ -36,3 +36,179 @@ test('given: valid values for user, when: creating a new user, then: user is cre
     expect(user.getDescription()).toBe(description);
     expect(user.getRole()).toBe(role);
 });
+
+test('given: negative id, when: creating a new user, then: throws error', () => {
+    expect(() => {
+        new User({
+            id: -1,
+            firstName: 'John',
+            lastName: 'Doe',
+            password: 'password',
+            birthDate: new Date(),
+            email: 'john.doe@example.com',
+            username: 'john_doe',
+            description: 'description',
+            role: 'PLAYER',
+        });
+    }).toThrow('Id cannot be negative.');
+});
+
+test('given: empty first name, when: creating a new user, then: throws error', () => {
+    expect(() => {
+        new User({
+            id: 1,
+            firstName: '',
+            lastName: 'Doe',
+            password: 'password',
+            birthDate: new Date(),
+            email: 'john.doe@example.com',
+            username: 'john_doe',
+            description: 'description',
+            role: 'PLAYER',
+        });
+    }).toThrow('First name cannot be empty.');
+});
+
+test('given: empty last name, when: creating a new user, then: throws error', () => {
+    expect(() => {
+        new User({
+            id: 1,
+            firstName: 'John',
+            lastName: '',
+            password: 'password',
+            birthDate: new Date(),
+            email: 'john.doe@example.com',
+            username: 'john_doe',
+            description: 'description',
+            role: 'PLAYER',
+        });
+    }).toThrow('Last name cannot be empty.');
+});
+
+test('given: empty password, when: creating a new user, then: throws error', () => {
+    expect(() => {
+        new User({
+            id: 1,
+            firstName: 'John',
+            lastName: 'Doe',
+            password: '',
+            birthDate: new Date(),
+            email: 'john.doe@example.com',
+            username: 'john_doe',
+            description: 'description',
+            role: 'PLAYER',
+        });
+    }).toThrow('Password cannot be empty.');
+});
+
+test('given: short password, when: creating a new user, then: throws error', () => {
+    expect(() => {
+        new User({
+            id: 1,
+            firstName: 'John',
+            lastName: 'Doe',
+            password: 'short',
+            birthDate: new Date(),
+            email: 'john.doe@example.com',
+            username: 'john_doe',
+            description: 'description',
+            role: 'PLAYER',
+        });
+    }).toThrow('Password needs to be at least 8 characters long.');
+});
+
+test('given: empty birth date, when: creating a new user, then: throws error', () => {
+    expect(() => {
+        new User({
+            id: 1,
+            firstName: 'John',
+            lastName: 'Doe',
+            password: 'password',
+            birthDate: new Date(''),
+            email: 'john.doe@example.com',
+            username: 'john_doe',
+            description: 'description',
+            role: 'PLAYER',
+        });
+    }).toThrow('Birth date cannot be empty.');
+});
+
+test('given: empty email, when: creating a new user, then: throws error', () => {
+    expect(() => {
+        new User({
+            id: 1,
+            firstName: 'John',
+            lastName: 'Doe',
+            password: 'password',
+            birthDate: new Date(),
+            email: '',
+            username: 'john_doe',
+            description: 'description',
+            role: 'PLAYER',
+        });
+    }).toThrow('Email cannot be empty.');
+});
+
+test('given: invalid email format, when: creating a new user, then: throws error', () => {
+    expect(() => {
+        new User({
+            id: 1,
+            firstName: 'John',
+            lastName: 'Doe',
+            password: 'password',
+            birthDate: new Date(),
+            email: 'john.doe@com',
+            username: 'john_doe',
+            description: 'description',
+            role: 'PLAYER',
+        });
+    }).toThrow('Email does not have a correct format.');
+});
+
+test('given: empty username, when: creating a new user, then: throws error', () => {
+    expect(() => {
+        new User({
+            id: 1,
+            firstName: 'John',
+            lastName: 'Doe',
+            password: 'password',
+            birthDate: new Date(),
+            email: 'john.doe@example.com',
+            username: '',
+            description: 'description',
+            role: 'PLAYER',
+        });
+    }).toThrow('Username cannot be empty.');
+});
+
+test('given: empty description, when: creating a new user, then: throws error', () => {
+    expect(() => {
+        new User({
+            id: 1,
+            firstName: 'John',
+            lastName: 'Doe',
+            password: 'password',
+            birthDate: new Date(),
+            email: 'john.doe@example.com',
+            username: 'john_doe',
+            description: '',
+            role: 'PLAYER',
+        });
+    }).toThrow('Description cannot be empty.');
+});
+
+test('given: empty role, when: creating a new user, then: throws error', () => {
+    expect(() => {
+        new User({
+            id: 1,
+            firstName: 'John',
+            lastName: 'Doe',
+            password: 'password',
+            birthDate: new Date(),
+            email: 'john.doe@example.com',
+            username: 'john_doe',
+            description: 'description',
+            role: '',
+        });
+    }).toThrow('Role cannot be empty.');
+});
