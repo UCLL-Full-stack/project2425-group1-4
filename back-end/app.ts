@@ -1,7 +1,7 @@
+import * as bodyParser from 'body-parser';
+import cors from 'cors';
 import * as dotenv from 'dotenv';
 import express from 'express';
-import cors from 'cors';
-import * as bodyParser from 'body-parser';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 
@@ -16,6 +16,7 @@ app.use(bodyParser.json());
 
 app.use((req, res, next) => {
     console.log(`Incoming ${req.method} request for ${req.url}`);
+    next();
 });
 
 app.get('/status', (req, res) => {
@@ -38,3 +39,5 @@ const swaggerOpts = {
 };
 const swaggerSpec = swaggerJSDoc(swaggerOpts);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+app.use('/users', userRouter);
