@@ -31,4 +31,16 @@ const getTeamNameById = async (id: number): Promise<string | null> => {
     return team ? team.getName() : null;
 };
 
-export default { getTeamNameById, getTeamById, getAllTeams };
+const updateTeam = async (id: string | number, updatedData: Partial<Team>): Promise<Team> => {
+    const numericId = typeof id === 'string' ? parseInt(id, 10) : id;
+    const team = await teamDb.getTeamById(numericId);
+
+    if (!team) {
+        throw new Error('Team not found');
+    }
+
+    const updatedTeam = await teamDb.updateTeam(numericId, updatedData);
+    return updatedTeam;
+};
+
+export default { getTeamNameById, getTeamById, getAllTeams, updateTeam };

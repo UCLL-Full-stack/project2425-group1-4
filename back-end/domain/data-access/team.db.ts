@@ -48,11 +48,12 @@ const addTeam = (team: Team): void => {
     teams.push(team);
 };
 
-const updateTeam = (id: number, updatedTeam: Partial<Team>): void => {
+const updateTeam = (id: number, updatedTeam: Partial<Team>): Team => {
     const teamIndex = teams.findIndex((team) => team.getId() === id);
     if (teamIndex !== -1) {
         teams[teamIndex] = { ...teams[teamIndex], ...updatedTeam } as Team;
     }
+    return teams[teamIndex];
 };
 
 const deleteTeam = (id: number): void => {
