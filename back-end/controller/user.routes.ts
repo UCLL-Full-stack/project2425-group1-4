@@ -69,4 +69,26 @@ userRouter.get('/players', async (req: Request, res: Response) => {
     }
 });
 
+userRouter.get('/:id', async (req: Request, res: Response) => {
+    const userId = parseInt(req.params.id, 10);
+    const user = await userService.getUserById(userId);
+    if (user) {
+        res.json(user);
+    } else {
+        res.status(404).json({ message: 'User not found' });
+    }
+});
+
+userRouter.put('/:id', async (req: Request, res: Response) => {
+    const userId = parseInt(req.params.id, 10);
+    const { teamId, description } = req.body;
+
+    const updatedUser = await userService.updateUser(userId, { teamId, description });
+    if (updatedUser) {
+        res.json(updatedUser);
+    } else {
+        res.status(404).json({ message: 'User not found' });
+    }
+});
+
 export default userRouter;

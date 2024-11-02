@@ -9,4 +9,32 @@ const getAllPlayers = async (): Promise<User[]> => {
     return players;
 };
 
-export default { getAllPlayers };
+const updateUser = async (
+    userId: number,
+    data: { teamId?: number; description?: string }
+): Promise<User | null> => {
+    const user = userDb.getUserById(userId);
+    if (!user) {
+        return null;
+    }
+
+    if (data.teamId !== undefined) {
+        user.setPlayerOfTeam(data.teamId);
+    }
+    if (data.description) {
+        user.setDescription(data.description);
+    }
+
+    userDb.updateUser(user);
+    return user;
+};
+
+const getUserById = async (userId: number): Promise<User | null> => {
+    const user = await userDb.getUserById(userId);
+    if (!user) {
+        return null;
+    }
+    return user;
+};
+
+export default { getAllPlayers, updateUser, getUserById };

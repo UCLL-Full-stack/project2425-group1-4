@@ -1,3 +1,6 @@
+import { Goal } from './goal';
+import { Team } from './team';
+
 export class User {
     private id?: number;
     private firstName: string;
@@ -9,6 +12,11 @@ export class User {
     private description: string;
     private role: string;
 
+    private coachOfTeam?: number;
+    private captainOfTeam?: number;
+    private playerOfTeam?: number;
+    private goals: Goal[] = [];
+
     constructor(user: {
         id: number;
         firstName: string;
@@ -19,6 +27,10 @@ export class User {
         username: string;
         description: string;
         role: string;
+        coachOfTeam?: number;
+        captainOfTeam?: number;
+        playerOfTeam?: number;
+        goals?: Goal[];
     }) {
         this.validate(user);
 
@@ -31,9 +43,12 @@ export class User {
         this.username = user.username;
         this.description = user.description;
         this.role = user.role;
+        this.coachOfTeam = user.coachOfTeam;
+        this.captainOfTeam = user.captainOfTeam;
+        this.playerOfTeam = user.playerOfTeam;
+        this.goals = user.goals || [];
     }
 
-    // Needs to be properly set up
     validate(user: {
         id: number;
         firstName: string;
@@ -44,42 +59,26 @@ export class User {
         username: string;
         description: string;
         role: string;
+        coachOfTeam?: number;
+        captainOfTeam?: number;
+        playerOfTeam?: number;
+        goals?: Goal[];
     }) {
-        if (user.id <= 0) {
-            throw new Error('Id cannot be negative.');
-        }
-        if (user.firstName === '') {
-            throw new Error('First name cannot be empty.');
-        }
-        if (user.lastName === '') {
-            throw new Error('Last name cannot be empty.');
-        }
-        if (user.password === '') {
-            throw new Error('Password cannot be empty.');
-        }
-        if (user.password.length < 8) {
+        if (user.id <= 0) throw new Error('Id cannot be negative or zero.');
+        if (!user.firstName) throw new Error('First name cannot be empty.');
+        if (!user.lastName) throw new Error('Last name cannot be empty.');
+        if (!user.password || user.password.length < 8)
             throw new Error('Password needs to be at least 8 characters long.');
-        }
-        if (user.birthDate.getTime() === new Date().getTime()) {
-            throw new Error('Birth date cannot be empty.');
-        }
-        if (user.email === '') {
-            throw new Error('Email cannot be empty.');
-        }
+        if (!user.birthDate || user.birthDate.getTime() >= new Date().getTime())
+            throw new Error('Birth date must be in the past.');
+        if (!user.email) throw new Error('Email cannot be empty.');
 
-        const regexEmail = new RegExp('^[\\w\\-.]+@([\\w\\-]+\\.)+[\\w\\-]{2,4}$');
-        if (!regexEmail.test(user.email)) {
-            throw new Error('Email does not have a correct format.');
-        }
-        if (user.username === '') {
-            throw new Error('Username cannot be empty.');
-        }
-        if (user.description === '') {
-            throw new Error('Description cannot be empty.');
-        }
-        if (user.role === '') {
-            throw new Error('Role cannot be empty.');
-        }
+        const emailRegex = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
+        if (!emailRegex.test(user.email)) throw new Error('Email does not have a correct format.');
+
+        if (!user.username) throw new Error('Username cannot be empty.');
+        if (!user.description) throw new Error('Description cannot be empty.');
+        if (!user.role) throw new Error('Role cannot be empty.');
     }
 
     // Getters
@@ -119,37 +118,79 @@ export class User {
         return this.role;
     }
 
-    // Setters
+    getCoachOfTeam(): number | undefined {
+        return this.coachOfTeam;
+    }
+
+    getCaptainOfTeam(): number | undefined {
+        return this.captainOfTeam;
+    }
+
+    getPlayerOfTeam(): number | undefined {
+        return this.playerOfTeam;
+    }
+
+    getGoals(): Goal[] {
+        return this.goals;
+    }
+
+    // Setters with validation as needed
     setFirstName(firstName: string): void {
+        if (!firstName) throw new Error("First name can't be empty.");
         this.firstName = firstName;
     }
 
     setLastName(lastName: string): void {
+        if (!lastName) throw new Error("Last name can't be empty.");
         this.lastName = lastName;
     }
 
     setPassword(password: string): void {
+        if (password.length < 8) throw new Error('Password must be at least 8 characters.');
         this.password = password;
     }
 
     setBirthDate(birthDate: Date): void {
+        if (birthDate.getTime() >= new Date().getTime())
+            throw new Error('Birth date must be in the past.');
         this.birthDate = birthDate;
     }
 
     setEmail(email: string): void {
+        const emailRegex = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
+        if (!emailRegex.test(email)) throw new Error('Invalid email format.');
         this.email = email;
     }
 
     setUsername(username: string): void {
+        if (!username) throw new Error("Username can't be empty.");
         this.username = username;
     }
 
     setDescription(description: string): void {
+        if (!description) throw new Error("Description can't be empty.");
         this.description = description;
     }
 
     setRole(role: string): void {
+        if (!role) throw new Error("Role can't be empty.");
         this.role = role;
+    }
+
+    setCoachOfTeam(team: number): void {
+        this.coachOfTeam = team;
+    }
+
+    setCaptainOfTeam(team: number): void {
+        this.captainOfTeam = team;
+    }
+
+    setPlayerOfTeam(team: number): void {
+        this.playerOfTeam = team;
+    }
+
+    setGoals(goals: Goal[]): void {
+        this.goals = goals;
     }
 
     equals(user: User): boolean {
@@ -157,7 +198,7 @@ export class User {
             this.firstName === user.getFirstName() &&
             this.lastName === user.getLastName() &&
             this.password === user.getPassword() &&
-            this.birthDate === user.getBirthDate() &&
+            this.birthDate.getTime() === user.getBirthDate().getTime() &&
             this.email === user.getEmail() &&
             this.username === user.getUsername() &&
             this.description === user.getDescription() &&

@@ -36,4 +36,8 @@ export type User = {
     username: string;
     description: string;
     role: string;
+    coachOfTeam?: number;
+    captainOfTeam?: number;
+    playerOfTeam?: number;
+    goals?: Goal[];
 };

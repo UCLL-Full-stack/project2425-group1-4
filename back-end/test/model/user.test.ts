@@ -49,7 +49,7 @@ test('given: negative id, when: creating a new user, then: throws error', () => 
             description: 'description',
             role: 'PLAYER',
         });
-    }).toThrow('Id cannot be negative.');
+    }).toThrow('Id cannot be negative or zero.');
 });
 
 test('given: empty first name, when: creating a new user, then: throws error', () => {
@@ -97,7 +97,7 @@ test('given: empty password, when: creating a new user, then: throws error', () 
             description: 'description',
             role: 'PLAYER',
         });
-    }).toThrow('Password cannot be empty.');
+    }).toThrow('Password needs to be at least 8 characters long.');
 });
 
 test('given: short password, when: creating a new user, then: throws error', () => {
@@ -129,7 +129,7 @@ test('given: empty birth date, when: creating a new user, then: throws error', (
             description: 'description',
             role: 'PLAYER',
         });
-    }).toThrow('Birth date cannot be empty.');
+    }).toThrow('Birth date must be in the past.');
 });
 
 test('given: empty email, when: creating a new user, then: throws error', () => {

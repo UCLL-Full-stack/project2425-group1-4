@@ -7,7 +7,7 @@ const validUser = new User({
     lastName: 'Doe',
     password: 'password',
     birthDate: new Date('2000-01-01'),
-    email: '',
+    email: 'coach@football.be',
     username: 'john_doe',
     description: 'description',
     role: 'role',

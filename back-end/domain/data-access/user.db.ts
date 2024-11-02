@@ -33,7 +33,7 @@ const users: User[] = [
         birthDate: new Date('1985-05-15'),
         email: 'johnsmith@example.com',
         username: 'jsmith',
-        description: 'John Smith',
+        description: 'John Smiths description is very interesting',
         role: 'Player',
     }),
     new User({
@@ -58,4 +58,17 @@ const getAllUsers = (): User[] => {
     return users;
 };
 
-export default { getAllPlayers, getAllUsers };
+const getUserById = (id: number): User | null => {
+    const user = users.find((u) => u.getId() === id);
+    return user || null;
+};
+
+const updateUser = (user: User): User => {
+    const index = users.findIndex((u) => u.getId() === user.getId());
+    if (index !== -1) {
+        users[index] = user;
+    }
+    return users[index];
+};
+
+export default { getAllPlayers, getAllUsers, getUserById, updateUser };
