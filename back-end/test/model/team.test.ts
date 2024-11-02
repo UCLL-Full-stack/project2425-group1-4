@@ -1,5 +1,5 @@
-import { Team } from '../../model/team';
-import { User } from '../../model/user';
+import { Team } from '../../domain/model/team';
+import { User } from '../../domain/model/user';
 
 const validUser = new User({
     id: 1,

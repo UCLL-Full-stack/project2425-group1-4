@@ -1,4 +1,4 @@
-import { Match } from '../../model/match';
+import { Match } from '../../domain/model/match';
 
 const validId = 1;
 const validDate = new Date('2021-01-01');

@@ -3,10 +3,10 @@ import userService from '../service/user.service';
 
 const userRouter = express.Router();
 
-userRouter.get('/', async (req: Request, res: Response) => {
+userRouter.get('/players', async (req: Request, res: Response) => {
     try {
-        const users = await userService.getAllUsers();
-        res.status(200).json(users);
+        const players = await userService.getAllPlayers();
+        res.status(200).json(players);
     } catch (error) {
         if (error instanceof Error) {
             res.status(400).json({ status: 'error', errorMessage: error.message });
@@ -15,3 +15,5 @@ userRouter.get('/', async (req: Request, res: Response) => {
         }
     }
 });
+
+export default userRouter;

@@ -1,4 +1,4 @@
-import { User } from '../../model/user';
+import { User } from '../../domain/model/user';
 
 test('given: valid values for user, when: creating a new user, then: user is created with those values', () => {
     // given

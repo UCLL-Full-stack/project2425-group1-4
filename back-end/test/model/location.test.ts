@@ -1,4 +1,4 @@
-import { Location } from '../../model/location';
+import { Location } from '../../domain/model/location';
 
 const validId = 1;
 const validCountry = 'Country';

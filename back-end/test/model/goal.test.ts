@@ -1,4 +1,4 @@
-import { Goal } from '../../model/goal';
+import { Goal } from '../../domain/model/goal';
 
 const validTime = 5;
 const validId = 1;

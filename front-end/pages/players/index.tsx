@@ -5,7 +5,7 @@ import React from 'react';
 const PlayersPage: React.FC = () => {
     return (
         <div>
-            <PlayerGrid />
+            <PlayerGrid players={[]} />
         </div>
     );
 };
