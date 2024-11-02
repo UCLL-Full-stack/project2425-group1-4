@@ -96,7 +96,7 @@ test(`given: invalid zip code, when: create location, then: error is thrown`, ()
     expect(
         () =>
             new Location({
-                id: negativeId,
+                id: validId,
                 country: validCountry,
                 city: validCity,
                 streetName: validStreetName,
@@ -110,7 +110,7 @@ test(`given: invalid number, when: create location, then: error is thrown`, () =
     expect(
         () =>
             new Location({
-                id: negativeId,
+                id: validId,
                 country: validCountry,
                 city: validCity,
                 streetName: validStreetName,

@@ -6,7 +6,7 @@ const validUser = new User({
     firstName: 'John',
     lastName: 'Doe',
     password: 'password',
-    birthDate: new Date(),
+    birthDate: new Date('2000-01-01'),
     email: '',
     username: 'john_doe',
     description: 'description',

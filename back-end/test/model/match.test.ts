@@ -11,5 +11,5 @@ test('given: valid values for match, when: creating a new match, then: match is 
     expect(match).toBeDefined();
 
     expect(match.getId()).toBe(1);
-    expect(match.getDate()).toBe('2021-01-01');
+    expect(match.getDate()).toBe(validDate);
 });

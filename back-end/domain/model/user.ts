@@ -60,7 +60,7 @@ export class User {
         if (user.password.length < 8) {
             throw new Error('Password needs to be at least 8 characters long.');
         }
-        if (user.birthDate === new Date()) {
+        if (user.birthDate.getTime() === new Date().getTime()) {
             throw new Error('Birth date cannot be empty.');
         }
         if (user.email === '') {
