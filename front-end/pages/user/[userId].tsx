@@ -38,28 +38,32 @@ const UserPage = () => {
 
     const handleSave = async () => {
         try {
-            if (editedUser && JSON.stringify(user) !== JSON.stringify(editedUser)) {
-                // Attempt to save if there are changes
-                const updatedUserResponse = await UserService.updateUser(editedUser);
-                if (updatedUserResponse.ok) {
-                    setUser(await updatedUserResponse.json());
+            if (editedUser) {
+                // Determine if there are changes in any field
+                const hasFieldChanges = JSON.stringify(user) !== JSON.stringify(editedUser);
+
+                // Trigger update only if there are field changes
+                if (hasFieldChanges) {
+                    const updatedUserResponse = await UserService.updateUser(editedUser);
+                    if (updatedUserResponse.ok) {
+                        setUser(await updatedUserResponse.json());
+                        setIsEditing(false);
+                        setEditedUser(null);
+                    } else {
+                        const { message } = await updatedUserResponse.json();
+                        alert(message || 'Failed to update user. Please try again.');
+                    }
+                } else {
+                    // Close edit mode if no changes
                     setIsEditing(false);
                     setEditedUser(null);
-                } else {
-                    const { message } = await updatedUserResponse.json();
-                    alert(message || 'Failed to update user. Please try again.');
                 }
-            } else {
-                // Close edit mode if no changes
-                setIsEditing(false);
-                setEditedUser(null);
             }
         } catch (error) {
             console.error('Error updating profile:', error);
             alert('An error occurred while updating the profile. Please try again later.');
         }
     };
-    
 
     if (!user) return <p>Loading...</p>;
 
@@ -117,6 +121,47 @@ const UserPage = () => {
                             <p className="text-gray-600">{user.playerOfTeam}</p>
                         )}
                     </div>
+                    <div className="bg-gray-100 p-4 rounded-lg shadow-md">
+                        <h2 className="text-xl font-semibold mb-2 text-gray-800">Email</h2>
+                        {isEditing ? (
+                            <input
+                                className="w-full p-2 border rounded-lg"
+                                value={editedUser?.email || ''}
+                                onChange={(e) =>
+                                    setEditedUser({
+                                        ...editedUser,
+                                        email: e.target.value,
+                                    } as User)
+                                }
+                                placeholder="Enter email"
+                            />
+                        ) : (
+                            <p className="text-gray-600">{user.email}</p>
+                        )}
+                    </div>
+                    {isEditing && (
+                        <>
+                            <div className="bg-gray-100 p-4 rounded-lg shadow-md">
+                                <h2 className="text-xl font-semibold mb-2 text-gray-800">
+                                    Password
+                                </h2>
+                                {isEditing ? (
+                                    <input
+                                        className="w-full p-2 border rounded-lg"
+                                        onChange={(e) =>
+                                            setEditedUser({
+                                                ...editedUser,
+                                                password: e.target.value,
+                                            } as User)
+                                        }
+                                        placeholder="Enter Password"
+                                    />
+                                ) : (
+                                    <p className="text-gray-600">{user.email}</p>
+                                )}
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
 

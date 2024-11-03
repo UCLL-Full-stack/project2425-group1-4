@@ -77,7 +77,6 @@ export class User {
         if (!emailRegex.test(user.email)) throw new Error('Email does not have a correct format.');
 
         if (!user.username) throw new Error('Username cannot be empty.');
-        if (!user.description) throw new Error('Description cannot be empty.');
         if (!user.role) throw new Error('Role cannot be empty.');
     }
 
@@ -191,6 +190,11 @@ export class User {
 
     setGoals(goals: Goal[]): void {
         this.goals = goals;
+    }
+
+    toPublic() {
+        const { password, ...safeUser } = this;
+        return safeUser;
     }
 
     equals(user: User): boolean {

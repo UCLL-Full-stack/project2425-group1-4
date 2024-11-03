@@ -76,6 +76,11 @@ const getUserById = (id: number): User | null => {
     return user || null;
 };
 
+const getUserByEmail = (email: string): User | null => {
+    const user = users.find((u) => u.getEmail() === email);
+    return user || null;
+};
+
 const updateUser = (user: User): User => {
     const index = users.findIndex((u) => u.getId() === user.getId());
     if (index !== -1) {
@@ -84,4 +89,4 @@ const updateUser = (user: User): User => {
     return users[index];
 };
 
-export default { getAllPlayers, getAllUsers, getUserById, updateUser };
+export default { getAllPlayers, getAllUsers, getUserById, updateUser, getUserByEmail };

@@ -20,20 +20,39 @@ const updateUser = async (userId: number, editedUser: UserInput): Promise<User |
     }
 
     // Destructure properties from editedUser
-    const { playerOfTeam, description } = editedUser;
+    const { playerOfTeam, description, email, password } = editedUser;
 
-    // Update fields only if they are provided
-    if (playerOfTeam !== undefined && playerOfTeam !== null) {
-        const teamExists = await teamDb.getTeamById(playerOfTeam); // Add await here
+    // Update fields only if they are provided and different from current values
+    if (
+        playerOfTeam !== undefined &&
+        playerOfTeam !== null &&
+        user.getPlayerOfTeam() !== playerOfTeam
+    ) {
+        const teamExists = await teamDb.getTeamById(playerOfTeam);
         if (!teamExists) {
             throw new Error('Team does not exist');
         }
-
         user.setPlayerOfTeam(playerOfTeam);
     }
 
-    if (description !== undefined && description !== null) {
+    if (
+        description !== undefined &&
+        description !== null &&
+        user.getDescription() !== description
+    ) {
         user.setDescription(description);
+    }
+
+    if (email !== undefined && email !== null && user.getEmail() !== email) {
+        const existingEmail = await userDb.getUserByEmail(email);
+        if (existingEmail) {
+            throw new Error('Email already exists');
+        }
+        user.setEmail(email);
+    }
+
+    if (password !== undefined && password !== null && user.getPassword() !== password) {
+        user.setPassword(password);
     }
 
     // Save the updated user in the database
