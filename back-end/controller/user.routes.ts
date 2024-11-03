@@ -5,7 +5,8 @@
  *   description: Endpoints for user management.
  */
 
-import express, { Request, Response } from 'express';
+import express, { NextFunction, Request, Response } from 'express';
+
 import userService from '../service/user.service';
 
 const userRouter = express.Router();
@@ -194,15 +195,15 @@ userRouter.get('/:id', async (req: Request, res: Response) => {
  *                   type: string
  *                   example: "User not found"
  */
-userRouter.put('/:id', async (req: Request, res: Response) => {
-    const userId = parseInt(req.params.id, 10);
-    const { teamId, description } = req.body;
+userRouter.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const userId = parseInt(req.params.id, 10);
+        const editedUser = req.body;
 
-    const updatedUser = await userService.updateUser(userId, { teamId, description });
-    if (updatedUser) {
+        const updatedUser = await userService.updateUser(userId, editedUser);
         res.json(updatedUser);
-    } else {
-        res.status(404).json({ message: 'User not found' });
+    } catch (error) {
+        next(error);
     }
 });
 

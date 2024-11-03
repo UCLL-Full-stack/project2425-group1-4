@@ -1,5 +1,7 @@
-import userDb from '../domain/data-access/user.db';
-import { User } from '../domain/model/user';
+import userDb from '../repository/user.db';
+import { User } from '../model/user';
+import { UserInput } from '../types';
+import teamDb from '../repository/team.db';
 
 const getAllPlayers = async (): Promise<User[]> => {
     const players = await userDb.getAllPlayers();
@@ -9,23 +11,33 @@ const getAllPlayers = async (): Promise<User[]> => {
     return players;
 };
 
-const updateUser = async (
-    userId: number,
-    data: { teamId?: number; description?: string }
-): Promise<User | null> => {
-    const user = userDb.getUserById(userId);
+const updateUser = async (userId: number, editedUser: UserInput): Promise<User | null> => {
+    const user = await userDb.getUserById(userId);
+
+    // Return null if the user is not found
     if (!user) {
         return null;
     }
 
-    if (data.teamId !== undefined) {
-        user.setPlayerOfTeam(data.teamId);
-    }
-    if (data.description) {
-        user.setDescription(data.description);
+    // Destructure properties from editedUser
+    const { playerOfTeam, description } = editedUser;
+
+    // Update fields only if they are provided
+    if (playerOfTeam !== undefined && playerOfTeam !== null) {
+        const teamExists = await teamDb.getTeamById(playerOfTeam); // Add await here
+        if (!teamExists) {
+            throw new Error('Team does not exist');
+        }
+
+        user.setPlayerOfTeam(playerOfTeam);
     }
 
-    userDb.updateUser(user);
+    if (description !== undefined && description !== null) {
+        user.setDescription(description);
+    }
+
+    // Save the updated user in the database
+    await userDb.updateUser(user);
     return user;
 };
 

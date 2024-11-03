@@ -1,3 +1,4 @@
+import { Team as TeamPrisa } from '@prisma/client';
 import { User } from './user';
 
 export class Team {
@@ -103,21 +104,6 @@ export class Team {
 
     setDescription(description: string): void {
         this.description = description;
-    }
-
-    addPlayer(player: User): Team {
-        this.players.push(player);
-        return this;
-    }
-
-    removePlayer(player: User): Team {
-        const index = this.players.findIndex((p) => p.getId() === player.getId());
-
-        if (index !== -1) {
-            this.players.splice(index, 1);
-        }
-
-        return this;
     }
 
     // Prisma Team to Team

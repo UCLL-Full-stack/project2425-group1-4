@@ -16,6 +16,18 @@ const users: User[] = [
     }),
     new User({
         id: currentId++,
+        firstName: 'Mathieu',
+        lastName: 'Sibret',
+        password: '1234889aaa',
+        birthDate: new Date('2001-06-09'),
+        email: 'r0833900@ucll.be',
+        username: 'msibret',
+        description: 'hola',
+        role: 'Player',
+        playerOfTeam: 1,
+    }),
+    new User({
+        id: currentId++,
         firstName: 'Jane',
         lastName: 'Doe',
         password: '123456lisqbj',
@@ -24,6 +36,7 @@ const users: User[] = [
         username: 'jdoe',
         description: 'Jane Doe',
         role: 'User',
+        playerOfTeam: 1,
     }),
     new User({
         id: currentId++,
@@ -33,7 +46,7 @@ const users: User[] = [
         birthDate: new Date('1985-05-15'),
         email: 'johnsmith@example.com',
         username: 'jsmith',
-        description: 'John Smiths description is very interesting',
+        description: 'Look at my very interesting description!',
         role: 'Player',
     }),
     new User({
@@ -44,7 +57,7 @@ const users: User[] = [
         birthDate: new Date('1992-11-30'),
         email: 'alicejohnson@example.com',
         username: 'alicej',
-        description: 'Alice Johnson',
+        description: 'This is my description :D',
         role: 'Player',
     }),
 ];

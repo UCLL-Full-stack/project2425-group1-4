@@ -1,7 +1,8 @@
 import * as bodyParser from 'body-parser';
 import cors from 'cors';
+import express, { Request, Response, NextFunction } from 'express';
+
 import * as dotenv from 'dotenv';
-import express from 'express';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 
@@ -15,11 +16,6 @@ const port = process.env.APP_PORT || 3000;
 app.use(cors());
 app.use(bodyParser.json());
 
-app.use((req, res, next) => {
-    console.log(`Incoming ${req.method} request for ${req.url}`);
-    next();
-});
-
 app.get('/status', (req, res) => {
     res.json({ message: 'Back-end is running...' });
 });
@@ -27,7 +23,7 @@ const swaggerOpts = {
     definition: {
         openapi: '3.0.0',
         info: {
-            title: 'Chatbox API',
+            title: 'GoalPro API',
             version: '1.0.0',
             description: 'API documentation for managing users and teams',
         },
@@ -120,6 +116,14 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // Register routers
 app.use('/users', userRouter);
 app.use('/teams', teamRouter); // Assuming you have a team router
+
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+    console.error(err.stack); // Log the error stack trace
+    res.status(400).json({
+        status: 'application error',
+        message: err.message,
+    });
+});
 
 // Start the server
 app.listen(port, () => {
