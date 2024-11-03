@@ -10,11 +10,11 @@ const UserPage = () => {
     const { userId } = router.query;
 
     const [user, setUser] = useState<User | null>(null);
+    const [editedUser, setEditedUser] = useState<User | null>(null);
     const [isEditing, setIsEditing] = useState(false);
 
     const getUserById = async (userId: string) => {
         const [userResponse] = await Promise.all([UserService.getUserById(userId)]);
-
         const [user] = await Promise.all([userResponse.json()]);
         setUser(user);
     };
@@ -26,20 +26,40 @@ const UserPage = () => {
     }, [userId]);
 
     const handleEditToggle = () => {
+        if (isEditing) {
+            // Reset editedUser to null when exiting edit mode without saving
+            setEditedUser(null);
+        } else {
+            // Initialize editedUser with current user data when entering edit mode
+            setEditedUser(user);
+        }
         setIsEditing(!isEditing);
     };
 
     const handleSave = async () => {
         try {
-            // const updatedUser = await userResponse.json();
-            // setUser(updatedUser);
-
-            setIsEditing(false);
+            if (editedUser && JSON.stringify(user) !== JSON.stringify(editedUser)) {
+                // Attempt to save if there are changes
+                const updatedUserResponse = await UserService.updateUser(editedUser);
+                if (updatedUserResponse.ok) {
+                    setUser(await updatedUserResponse.json());
+                    setIsEditing(false);
+                    setEditedUser(null);
+                } else {
+                    const { message } = await updatedUserResponse.json();
+                    alert(message || 'Failed to update user. Please try again.');
+                }
+            } else {
+                // Close edit mode if no changes
+                setIsEditing(false);
+                setEditedUser(null);
+            }
         } catch (error) {
-            console.error('Error updating profile or team:', error);
-            alert(error);
+            console.error('Error updating profile:', error);
+            alert('An error occurred while updating the profile. Please try again later.');
         }
     };
+    
 
     if (!user) return <p>Loading...</p>;
 
@@ -61,8 +81,13 @@ const UserPage = () => {
                         {isEditing ? (
                             <textarea
                                 className="w-full p-2 border rounded-lg"
-                                value={user.description}
-                                onChange={() => {}}
+                                value={editedUser?.description || ''}
+                                onChange={(e) =>
+                                    setEditedUser({
+                                        ...editedUser,
+                                        description: e.target.value,
+                                    } as User)
+                                }
                                 placeholder="Enter description"
                             />
                         ) : (
@@ -74,19 +99,23 @@ const UserPage = () => {
 
                     <div className="bg-gray-100 p-4 rounded-lg shadow-md">
                         <h2 className="text-xl font-semibold mb-2 text-gray-800">Team</h2>
-                        <p className="text-gray-600">
-                            {isEditing ? (
-                                <input
-                                    type="number"
-                                    className="w-full p-2 border rounded-lg"
-                                    value={user.playerOfTeam}
-                                    onChange={() => {}}
-                                    placeholder="Enter team ID"
-                                />
-                            ) : (
-                                user.playerOfTeam
-                            )}
-                        </p>
+                        {isEditing ? (
+                            <input
+                                type="number"
+                                min={1}
+                                className="w-full p-2 border rounded-lg"
+                                value={editedUser?.playerOfTeam || ''}
+                                onChange={(e) =>
+                                    setEditedUser({
+                                        ...editedUser,
+                                        playerOfTeam: Number(e.target.value),
+                                    } as User)
+                                }
+                                placeholder="Enter team ID"
+                            />
+                        ) : (
+                            <p className="text-gray-600">{user.playerOfTeam}</p>
+                        )}
                     </div>
                 </div>
             </div>
@@ -101,9 +130,7 @@ const UserPage = () => {
                 {isEditing ? (
                     <div className="flex gap-4">
                         <button
-                            onClick={() => {
-                                handleSave();
-                            }}
+                            onClick={handleSave}
                             className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
                         >
                             Save

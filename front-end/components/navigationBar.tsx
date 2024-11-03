@@ -13,7 +13,7 @@ const NavBar: React.FC = () => {
                     <Link href="/players">Players</Link>
                     <Link href="/teams">Teams</Link>
                     <Link href="/matches">Matches</Link>
-                    <Link href="/profile/3">[Firstname]</Link>
+                    <Link href="/user/3">[Firstname]</Link>
                 </div>
             </div>
         </nav>
