@@ -52,21 +52,57 @@ const updateTeam = async (team: Team): Promise<boolean> => {
             body: JSON.stringify(team),
         });
 
-        if (!response.ok) {
-            throw new Error('Failed to update team');
-        }
-
-        return true;
+        return response.ok;
     } catch (error) {
         console.error('Error updating team:', error);
         return false;
     }
 };
 
-const TeamService = {
+const addPlayerToTeam = async (teamId: number, playerId: number): Promise<boolean> => {
+    try {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/teams/${teamId}/addPlayer`,
+            {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ playerId }),
+            }
+        );
+
+        return response.ok;
+    } catch (error) {
+        console.error('Error adding player to team:', error);
+        return false;
+    }
+};
+
+const removePlayerFromTeam = async (teamId: number, playerId: number): Promise<boolean> => {
+    try {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/teams/${teamId}/removePlayer`,
+            {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ playerId }),
+            }
+        );
+
+        return response.ok;
+    } catch (error) {
+        console.error('Error removing player from team:', error);
+        return false;
+    }
+};
+
+export default {
     getAllTeams,
     getTeamById,
     updateTeam,
+    addPlayerToTeam,
+    removePlayerFromTeam,
 };
-
-export default TeamService;

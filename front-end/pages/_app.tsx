@@ -1,4 +1,3 @@
-// pages/_app.tsx
 import NavBar from '@components/navigationBar';
 import '@styles/index.css';
 import type { AppProps } from 'next/app';

@@ -1,50 +1,29 @@
-// pages/profile/[profileId].tsx
+import UserService from '@services/UserService';
 import { User } from '@types';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import ProfileHeader from '../../components/profileHeader';
 import StatsGrid from '../../components/statsGrid';
-import TeamService from '../../services/TeamService';
 
-const ProfilePage = () => {
+const UserPage = () => {
     const router = useRouter();
-    const { profileId } = router.query;
+    const { userId } = router.query;
 
     const [user, setUser] = useState<User | null>(null);
     const [isEditing, setIsEditing] = useState(false);
-    const [description, setDescription] = useState('');
-    const [playerOfTeam, setPlayerOfTeam] = useState<number | null>(null);
-    const [teamName, setTeamName] = useState<string | null>(null);
+
+    const getUserById = async (userId: string) => {
+        const [userResponse] = await Promise.all([UserService.getUserById(userId)]);
+
+        const [user] = await Promise.all([userResponse.json()]);
+        setUser(user);
+    };
 
     useEffect(() => {
-        if (profileId) {
-            fetch(`http://localhost:3000/users/${profileId}`)
-                .then((response) => response.json())
-                .then((data) => {
-                    setUser(data);
-                    setDescription(data.description || '');
-                    setPlayerOfTeam(data.playerOfTeam || null);
-                })
-                .catch((error) => console.error('Error fetching user:', error));
+        if (userId) {
+            getUserById(userId as string);
         }
-    }, [profileId]);
-
-    useEffect(() => {
-        if (playerOfTeam) {
-            const fetchTeamName = async () => {
-                try {
-                    const team = await TeamService.getTeamById(playerOfTeam);
-                    setTeamName(team ? team.name : 'No team assigned');
-                } catch (error) {
-                    console.error('Error fetching team:', error);
-                    setTeamName('No team assigned');
-                }
-            };
-            fetchTeamName();
-        } else {
-            setTeamName('No team assigned');
-        }
-    }, [playerOfTeam]);
+    }, [userId]);
 
     const handleEditToggle = () => {
         setIsEditing(!isEditing);
@@ -52,27 +31,13 @@ const ProfilePage = () => {
 
     const handleSave = async () => {
         try {
-            const response = await fetch(`http://localhost:3000/users/${profileId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    description,
-                    teamId: playerOfTeam,
-                }),
-            });
+            // const updatedUser = await userResponse.json();
+            // setUser(updatedUser);
 
-            if (!response.ok) {
-                throw new Error('Failed to update profile');
-            }
-
-            const updatedUser = await response.json();
-            setUser(updatedUser);
             setIsEditing(false);
-            alert('Profile updated successfully!');
         } catch (error) {
-            console.error('Error updating profile:', error);
+            console.error('Error updating profile or team:', error);
+            alert(error);
         }
     };
 
@@ -96,8 +61,8 @@ const ProfilePage = () => {
                         {isEditing ? (
                             <textarea
                                 className="w-full p-2 border rounded-lg"
-                                value={description}
-                                onChange={(e) => setDescription(e.target.value)}
+                                value={user.description}
+                                onChange={() => {}}
                                 placeholder="Enter description"
                             />
                         ) : (
@@ -114,12 +79,12 @@ const ProfilePage = () => {
                                 <input
                                     type="number"
                                     className="w-full p-2 border rounded-lg"
-                                    value={playerOfTeam || ''}
-                                    onChange={(e) => setPlayerOfTeam(Number(e.target.value))}
+                                    value={user.playerOfTeam}
+                                    onChange={() => {}}
                                     placeholder="Enter team ID"
                                 />
                             ) : (
-                                teamName
+                                user.playerOfTeam
                             )}
                         </p>
                     </div>
@@ -136,7 +101,9 @@ const ProfilePage = () => {
                 {isEditing ? (
                     <div className="flex gap-4">
                         <button
-                            onClick={handleSave}
+                            onClick={() => {
+                                handleSave();
+                            }}
                             className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
                         >
                             Save
@@ -174,4 +141,4 @@ const ProfilePage = () => {
     );
 };
 
-export default ProfilePage;
+export default UserPage;

@@ -1,4 +1,5 @@
 import teamDb from '../domain/data-access/team.db';
+import userDb from '../domain/data-access/user.db';
 import { Team } from '../domain/model/team';
 
 const getAllTeams = async (): Promise<Team[]> => {
@@ -43,4 +44,45 @@ const updateTeam = async (id: string | number, updatedData: Partial<Team>): Prom
     return updatedTeam;
 };
 
-export default { getTeamNameById, getTeamById, getAllTeams, updateTeam };
+const addPlayerToTeam = async (teamId: number, playerId: number): Promise<boolean> => {
+    const team = await teamDb.getTeamById(teamId);
+    const player = await userDb.getUserById(playerId);
+
+    if (!team || !player) {
+        return false;
+    }
+
+    // Check if the player is already part of the team
+    const isPlayerInTeam = team.getPlayers().some((p) => p.getId() === playerId);
+    if (!isPlayerInTeam) {
+        team.addPlayer(player);
+        await teamDb.updateTeam(teamId, team);
+    }
+    return true;
+};
+
+const removePlayerFromTeam = async (teamId: number, playerId: number): Promise<boolean> => {
+    const team = await teamDb.getTeamById(teamId);
+
+    if (!team) {
+        return false; // Team not found
+    }
+
+    const player = await userDb.getUserById(playerId);
+    if (!player) {
+        return false; // Player not found
+    }
+    team.removePlayer(player); // Assuming `removePlayer` is a method that removes a player by User object
+    player.setPlayerOfTeam(teamId);
+    await teamDb.updateTeam(teamId, team);
+    return true;
+};
+
+export default {
+    getTeamNameById,
+    getTeamById,
+    getAllTeams,
+    updateTeam,
+    addPlayerToTeam,
+    removePlayerFromTeam,
+};

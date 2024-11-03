@@ -1,5 +1,4 @@
 import { User } from '@types';
-import getBaseWebpackConfig from 'next/dist/build/webpack-config';
 
 const getAllPlayers = async () => {
     return fetch(process.env.NEXT_PUBLIC_API_URL + '/players', {
@@ -19,21 +18,14 @@ const updateUser = async (user: User) => {
         body: JSON.stringify(user),
     });
 };
-const getUserById = async (userId: number): Promise<User | null> => {
-    try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/${userId}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
 
-        const user: User = await response.json();
-        return user;
-    } catch (error) {
-        console.error('Error fetching user by ID:', error);
-        return null;
-    }
+const getUserById = async (userId: string) => {
+    return await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/${userId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
 };
 
 const UserService = {

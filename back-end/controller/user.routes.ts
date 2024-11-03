@@ -2,7 +2,7 @@
  * @swagger
  * tags:
  *   name: Users
- *   description: All endpoints for users
+ *   description: Endpoints for user management.
  */
 
 import express, { Request, Response } from 'express';
@@ -18,7 +18,7 @@ const userRouter = express.Router();
  *     tags: [Users]
  *     responses:
  *       200:
- *         description: A list of players
+ *         description: Successfully retrieved a list of players
  *         content:
  *           application/json:
  *             schema:
@@ -27,8 +27,8 @@ const userRouter = express.Router();
  *                 type: object
  *                 properties:
  *                   id:
- *                     type: string
- *                     example: "12345"
+ *                     type: integer
+ *                     example: 12345
  *                   firstName:
  *                     type: string
  *                     example: "John"
@@ -41,9 +41,8 @@ const userRouter = express.Router();
  *                   role:
  *                     type: string
  *                     example: "Player"
- *
  *       400:
- *         description: Bad request
+ *         description: Bad request due to an error
  *         content:
  *           application/json:
  *             schema:
@@ -61,14 +60,64 @@ userRouter.get('/players', async (req: Request, res: Response) => {
         const players = await userService.getAllPlayers();
         res.status(200).json(players);
     } catch (error) {
-        if (error instanceof Error) {
-            res.status(400).json({ status: 'error', errorMessage: error.message });
-        } else {
-            res.status(400).json({ status: 'error', errorMessage: 'Unknown error' });
-        }
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        res.status(400).json({ status: 'error', errorMessage });
     }
 });
 
+/**
+ * @swagger
+ * /users/{id}:
+ *   get:
+ *     summary: Retrieve a user by ID
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The ID of the user
+ *     responses:
+ *       200:
+ *         description: User data retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   example: 12345
+ *                 firstName:
+ *                   type: string
+ *                   example: "John"
+ *                 lastName:
+ *                   type: string
+ *                   example: "Doe"
+ *                 email:
+ *                   type: string
+ *                   example: "johndoe@example.com"
+ *                 role:
+ *                   type: string
+ *                   example: "Player"
+ *                 teamId:
+ *                   type: integer
+ *                   example: 5
+ *                 description:
+ *                   type: string
+ *                   example: "An avid football player"
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User not found"
+ */
 userRouter.get('/:id', async (req: Request, res: Response) => {
     const userId = parseInt(req.params.id, 10);
     const user = await userService.getUserById(userId);
@@ -79,6 +128,72 @@ userRouter.get('/:id', async (req: Request, res: Response) => {
     }
 });
 
+/**
+ * @swagger
+ * /users/{id}:
+ *   put:
+ *     summary: Update a user's information
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The ID of the user to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               teamId:
+ *                 type: integer
+ *                 example: 5
+ *               description:
+ *                 type: string
+ *                 example: "A passionate midfielder"
+ *     responses:
+ *       200:
+ *         description: User information updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   example: 12345
+ *                 firstName:
+ *                   type: string
+ *                   example: "John"
+ *                 lastName:
+ *                   type: string
+ *                   example: "Doe"
+ *                 email:
+ *                   type: string
+ *                   example: "johndoe@example.com"
+ *                 role:
+ *                   type: string
+ *                   example: "Player"
+ *                 teamId:
+ *                   type: integer
+ *                   example: 5
+ *                 description:
+ *                   type: string
+ *                   example: "A passionate midfielder"
+ *       404:
+ *         description: User not found for update
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User not found"
+ */
 userRouter.put('/:id', async (req: Request, res: Response) => {
     const userId = parseInt(req.params.id, 10);
     const { teamId, description } = req.body;
