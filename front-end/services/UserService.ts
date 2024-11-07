@@ -1,7 +1,7 @@
 import { User } from '@types';
 
 const getAllPlayers = async () => {
-    return fetch(process.env.NEXT_PUBLIC_API_URL + '/players', {
+    return fetch(process.env.NEXT_PUBLIC_API_URL + '/users/players', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
