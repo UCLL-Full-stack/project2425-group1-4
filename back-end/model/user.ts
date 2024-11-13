@@ -1,6 +1,5 @@
 import { Goal } from './goal';
-import { Team } from './team';
-
+import { User as UserPrisma } from '@prisma/client';
 export class User {
     private id?: number;
     private firstName: string;
@@ -208,5 +207,29 @@ export class User {
             this.description === user.getDescription() &&
             this.role === user.getRole()
         );
+    }
+
+    static from({
+        id,
+        firstName,
+        lastName,
+        password,
+        birthDate,
+        email,
+        username,
+        description,
+        role,
+    }: UserPrisma) {
+        return new User({
+            id,
+            firstName,
+            lastName,
+            password,
+            birthDate,
+            email,
+            username,
+            description,
+            role,
+        });
     }
 }

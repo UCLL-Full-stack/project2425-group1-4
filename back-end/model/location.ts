@@ -1,3 +1,5 @@
+import { Location as LocationPrisma } from '@prisma/client';
+
 export class Location {
     private id?: number;
     private country: string;
@@ -106,5 +108,15 @@ export class Location {
             this.zipCode === location.getZipCode() &&
             this.number === location.getNumber()
         );
+    }
+
+    static from(location: LocationPrisma) {
+        return new Location({ 
+            id: location.id, 
+            country: location.country, 
+            city: location.city, 
+            streetName: location.streetName, 
+            zipCode: location.zipCode, 
+            number: location.number });
     }
 }
