@@ -199,6 +199,143 @@ const main = async () => {
             description: 'Historic team with many titles',
         },
     });
+    const locations = [
+        {
+            country: 'Belgium',
+            city: 'Brussels',
+            streetName: 'Rue de la Loi',
+            zipCode: 1000,
+            number: 16,
+        },
+        {
+            country: 'France',
+            city: 'Paris',
+            streetName: 'Champs-Élysées',
+            zipCode: 75008,
+            number: 101,
+        },
+        {
+            country: 'Netherlands',
+            city: 'Amsterdam',
+            streetName: 'Dam Square',
+            zipCode: 1012,
+            number: 5,
+        },
+    ];
+
+    // teams data
+    const teams = [
+        {
+            name: 'FC Brussels',
+            description: 'A strong team from Brussels',
+            captain: {
+                connectOrCreate: {
+                    where: { email: 'captain1@fcbrussels.com' },
+                    create: {
+                        firstName: 'John',
+                        lastName: 'Doe',
+                        email: 'captain1@fcbrussels.com',
+                        role: 'Captain',
+                        password: 'securepassword',
+                    },
+                },
+            },
+            coach: {
+                connectOrCreate: {
+                    where: { email: 'coach1@fcbrussels.com' },
+                    create: {
+                        firstName: 'Jane',
+                        lastName: 'Doe',
+                        email: 'coach1@fcbrussels.com',
+                        role: 'Coach',
+                        password: 'securepassword',
+                    },
+                },
+            },
+            players: {
+                connectOrCreate: [
+                    {
+                        where: { email: 'player1@fcbrussels.com' },
+                        create: {
+                            firstName: 'Alice',
+                            lastName: 'Smith',
+                            email: 'player1@fcbrussels.com',
+                            role: 'Player',
+                            password: 'securepassword',
+                        },
+                    },
+                    {
+                        where: { email: 'player2@fcbrussels.com' },
+                        create: {
+                            firstName: 'Bob',
+                            lastName: 'Johnson',
+                            email: 'player2@fcbrussels.com',
+                            role: 'Player',
+                            password: 'securepassword',
+                        },
+                    },
+                ],
+            },
+            location: {
+                connect: { id: 1 }, // Connect this team to the first location (FC Brussels in Brussels)
+            },
+        },
+        {
+            name: 'Paris United',
+            description: 'Top team from Paris',
+            captain: {
+                connectOrCreate: {
+                    where: { email: 'captain1@parisunited.com' },
+                    create: {
+                        firstName: 'Louis',
+                        lastName: 'Martin',
+                        email: 'captain1@parisunited.com',
+                        role: 'Captain',
+                        password: 'securepassword',
+                    },
+                },
+            },
+            coach: {
+                connectOrCreate: {
+                    where: { email: 'coach1@parisunited.com' },
+                    create: {
+                        firstName: 'Clara',
+                        lastName: 'Dupont',
+                        email: 'coach1@parisunited.com',
+                        role: 'Coach',
+                        password: 'securepassword',
+                    },
+                },
+            },
+            players: {
+                connectOrCreate: [
+                    {
+                        where: { email: 'player1@parisunited.com' },
+                        create: {
+                            firstName: 'Emily',
+                            lastName: 'Durand',
+                            email: 'player1@parisunited.com',
+                            role: 'Player',
+                            password: 'securepassword',
+                        },
+                    },
+                    {
+                        where: { email: 'player2@parisunited.com' },
+                        create: {
+                            firstName: 'Victor',
+                            lastName: 'Rousseau',
+                            email: 'player2@parisunited.com',
+                            role: 'Player',
+                            password: 'securepassword',
+                        },
+                    },
+                ],
+            },
+            location: {
+                connect: { id: 2 }, // Connect this team to the second location (Paris United in Paris)
+            },
+        },
+    ];
 };
 
 (async () => {

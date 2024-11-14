@@ -81,7 +81,7 @@ model Location {
   country         String
   city            String
   streetName      String
-  zipCode         Int
+  zipCode         String
   number          Int
 
   matches         Match[]
