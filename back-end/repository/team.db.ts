@@ -1,42 +1,20 @@
 import { Team } from '../model/team';
-import userDb from './user.db';
+import database from './database';
 
-let currentId = 1;
-
-const player1 = userDb.getUserById(1);
-if (!player1) {
-    throw new Error('User with ID 1 not found');
-}
-
-let teams: Team[] = [
-    new Team({
-        id: currentId++,
-        name: 'FC Barcelona',
-        captain: player1,
-        coach: player1,
-        players: [],
-        description: 'Best team in the world',
-    }),
-    new Team({
-        id: currentId++,
-        name: 'PSG',
-        captain: player1,
-        coach: player1,
-        players: [],
-        description: 'Vive la France!',
-    }),
-    new Team({
-        id: currentId++,
-        name: 'Club Brugge',
-        captain: player1,
-        coach: player1,
-        players: [],
-        description: 'black and blue',
-    }),
-];
-
-const getAllTeams = (): Team[] => {
-    return teams;
+const getAllTeams = async (): Promise<Team[]> => {
+    try {
+        const teamsPrisma = await database.team.findMany({
+            include: {
+                captain: true,
+                coach: true,
+                players: true,
+            },
+        });
+        return teamsPrisma.map((teamPrisma) => Team.from(teamPrisma));
+    } catch (error) {
+        console.error(error);
+        throw new Error('Database error, See server log for details.');
+    }
 };
 
 const getTeamById = async (id: number): Promise<Team | null> => {

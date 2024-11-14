@@ -1,6 +1,6 @@
 import { Team, User, Goal, Match, Location } from '@prisma/client';
 
-type Role = 'Player' | 'Coach' | 'Captain' | 'Admin';
+type Role = 'PLAYER' | 'COACH' | 'ADMIN';
 
 type PublicUser = {
     id?: number;

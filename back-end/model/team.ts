@@ -4,16 +4,16 @@ import { User } from './user';
 export class Team {
     private id: number;
     private name: string;
-    private captain: User;
-    private coach: User;
+    private captain: User | undefined;
+    private coach: User | undefined;
     private players: User[];
     private description: string;
 
     constructor(team: {
         id: number;
         name: string;
-        captain: User;
-        coach: User;
+        captain?: User;
+        coach?: User;
         players: User[];
         description: string;
     }) {
@@ -31,8 +31,8 @@ export class Team {
     validate(team: {
         id: number;
         name: string;
-        captain: User;
-        coach: User;
+        captain?: User;
+        coach?: User;
         players: User[];
         description: string;
     }) {
@@ -65,11 +65,11 @@ export class Team {
         return this.name;
     }
 
-    getCaptain(): User {
+    getCaptain(): User | undefined {
         return this.captain;
     }
 
-    getCoach(): User {
+    getCoach(): User | undefined {
         return this.coach;
     }
 
@@ -107,13 +107,17 @@ export class Team {
     }
 
     static from(
-        team: TeamPrisma & { captain: UserPrisma; coach: UserPrisma; players: UserPrisma[] }
+        team: TeamPrisma & {
+            captain: UserPrisma | null;
+            coach: UserPrisma | null;
+            players: UserPrisma[];
+        }
     ) {
         return new Team({
             id: team.id,
             name: team.name,
-            captain: User.from(team.captain),
-            coach: User.from(team.coach),
+            captain: team.captain ? User.from(team.captain) : undefined,
+            coach: team.coach ? User.from(team.coach) : undefined,
             players: team.players.map((player) => User.from(player)),
             description: team.description,
         });

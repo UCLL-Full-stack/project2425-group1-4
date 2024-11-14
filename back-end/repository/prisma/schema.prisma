@@ -26,7 +26,7 @@ model User {
   captainOfTeamId Int?       @unique
 
   playerOfTeam    Team?      @relation("PlayerTeam", fields: [playerOfTeamId], references: [id])
-  playerOfTeamId  Int?       @unique
+  playerOfTeamId  Int?       
 
   goals           Goal[]
 }
@@ -73,7 +73,7 @@ model Goal {
   matchId         Int
 
   player          User        @relation(fields: [playerId], references: [id], onDelete: Cascade)
-  playerId        Int
+  playerId        Int        
 }
 
 model Location {
@@ -90,7 +90,6 @@ model Location {
 enum Role {
   ADMIN
   COACH
-  CAPTAIN
   PLAYER
   USER
 }

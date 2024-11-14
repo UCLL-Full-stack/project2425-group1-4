@@ -1,3 +1,4 @@
+import { Role } from '../types';
 import { Goal } from './goal';
 import { User as UserPrisma } from '@prisma/client';
 export class User {
@@ -9,7 +10,7 @@ export class User {
     private email: string;
     private username: string;
     private description: string;
-    private role: string;
+    private role: Role;
 
     private coachOfTeam?: number;
     private captainOfTeam?: number;
@@ -25,7 +26,7 @@ export class User {
         email: string;
         username: string;
         description: string;
-        role: string;
+        role: Role;
         coachOfTeam?: number;
         captainOfTeam?: number;
         playerOfTeam?: number;
@@ -112,7 +113,7 @@ export class User {
         return this.description;
     }
 
-    getRole(): string {
+    getRole(): Role {
         return this.role;
     }
 
@@ -170,7 +171,7 @@ export class User {
         this.description = description;
     }
 
-    setRole(role: string): void {
+    setRole(role: Role): void {
         if (!role) throw new Error("Role can't be empty.");
         this.role = role;
     }
@@ -229,7 +230,7 @@ export class User {
             email,
             username,
             description,
-            role,
+            role: role as Role,
         });
     }
 }
