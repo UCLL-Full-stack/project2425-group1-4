@@ -42,7 +42,7 @@ export class Match {
     }
 
     // Prisma Match to Match
-    static from({ id, date }: Match): Match {
+    static from({ id, date }: MatchPrisma) {
         return new Match({
             id,
             date,

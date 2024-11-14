@@ -47,7 +47,7 @@ export class Goal {
     }
 
     // Prisma Goal to Goal
-    static from({ id, time }: Goal) {
+    static from({ id, time }: GoalPrisma) {
         return new Goal({ id, time });
     }
 

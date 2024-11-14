@@ -1,4 +1,4 @@
-import { Team as TeamPrisa } from '@prisma/client';
+import { Team as TeamPrisma, User as UserPrisma } from '@prisma/client';
 import { User } from './user';
 
 export class Team {
@@ -106,15 +106,16 @@ export class Team {
         this.description = description;
     }
 
-    // Prisma Team to Team
-    static from({ id, name, captain, coach, players, description }: Team) {
+    static from(
+        team: TeamPrisma & { captain: UserPrisma; coach: UserPrisma; players: UserPrisma[] }
+    ) {
         return new Team({
-            id,
-            name,
-            captain,
-            coach,
-            players,
-            description,
+            id: team.id,
+            name: team.name,
+            captain: User.from(team.captain),
+            coach: User.from(team.coach),
+            players: team.players.map((player) => User.from(player)),
+            description: team.description,
         });
     }
 
