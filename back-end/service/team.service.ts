@@ -36,21 +36,21 @@ const updateTeam = async (updateTeam: Team): Promise<Team> => {
     const numericId = Number(updateTeam.getId());
     const team = await teamDb.getTeamById(numericId);
 
-//     if (!team) {
-//         throw new Error('Team not found');
-//     }
+    if (!team) {
+        throw new Error('Team not found');
+    }
 
     const updatedTeam = await teamDb.updateTeam(updateTeam);
     return updatedTeam;
 };
 
-// const addPlayerToTeam = async (teamId: number, playerId: number): Promise<boolean> => {
-//     const team = await teamDb.getTeamById(teamId);
-//     const player = await userDb.getUserById(playerId);
+const addPlayerToTeam = async (teamId: number, playerId: number): Promise<boolean> => {
+    const team = await teamDb.getTeamById(teamId);
+    const player = await userDb.getUserById(playerId);
 
-//     if (!team || !player) {
-//         return false;
-//     }
+    if (!team || !player) {
+        return false;
+    }
 
     // Check if the player is already part of the team
     const isPlayerInTeam = team.getPlayers().some((p) => p.getId() === playerId);
@@ -61,12 +61,12 @@ const updateTeam = async (updateTeam: Team): Promise<Team> => {
     return true;
 };
 
-// const removePlayerFromTeam = async (teamId: number, playerId: number): Promise<boolean> => {
-//     const team = await teamDb.getTeamById(teamId);
+const removePlayerFromTeam = async (teamId: number, playerId: number): Promise<boolean> => {
+    const team = await teamDb.getTeamById(teamId);
 
-//     if (!team) {
-//         return false; // Team not found
-//     }
+    if (!team) {
+        return false; // Team not found
+    }
 
     const player = await userDb.getUserById(playerId);
     if (!player) {
@@ -82,7 +82,7 @@ export default {
     getTeamNameById,
     getTeamById,
     getAllTeams,
-    // updateTeam,
-    // addPlayerToTeam,
-    // removePlayerFromTeam,
+    updateTeam,
+    addPlayerToTeam,
+    removePlayerFromTeam,
 };

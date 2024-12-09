@@ -167,27 +167,27 @@ teamRouter.get('/:id', async (req: Request, res: Response) => {
  *                   type: string
  *                   example: Error message
  */
-// teamRouter.put('/:id', async (req: Request, res: Response) => {
-//     const { id } = req.params;
-//     const updatedTeamData = req.body;
+teamRouter.put('/:id', async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const updatedTeamData = req.body;
 
-//     try {
-//         const team = await teamService.getTeamById(Number(id));
-//         if (!team) {
-//             return res.status(404).json({ status: 'error', errorMessage: 'Team not found' });
-//         }
+    try {
+        const team = await teamService.getTeamById(Number(id));
+        if (!team) {
+            return res.status(404).json({ status: 'error', errorMessage: 'Team not found' });
+        }
 
         const updateResult = await teamService.updateTeam(updatedTeamData);
         if (!updateResult) {
             throw new Error('Failed to update team');
         }
 
-//         res.status(200).json({ message: 'Team updated successfully' });
-//     } catch (error) {
-//         const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
-//         res.status(400).json({ status: 'error', errorMessage });
-//     }
-// });
+        res.status(200).json({ message: 'Team updated successfully' });
+    } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+        res.status(400).json({ status: 'error', errorMessage });
+    }
+});
 
 /**
  * @swagger
