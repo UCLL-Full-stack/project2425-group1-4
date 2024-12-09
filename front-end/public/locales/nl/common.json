@@ -1,31 +1,51 @@
 {
-    "app.title": "Courses App",
+    "app.title": "GoalPro App",
     "general.error": "Er is een fout opgetreden. Probeer het later opnieuw.",
     "permissions": {
-        "unauthorized": "U bent niet gemachtigd om deze pagina te bekijken."
+        "unauthorized": "Je bent niet gemachtigd om deze pagina te openen."
     },
     "login": {
         "title": "Inloggen",
         "button": "Inloggen",
-        "success": "Inloggen succesvol. Doorsturen naar de startpagina...",
+        "success": "Inloggen succesvol. Omleiden naar de homepage...",
         "validate": {
-            "name": "Naam is verplicht",
-            "password": "Wachtwoord is verplicht"
+            "name": "Naam is vereist",
+            "password": "Wachtwoord is vereist"
         },
-        "label": { "username": "Gebruikersnaam:", "password": "Wachtwoord:" }
+        "label": {
+            "username": "Gebruikersnaam:",
+            "password": "Wachtwoord:"
+        }
+    },
+    "register": {
+        "title": "Registreren",
+        "button": "Registreren",
+        "success": "Registratie succesvol. U wordt naar de homepage geleid...",
+        "validate": {
+            "name": "Naam is vereist",
+            "password": "Wachtwoord is vereist",
+            "email": "Email is vereist",
+            "emailValid": "Email is niet geldig"
+        },
+        "label": {
+            "username": "Gebruikersnaam:",
+            "password": "Wachtwoord:",
+            "firstName": "Voornaam:",
+            "lastName": "Achternaam:",
+            "email": "Email:",
+            "birthDate": "Geboortedatum:"
+        }
     },
     "header": {
         "welcome": "Welkom",
         "nav": {
-            "home": "Start",
-            "lecturers": "Docenten",
-            "schedules": "Roosters",
+            "home": "Home",
+            "players": "Spelers",
+            "teams": "Teams",
+            "matches": "Wedstrijden",
             "login": "Inloggen",
+            "register": "Registreren",
             "logout": "Uitloggen"
         }
-    },
-    "lecturers": {
-        "title": "Docenten",
-        "given": "Cursussen gegeven door"
     }
 }

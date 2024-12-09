@@ -47,9 +47,5 @@
             "register": "Register",
             "logout": "Logout"
         }
-    },
-    "lecturers": {
-        "title": "Lecturers",
-        "given": "Courses taught by"
     }
 }
