@@ -1,14 +1,14 @@
-import NavBar from '@components/navigationBar';
+import NavBar from '@components/header';
 import '@styles/index.css';
 import type { AppProps } from 'next/app';
+import { appWithTranslation } from 'next-i18next';
 
 function MyApp({ Component, pageProps }: AppProps) {
     return (
         <>
-            <NavBar />
             <Component {...pageProps} />
         </>
     );
 }
 
-export default MyApp;
+export default appWithTranslation(MyApp);

@@ -16,14 +16,13 @@ model User {
   birthDate       DateTime
   email           String     @unique
   username        String     @unique
-  description     String
+  description     String?
   role            Role       @default(USER)
 
   coachOfTeam     Team?      @relation("CoachTeam", fields: [coachOfTeamId], references: [id])
   coachOfTeamId   Int?       @unique
 
-  captainOfTeam   Team?      @relation("CaptainTeam", fields: [captainOfTeamId], references: [id])
-  captainOfTeamId Int?       @unique
+
 
   playerOfTeam    Team?      @relation("PlayerTeam", fields: [playerOfTeamId], references: [id])
   playerOfTeamId  Int?       
@@ -36,7 +35,6 @@ model Team {
   name            String
   description     String
 
-  captain         User?       @relation("CaptainTeam")
   coach           User?       @relation("CoachTeam")
   players         User[]      @relation("PlayerTeam")
 

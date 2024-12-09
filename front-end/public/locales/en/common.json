@@ -1,0 +1,55 @@
+{
+    "app.title": "GoalPro App",
+    "general.error": "An error has occurred. Please try again later.",
+    "permissions": {
+        "unauthorized": "You are not authorized to access this page."
+    },
+    "login": {
+        "title": "Login",
+        "button": "Login",
+        "success": "Login succesful. Redirecting to homepage...",
+        "validate": {
+            "name": "Name is required",
+            "password": "Password is required"
+        },
+        "label": {
+            "username": "Username:",
+            "password": "Password:"
+        }
+    },
+    "register": {
+        "title": "Register",
+        "button": "Register",
+        "success": "Registration successful. Leading you to the home page...",
+        "validate": {
+            "name": "Name is required",
+            "password": "Password is required",
+            "email": "Email is required",
+            "emailValid": "Email is not valid"
+        },
+        "label": {
+            "username": "Username:",
+            "password": "Password:",
+            "firstName": "First Name:",
+            "lastName": "Last Name:",
+            "email": "Email:",
+            "birthDate": "Birth Date:"
+        }
+    },
+    "header": {
+        "welcome": "Welcome",
+        "nav": {
+            "home": "Home",
+            "players": "Players",
+            "teams": "Teams",
+            "matches": "Matches",
+            "login": "Login",
+            "register": "Register",
+            "logout": "Logout"
+        }
+    },
+    "lecturers": {
+        "title": "Lecturers",
+        "given": "Courses taught by"
+    }
+}

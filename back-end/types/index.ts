@@ -1,4 +1,4 @@
-type Role = 'PLAYER' | 'COACH' | 'ADMIN';
+type Role = 'USER' | 'PLAYER' | 'COACH' | 'ADMIN';
 
 type UserInput = {
     id?: number;
@@ -8,10 +8,9 @@ type UserInput = {
     birthDate: Date;
     email: string;
     username: string;
-    description: string;
+    description?: string;
     role: string;
     coachOfTeam?: number;
-    captainOfTeam?: number;
     playerOfTeam?: number;
     goals?: GoalInput[];
 };
@@ -21,7 +20,6 @@ type TeamInput = {
     name: string;
     description: string;
     coachId: number;
-    captainId: number;
     players: number[];
     matches: number[];
 };

@@ -230,7 +230,7 @@ userRouter.post('/login', async (req: Request, res: Response, next: NextFunction
     try {
         const userInput = <UserInput>req.body;
         const response = await userService.authenticate(userInput);
-        res.status(200).json({ message: 'Authentication succesful', ...response });
+        res.status(200).json({ message: 'Authentication successful', ...response });
     } catch (error) {
         next(error);
     }
@@ -238,7 +238,7 @@ userRouter.post('/login', async (req: Request, res: Response, next: NextFunction
 
 /**
  * @swagger
- * /users/signup:
+ * /users/register:
  *   post:
  *      summary: Create a user
  *      requestBody:
@@ -255,7 +255,7 @@ userRouter.post('/login', async (req: Request, res: Response, next: NextFunction
  *                schema:
  *                  $ref: '#/components/schemas/User'
  */
-userRouter.post('/signup', async (req: Request, res: Response, next: NextFunction) => {
+userRouter.post('/register', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const userInput = <UserInput>req.body;
         const user = await userService.createUser(userInput);

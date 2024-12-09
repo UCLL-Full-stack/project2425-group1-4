@@ -1,4 +1,3 @@
-import { tr } from 'date-fns/locale';
 import { User } from '../model/user';
 import database from './database';
 
@@ -67,7 +66,7 @@ const updateUser = async (user: User): Promise<User> => {
                 birthDate: user.getBirthDate(),
                 email: user.getEmail(),
                 username: user.getUsername(),
-                description: user.getDescription(),
+                description: user.getDescription() ?? '',
                 role: user.getRole(),
             },
         });

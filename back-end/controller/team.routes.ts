@@ -167,27 +167,27 @@ teamRouter.get('/:id', async (req: Request, res: Response) => {
  *                   type: string
  *                   example: Error message
  */
-teamRouter.put('/:id', async (req: Request, res: Response) => {
-    const { id } = req.params;
-    const updatedTeamData = req.body;
+// teamRouter.put('/:id', async (req: Request, res: Response) => {
+//     const { id } = req.params;
+//     const updatedTeamData = req.body;
 
-    try {
-        const team = await teamService.getTeamById(Number(id));
-        if (!team) {
-            return res.status(404).json({ status: 'error', errorMessage: 'Team not found' });
-        }
+//     try {
+//         const team = await teamService.getTeamById(Number(id));
+//         if (!team) {
+//             return res.status(404).json({ status: 'error', errorMessage: 'Team not found' });
+//         }
 
-        const updateResult = await teamService.updateTeam(Number(id), updatedTeamData);
-        if (!updateResult) {
-            throw new Error('Failed to update team');
-        }
+//         const updateResult = await teamService.updateTeam(Number(id), updatedTeamData);
+//         if (!updateResult) {
+//             throw new Error('Failed to update team');
+//         }
 
-        res.status(200).json({ message: 'Team updated successfully' });
-    } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
-        res.status(400).json({ status: 'error', errorMessage });
-    }
-});
+//         res.status(200).json({ message: 'Team updated successfully' });
+//     } catch (error) {
+//         const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+//         res.status(400).json({ status: 'error', errorMessage });
+//     }
+// });
 
 /**
  * @swagger
@@ -245,20 +245,20 @@ teamRouter.put('/:id', async (req: Request, res: Response) => {
  *                   type: string
  *                   example: Error adding player to team
  */
-teamRouter.put('/:id/addPlayer', async (req: Request, res: Response) => {
-    const { id } = req.params;
-    const { playerId } = req.body;
+// teamRouter.put('/:id/addPlayer', async (req: Request, res: Response) => {
+//     const { id } = req.params;
+//     const { playerId } = req.body;
 
-    try {
-        const result = await teamService.addPlayerToTeam(Number(id), playerId);
-        if (!result) {
-            return res.status(404).json({ message: 'Team or player not found' });
-        }
-        res.status(200).json({ message: 'Player added to team successfully' });
-    } catch (error) {
-        res.status(400).json({ message: 'Error adding player to team' });
-    }
-});
+//     try {
+//         const result = await teamService.addPlayerToTeam(Number(id), playerId);
+//         if (!result) {
+//             return res.status(404).json({ message: 'Team or player not found' });
+//         }
+//         res.status(200).json({ message: 'Player added to team successfully' });
+//     } catch (error) {
+//         res.status(400).json({ message: 'Error adding player to team' });
+//     }
+// });
 
 /**
  * @swagger
@@ -316,19 +316,19 @@ teamRouter.put('/:id/addPlayer', async (req: Request, res: Response) => {
  *                   type: string
  *                   example: Error removing player from team
  */
-teamRouter.put('/:id/removePlayer', async (req: Request, res: Response) => {
-    const { id } = req.params;
-    const { playerId } = req.body;
+// teamRouter.put('/:id/removePlayer', async (req: Request, res: Response) => {
+//     const { id } = req.params;
+//     const { playerId } = req.body;
 
-    try {
-        const result = await teamService.removePlayerFromTeam(Number(id), playerId);
-        if (!result) {
-            return res.status(404).json({ message: 'Team or player not found' });
-        }
-        res.status(200).json({ message: 'Player removed from team successfully' });
-    } catch (error) {
-        res.status(400).json({ message: 'Error removing player from team' });
-    }
-});
+//     try {
+//         const result = await teamService.removePlayerFromTeam(Number(id), playerId);
+//         if (!result) {
+//             return res.status(404).json({ message: 'Team or player not found' });
+//         }
+//         res.status(200).json({ message: 'Player removed from team successfully' });
+//     } catch (error) {
+//         res.status(400).json({ message: 'Error removing player from team' });
+//     }
+// });
 
 export default teamRouter;

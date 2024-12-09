@@ -100,15 +100,24 @@ const createUser = async ({
     firstName,
     lastName,
     email,
+    birthDate,
 }: UserInput): Promise<User> => {
-    const existingUser = await userDb.getUserByUsername({ username });
 
+    const existingUser = await userDb.getUserByUsername({ username });
     if (existingUser) {
         throw new Error(`User with username ${username} is already registered.`);
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
-    const user = new User({ username, password: hashedPassword, firstName, lastName, email });
+    const user = new User({
+        username,
+        password: hashedPassword,
+        firstName,
+        lastName,
+        email,
+        birthDate,
+    });
+
 
     return await userDb.createUser(user);
 };

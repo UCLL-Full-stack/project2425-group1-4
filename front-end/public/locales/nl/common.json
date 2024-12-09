@@ -1,0 +1,31 @@
+{
+    "app.title": "Courses App",
+    "general.error": "Er is een fout opgetreden. Probeer het later opnieuw.",
+    "permissions": {
+        "unauthorized": "U bent niet gemachtigd om deze pagina te bekijken."
+    },
+    "login": {
+        "title": "Inloggen",
+        "button": "Inloggen",
+        "success": "Inloggen succesvol. Doorsturen naar de startpagina...",
+        "validate": {
+            "name": "Naam is verplicht",
+            "password": "Wachtwoord is verplicht"
+        },
+        "label": { "username": "Gebruikersnaam:", "password": "Wachtwoord:" }
+    },
+    "header": {
+        "welcome": "Welkom",
+        "nav": {
+            "home": "Start",
+            "lecturers": "Docenten",
+            "schedules": "Roosters",
+            "login": "Inloggen",
+            "logout": "Uitloggen"
+        }
+    },
+    "lecturers": {
+        "title": "Docenten",
+        "given": "Cursussen gegeven door"
+    }
+}

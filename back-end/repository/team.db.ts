@@ -5,7 +5,6 @@ const getAllTeams = async (): Promise<Team[]> => {
     try {
         const teamsPrisma = await database.team.findMany({
             include: {
-                captain: true,
                 coach: true,
                 players: true,
             },
@@ -24,7 +23,6 @@ const getTeamById = async (id: number): Promise<Team | null> => {
                 id: id,
             },
             include: {
-                captain: true,
                 coach: true,
                 players: true,
             },
@@ -41,10 +39,6 @@ const addTeam = async (team: Team): Promise<Team> => {
         const teamPrisma = await database.team.create({
             data: {
                 name: team.getName(),
-                // Conditionally add captain and coach only if they are defined
-                captain: team.getCaptain()
-                    ? { connect: { id: team.getCaptain()?.getId() } }
-                    : undefined,
                 coach: team.getCoach() ? { connect: { id: team.getCoach()?.getId() } } : undefined,
                 players: {
                     connect: team.getPlayers().map((player) => ({ id: player.getId() })),
@@ -52,7 +46,6 @@ const addTeam = async (team: Team): Promise<Team> => {
                 description: team.getDescription(),
             },
             include: {
-                captain: true,
                 coach: true,
                 players: true,
             },
@@ -74,12 +67,7 @@ const updateTeam = async (team: Team): Promise<Team> => {
             description: team.getDescription(),
         };
 
-        // Had weird issues with captain and coach possibly being null
-        if (team.getCaptain()) {
-            updateData.captain = { connect: { id: team.getCaptain()?.getId() } };
-        } else {
-            updateData.captain = { disconnect: true };
-        }
+      
 
         if (team.getCoach()) {
             updateData.coach = { connect: { id: team.getCoach()?.getId() } };
@@ -93,7 +81,6 @@ const updateTeam = async (team: Team): Promise<Team> => {
             },
             data: updateData,
             include: {
-                captain: true,
                 coach: true,
                 players: true,
             },
@@ -113,7 +100,6 @@ const getTeamByName = async (name: string): Promise<Team | null> => {
                 name: name,
             },
             include: {
-                captain: true,
                 coach: true,
                 players: true,
             },
