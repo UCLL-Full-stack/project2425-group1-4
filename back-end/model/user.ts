@@ -1,32 +1,32 @@
-import { Role } from '../types';
 import { Goal } from './goal';
-import { User as UserPrisma } from '@prisma/client';
+import { Role, User as UserPrisma } from '@prisma/client';
+
 export class User {
     private id?: number;
     private firstName: string;
     private lastName: string;
     private password: string;
-    private birthDate: Date;
+    private birthDate?: Date;
     private email: string;
     private username: string;
-    private description: string;
-    private role: Role;
+    private description?: string;
+    private role?: Role;
 
     private coachOfTeam?: number;
     private captainOfTeam?: number;
     private playerOfTeam?: number;
-    private goals: Goal[] = [];
+    private goals: Goal[];
 
     constructor(user: {
-        id: number;
+        id?: number;
         firstName: string;
         lastName: string;
         password: string;
-        birthDate: Date;
+        birthDate?: Date;
         email: string;
         username: string;
-        description: string;
-        role: Role;
+        description?: string;
+        role?: Role;
         coachOfTeam?: number;
         captainOfTeam?: number;
         playerOfTeam?: number;
@@ -50,15 +50,15 @@ export class User {
     }
 
     validate(user: {
-        id: number;
+        id?: number;
         firstName: string;
         lastName: string;
         password: string;
-        birthDate: Date;
+        birthDate?: Date;
         email: string;
         username: string;
-        description: string;
-        role: string;
+        description?: string;
+        role?: Role;
         coachOfTeam?: number;
         captainOfTeam?: number;
         playerOfTeam?: number;
@@ -77,7 +77,6 @@ export class User {
         if (!emailRegex.test(user.email)) throw new Error('Email does not have a correct format.');
 
         if (!user.username) throw new Error('Username cannot be empty.');
-        if (!user.role) throw new Error('Role cannot be empty.');
     }
 
     // Getters

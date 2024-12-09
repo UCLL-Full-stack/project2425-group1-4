@@ -17,7 +17,7 @@ model User {
   email           String     @unique
   username        String     @unique
   description     String
-  role            Role
+  role            Role       @default(USER)
 
   coachOfTeam     Team?      @relation("CoachTeam", fields: [coachOfTeamId], references: [id])
   coachOfTeamId   Int?       @unique

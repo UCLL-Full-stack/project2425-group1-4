@@ -1,7 +1,9 @@
 import userDb from '../repository/user.db';
 import { User } from '../model/user';
-import { UserInput } from '../types';
+import { AuthenticationResponse, UserInput } from '../types';
 import teamDb from '../repository/team.db';
+import bcrypt from 'bcrypt';
+import { generateJwtToken } from '../util/jwt';
 
 const getAllPlayers = async (): Promise<User[]> => {
     const players = await userDb.getAllPlayers();
@@ -68,4 +70,54 @@ const getUserById = async (userId: number): Promise<User | null> => {
     return user;
 };
 
-export default { getAllPlayers, updateUser, getUserById };
+const getUserByUsername = async ({ username }: { username: string }): Promise<User> => {
+    const user = await userDb.getUserByUsername({ username });
+    if (!user) {
+        throw new Error(`User with username: ${username} does not exist.`);
+    }
+    return user;
+};
+
+const authenticate = async ({ username, password }: UserInput): Promise<AuthenticationResponse> => {
+    const user = await getUserByUsername({ username });
+
+    const isValidPassword = await bcrypt.compare(password, user.getPassword());
+
+    if (!isValidPassword) {
+        throw new Error('Incorrect password.');
+    }
+    return {
+        token: generateJwtToken({ username, role: user.getRole() }),
+        username: username,
+        fullname: `${user.getFirstName()} ${user.getLastName()}`,
+        role: user.getRole(),
+    };
+};
+
+const createUser = async ({
+    username,
+    password,
+    firstName,
+    lastName,
+    email,
+}: UserInput): Promise<User> => {
+    const existingUser = await userDb.getUserByUsername({ username });
+
+    if (existingUser) {
+        throw new Error(`User with username ${username} is already registered.`);
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 12);
+    const user = new User({ username, password: hashedPassword, firstName, lastName, email });
+
+    return await userDb.createUser(user);
+};
+
+export default {
+    getAllPlayers,
+    updateUser,
+    getUserById,
+    getUserByUsername,
+    authenticate,
+    createUser,
+};

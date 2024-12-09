@@ -1,21 +1,4 @@
-import { Team, User, Goal, Match, Location } from '@prisma/client';
-
 type Role = 'PLAYER' | 'COACH' | 'ADMIN';
-
-type PublicUser = {
-    id?: number;
-    firstName?: string;
-    lastName?: string;
-    birthDate?: Date;
-    email?: string;
-    username?: string;
-    description?: string;
-    role?: string;
-    coachOfTeam?: number;
-    captainOfTeam?: number;
-    playerOfTeam?: number;
-    goals?: Goal[];
-};
 
 type UserInput = {
     id?: number;
@@ -30,7 +13,7 @@ type UserInput = {
     coachOfTeam?: number;
     captainOfTeam?: number;
     playerOfTeam?: number;
-    goals?: Goal[];
+    goals?: GoalInput[];
 };
 
 type TeamInput = {
@@ -67,4 +50,18 @@ type LocationInput = {
     country: string;
 };
 
-export type { Role, UserInput, TeamInput, GoalInput, MatchInput, LocationInput, PublicUser };
+type AuthenticationResponse = {
+    token: string;
+    username: string;
+    fullname: string;
+    role: string;
+};
+export type {
+    Role,
+    UserInput,
+    TeamInput,
+    GoalInput,
+    MatchInput,
+    LocationInput,
+    AuthenticationResponse,
+};
