@@ -1,26 +1,26 @@
-import { Team } from '@types';
+import { Match } from '@types';
 import React, { useState } from 'react';
 
 type Props = {
-    teams: Array<Team>;
+    matches: Array<Match>;
 };
 
-const TeamGrid: React.FC<Props> = ({ teams }: Props) => {
+const MatchGrid: React.FC<Props> = ({ matches }: Props) => {
     const [searchTerm, setSearchTerm] = useState('');
 
-    // Filter teams
-    const filteredTeams = teams.filter((team) =>
-        `${team.name}`.toLowerCase().includes(searchTerm.toLowerCase())
+    // Filter matches
+    const filteredMatches = matches.filter((match) =>
+        `${match.id}`.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     return (
         <>
-            {teams && (
+            {matches && (
                 <section className="p-6">
                     <div className="mb-6 flex items-center">
                         <input
                             type="text"
-                            placeholder="Search for teams..."
+                            placeholder="Search for matches..."
                             aria-label="Search"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
@@ -29,20 +29,20 @@ const TeamGrid: React.FC<Props> = ({ teams }: Props) => {
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                        {filteredTeams.length > 0 ? (
-                            filteredTeams.map((team) => (
+                        {filteredMatches.length > 0 ? (
+                            filteredMatches.map((match) => (
                                 <div
-                                    key={team.id}
+                                    key={match.id}
                                     className="bg-white p-4 rounded-lg shadow-md text-center hover:shadow-lg transition-shadow"
                                 >
                                     <p className="font-semibold text-lg text-gray-800">
-                                        {team.name}
+                                        {match.id}
                                     </p>
                                 </div>
                             ))
                         ) : (
                             <p className="text-center col-span-full text-gray-500">
-                                No teams found.
+                                No matches found.
                             </p>
                         )}
                     </div>
@@ -52,4 +52,4 @@ const TeamGrid: React.FC<Props> = ({ teams }: Props) => {
     );
 };
 
-export default TeamGrid;
+export default MatchGrid;

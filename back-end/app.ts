@@ -8,6 +8,7 @@ import swaggerUi from 'swagger-ui-express';
 
 import userRouter from './controller/user.routes';
 import teamRouter from './controller/team.routes';
+import matchRouter from './controller/match.routes';
 
 const app = express();
 dotenv.config();
@@ -115,7 +116,8 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Register routers
 app.use('/users', userRouter);
-app.use('/teams', teamRouter); // Assuming you have a team router
+app.use('/matches', matchRouter);
+app.use('/teams', teamRouter);
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     if (err.name === 'UnauthorizedError') {
