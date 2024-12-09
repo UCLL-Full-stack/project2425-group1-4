@@ -57,7 +57,7 @@ const userRouter = express.Router();
  *                   type: string
  *                   example: "Error message"
  */
-userRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
+userRouter.get('/players', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const players = await userService.getAllPlayers();
         res.status(200).json(players);
@@ -119,15 +119,15 @@ userRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
  *                   type: string
  *                   example: "User not found"
  */
-userRouter.get('/:id', async (req: Request, res: Response) => {
-    const userId = parseInt(req.params.id, 10);
-    const user = await userService.getUserById(userId);
-    if (user) {
-        res.json(user);
-    } else {
-        res.status(404).json({ message: 'User not found' });
-    }
-});
+// userRouter.get('/:id', async (req: Request, res: Response) => {
+//     const userId = parseInt(req.params.id, 10);
+//     const user = await userService.getUserById(userId);
+//     if (user) {
+//         res.json(user);
+//     } else {
+//         res.status(404).json({ message: 'User not found' });
+//     }
+// });
 
 /**
  * @swagger
@@ -195,17 +195,17 @@ userRouter.get('/:id', async (req: Request, res: Response) => {
  *                   type: string
  *                   example: "User not found"
  */
-userRouter.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const userId = parseInt(req.params.id, 10);
-        const editedUser = req.body;
+// userRouter.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
+//     try {
+//         const userId = parseInt(req.params.id, 10);
+//         const editedUser = req.body;
 
-        const updatedUser = await userService.updateUser(userId, editedUser);
-        res.json(updatedUser);
-    } catch (error) {
-        next(error);
-    }
-});
+//         const updatedUser = await userService.updateUser(userId, editedUser);
+//         res.json(updatedUser);
+//     } catch (error) {
+//         next(error);
+//     }
+// });
 
 /**
  * @swagger

@@ -85,9 +85,9 @@ const updateTeam = async (updateTeam: Team): Promise<Team> => {
     }
 };
 
-const getTeamByName = async (name: string): Promise<Team | null> => {
+const getTeamsByName = async (name: string): Promise<Team[]> => {
     try {
-        const teamPrisma = await database.team.findFirst({
+        const teamsPrisma = await database.team.findMany({
             where: {
                 name: name,
             },
@@ -96,7 +96,7 @@ const getTeamByName = async (name: string): Promise<Team | null> => {
                 players: true,
             },
         });
-        return teamPrisma ? Team.from(teamPrisma) : null;
+        return teamsPrisma.map((teamPrisma) => Team.from(teamPrisma));
     } catch (error) {
         console.error(error);
         throw new Error('Database error. See server log for details.');
@@ -116,4 +116,4 @@ const removeTeam = async (id: number): Promise<void> => {
     }
 };
 
-export default { getAllTeams, getTeamById, addTeam, updateTeam, getTeamByName, removeTeam };
+export default { getAllTeams, getTeamById, addTeam, updateTeam, getTeamsByName, removeTeam };

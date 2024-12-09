@@ -108,7 +108,7 @@ const main = async () => {
             lastName: 'Iniesta',
             password: 'password123',
             birthDate: new Date('1984-05-11'),
-            email: 'andreasIniesta',
+            email: 'azdazd@outlook.com',
             username: 'andresi',
             description: 'Best midfielder in the world',
             role: 'PLAYER',
@@ -118,7 +118,6 @@ const main = async () => {
     const barcolona = await prisma.team.create({
         data: {
             name: 'FC Barcelona',
-            captain: { connect: { id: bob.id } },
             coach: {
                 create: {
                     firstName: 'Pep',
@@ -180,7 +179,6 @@ const main = async () => {
     const madrid = await prisma.team.create({
         data: {
             name: 'Real Madrid',
-            captain: { connect: { id: matheo.id } },
             coach: {
                 create: {
                     firstName: 'Zinedine',
@@ -228,18 +226,6 @@ const main = async () => {
         {
             name: 'FC Brussels',
             description: 'A strong team from Brussels',
-            captain: {
-                connectOrCreate: {
-                    where: { email: 'captain1@fcbrussels.com' },
-                    create: {
-                        firstName: 'John',
-                        lastName: 'Doe',
-                        email: 'captain1@fcbrussels.com',
-                        role: 'Captain',
-                        password: 'securepassword',
-                    },
-                },
-            },
             coach: {
                 connectOrCreate: {
                     where: { email: 'coach1@fcbrussels.com' },
@@ -283,18 +269,6 @@ const main = async () => {
         {
             name: 'Paris United',
             description: 'Top team from Paris',
-            captain: {
-                connectOrCreate: {
-                    where: { email: 'captain1@parisunited.com' },
-                    create: {
-                        firstName: 'Louis',
-                        lastName: 'Martin',
-                        email: 'captain1@parisunited.com',
-                        role: 'Captain',
-                        password: 'securepassword',
-                    },
-                },
-            },
             coach: {
                 connectOrCreate: {
                     where: { email: 'coach1@parisunited.com' },
