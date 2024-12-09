@@ -177,10 +177,10 @@ teamRouter.get('/:id', async (req: Request, res: Response) => {
 //             return res.status(404).json({ status: 'error', errorMessage: 'Team not found' });
 //         }
 
-//         const updateResult = await teamService.updateTeam(Number(id), updatedTeamData);
-//         if (!updateResult) {
-//             throw new Error('Failed to update team');
-//         }
+        const updateResult = await teamService.updateTeam(updatedTeamData);
+        if (!updateResult) {
+            throw new Error('Failed to update team');
+        }
 
 //         res.status(200).json({ message: 'Team updated successfully' });
 //     } catch (error) {

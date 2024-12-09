@@ -57,27 +57,19 @@ const addTeam = async (team: Team): Promise<Team> => {
     }
 };
 
-const updateTeam = async (team: Team): Promise<Team> => {
+const updateTeam = async (updateTeam: Team): Promise<Team> => {
     try {
         const updateData: any = {
-            name: team.getName(),
+            name: updateTeam.getName(),
             players: {
-                set: team.getPlayers().map((player) => ({ id: player.getId() })),
+                set: updateTeam.getPlayers().map((player) => ({ id: player.getId() })),
             },
-            description: team.getDescription(),
+            description: updateTeam.getDescription(),
         };
-
-      
-
-        if (team.getCoach()) {
-            updateData.coach = { connect: { id: team.getCoach()?.getId() } };
-        } else {
-            updateData.coach = { disconnect: true };
-        }
 
         const teamPrisma = await database.team.update({
             where: {
-                id: team.getId(),
+                id: updateData.getId(),
             },
             data: updateData,
             include: {
