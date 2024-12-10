@@ -45,7 +45,13 @@ type LocationInput = {
     id?: number;
     name: string;
     city: string;
-    country: string;};
+    country: string;
+};
+
+type AuthenticationRequest = {
+    email: string;
+    password: string;
+};
 
 type AuthenticationResponse = {
     token: string;
@@ -54,11 +60,12 @@ type AuthenticationResponse = {
     role: string;
 };
 export type {
-    Role,
-    UserInput,
-    TeamInput,
-    GoalInput,
-    MatchInput,
-    LocationInput,
+    AuthenticationRequest,
     AuthenticationResponse,
+    GoalInput,
+    LocationInput,
+    MatchInput,
+    Role,
+    TeamInput,
+    UserInput,
 };

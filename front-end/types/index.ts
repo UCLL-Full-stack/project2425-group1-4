@@ -45,3 +45,13 @@ export type StatusMessage = {
     message: string;
     type: 'error' | 'success';
 };
+
+
+export interface DecodedToken {
+    email: string;
+    role: string;
+    iat: number;
+    exp: number;
+    iss: string;
+}
+

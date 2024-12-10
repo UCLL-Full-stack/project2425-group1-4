@@ -1,8 +1,9 @@
+import { User } from '@types';
+import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import Language from './language/Language';
-import { useTranslation } from 'next-i18next';
-import { User } from '@types';
+import BackButton from './backButton';
 
 const Header: React.FC = () => {
     const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
@@ -23,6 +24,7 @@ const Header: React.FC = () => {
     return (
         <nav className="bg-slate-800 text-white p-4">
             <div className="container mx-auto flex justify-between">
+                <BackButton />
                 <Link href="/" className="text-lg font-bold">
                     {t('app.title')}
                 </Link>
@@ -87,7 +89,7 @@ const Header: React.FC = () => {
                                 className="px-2 text-white text-xl hover:bg-slate-600 rounded-lg"
                                 href="/users"
                             >
-                                Admin Matches
+                                Users
                             </Link>
                         </>
                     )}

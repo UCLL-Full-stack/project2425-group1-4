@@ -4,6 +4,7 @@ import { AuthenticationResponse, UserInput } from '../types';
 import teamDb from '../repository/team.db';
 import bcrypt from 'bcrypt';
 import { generateJwtToken } from '../util/jwt';
+import { UnauthorizedError } from 'express-jwt';
 
 const getAllPlayers = async (): Promise<User[]> => {
     const players = await userDb.getAllPlayers();
@@ -11,6 +12,16 @@ const getAllPlayers = async (): Promise<User[]> => {
         throw new Error('No players found.');
     }
     return players;
+};
+
+const getAllUsers = async ({ role }: { role: string}): Promise<User[]> => {
+    if (role === "ADMIN") {
+        return userDb.getAllUsers();
+    } else {
+        throw new UnauthorizedError("credentials_required", {
+            message: 'You are not authorized to access this resource',
+        });
+    }
 };
 
 const updateUser = async (userId: number, editedUser: UserInput): Promise<User | null> => {
@@ -122,6 +133,7 @@ const createUser = async ({
 
 export default {
     getAllPlayers,
+    getAllUsers,
     updateUser,
     getUserById,
     getUserByUsername,

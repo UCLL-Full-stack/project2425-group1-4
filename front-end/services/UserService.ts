@@ -9,6 +9,15 @@ const getAllPlayers = async () => {
     });
 };
 
+const getAllUsers = async () => {
+    return fetch(process.env.NEXT_PUBLIC_API_URL + '/users', {
+        method: "GET",
+        headers: {
+            'content-Type': 'application/json',
+        },
+    });
+};
+
 const updateUser = async (user: User) => {
     return fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/${user.id}`, {
         method: 'PUT',
@@ -50,6 +59,7 @@ const registerUser = (user: User) => {
 
 const UserService = {
     getAllPlayers,
+    getAllUsers,
     updateUser,
     getUserById,
     loginUser,

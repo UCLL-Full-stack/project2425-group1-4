@@ -117,7 +117,7 @@ export class Location {
             city: location.city,
             streetName: location.streetName,
             zipCode: location.zipCode,
-            number: location.number,
+            number: location.number.toString(),
         });
     }
 }

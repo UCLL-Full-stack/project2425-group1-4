@@ -8,7 +8,7 @@
 import express, { NextFunction, Request, Response } from 'express';
 
 import userService from '../service/user.service';
-import { UserInput } from '../types';
+import { Role, UserInput } from '../types';
 
 const userRouter = express.Router();
 
@@ -265,5 +265,33 @@ userRouter.post('/register', async (req: Request, res: Response, next: NextFunct
     }
 });
 
-// userRouter.get('/', async ())
-// export default userRouter;
+/**
+ * @swagger
+ * /users:
+ *   get:
+ *     security:
+ *       - bearerAuth: []
+ *     summary: Get a list of all users
+ *     responses:
+ *       200:
+ *         description: A list of users.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                  $ref: '#/components/schemas/User'
+ */
+userRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const request = req as Request & { auth: { role: Role } };
+        const { role } = request.auth;
+        console.log('Decoded token:', request.auth);
+        const users = await userService.getAllUsers({ role });
+        res.status(200).json(users);
+    } catch (error) {
+        next(error);
+    }
+});
+
+export default userRouter;
