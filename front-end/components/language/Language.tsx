@@ -12,17 +12,14 @@ const Language: React.FC = () => {
 
     return (
         <div className="ml-6">
-            <label htmlFor="language" className="text-white">
-                Language
-            </label>
             <select
                 id="language"
-                className="ml-2 p-1"
+                className="ml-2 p-1 bg-slate-800"
                 value={locale}
                 onChange={handleLanguageChange}
             >
-                <option value="en">English</option>
-                <option value="nl">Nederlands</option>
+                <option value="en">🇬🇧</option>
+                <option value="nl">🇳🇱</option>
             </select>
         </div>
     );

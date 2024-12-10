@@ -80,6 +80,17 @@ const Header: React.FC = () => {
                         </>
                     )}
                     <Language />
+
+                    {loggedInUser && loggedInUser.role === 'ADMIN' && (
+                        <>
+                            <Link
+                                className="px-2 text-white text-xl hover:bg-slate-600 rounded-lg"
+                                href="/users"
+                            >
+                                Admin Matches
+                            </Link>
+                        </>
+                    )}
                 </div>
             </div>
         </nav>

@@ -265,4 +265,5 @@ userRouter.post('/register', async (req: Request, res: Response, next: NextFunct
     }
 });
 
-export default userRouter;
+// userRouter.get('/', async ())
+// export default userRouter;

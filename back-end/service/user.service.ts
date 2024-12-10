@@ -62,10 +62,10 @@ const updateUser = async (userId: number, editedUser: UserInput): Promise<User |
     return user;
 };
 
-const getUserById = async (userId: number): Promise<User | null> => {
+const getUserById = async (userId: number): Promise<User> => {
     const user = await userDb.getUserById(userId);
     if (!user) {
-        return null;
+        throw new Error(`User with username: ${userId} does not exist.`);
     }
     return user;
 };
@@ -102,7 +102,6 @@ const createUser = async ({
     email,
     birthDate,
 }: UserInput): Promise<User> => {
-
     const existingUser = await userDb.getUserByUsername({ username });
     if (existingUser) {
         throw new Error(`User with username ${username} is already registered.`);
@@ -117,7 +116,6 @@ const createUser = async ({
         email,
         birthDate,
     });
-
 
     return await userDb.createUser(user);
 };

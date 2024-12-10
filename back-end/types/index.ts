@@ -45,8 +45,7 @@ type LocationInput = {
     id?: number;
     name: string;
     city: string;
-    country: string;
-};
+    country: string;};
 
 type AuthenticationResponse = {
     token: string;

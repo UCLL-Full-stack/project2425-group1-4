@@ -5,16 +5,16 @@ export class Location {
     private country: string;
     private city: string;
     private streetName: string;
-    private zipCode: number;
-    private number: number;
+    private zipCode: string;
+    private number: string;
 
     constructor(location: {
         id: number;
         country: string;
         city: string;
         streetName: string;
-        zipCode: number;
-        number: number;
+        zipCode: string;
+        number: string;
     }) {
         this.validate(location);
 
@@ -31,8 +31,8 @@ export class Location {
         country: string;
         city: string;
         streetName: string;
-        zipCode: number;
-        number: number;
+        zipCode: string;
+        number: string;
     }) {
         if (location.id < 0 || location.id === null) {
             throw new Error('Id cannot be negative');
@@ -46,10 +46,10 @@ export class Location {
         if (location.streetName == '' || location.streetName === null) {
             throw new Error('Invalid street name');
         }
-        if (location.zipCode < 1 || location.zipCode === null) {
+        if (location.zipCode === '' || location.zipCode === null) {
             throw new Error('Invalid zip code');
         }
-        if (location.number <= 0 || location.number === null) {
+        if (location.number === '' || location.number === null) {
             throw new Error('Invalid number');
         }
     }
@@ -71,11 +71,11 @@ export class Location {
         return this.streetName;
     }
 
-    getZipCode(): number {
+    getZipCode(): string {
         return this.zipCode;
     }
 
-    getNumber(): number {
+    getNumber(): string {
         return this.number;
     }
 
@@ -92,11 +92,11 @@ export class Location {
         this.streetName = streetName;
     }
 
-    setZipCode(zipCode: number): void {
+    setZipCode(zipCode: string): void {
         this.zipCode = zipCode;
     }
 
-    setNumber(number: number): void {
+    setNumber(number: string): void {
         this.number = number;
     }
 
@@ -111,12 +111,13 @@ export class Location {
     }
 
     static from(location: LocationPrisma) {
-        return new Location({ 
-            id: location.id, 
-            country: location.country, 
-            city: location.city, 
-            streetName: location.streetName, 
-            zipCode: location.zipCode, 
-            number: location.number });
+        return new Location({
+            id: location.id,
+            country: location.country,
+            city: location.city,
+            streetName: location.streetName,
+            zipCode: location.zipCode,
+            number: location.number,
+        });
     }
 }

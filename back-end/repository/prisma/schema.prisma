@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -22,12 +21,10 @@ model User {
   coachOfTeam     Team?      @relation("CoachTeam", fields: [coachOfTeamId], references: [id])
   coachOfTeamId   Int?       @unique
 
-
-
   playerOfTeam    Team?      @relation("PlayerTeam", fields: [playerOfTeamId], references: [id])
   playerOfTeamId  Int?       
 
-  goals           Goal[]
+  goals           Goal[]     // Goals scored by this user
 }
 
 model Team {
@@ -39,18 +36,18 @@ model Team {
   players         User[]      @relation("PlayerTeam")
 
   matches         MatchTeam[]
+  goals           Goal[]      // Goals scored by this team
 }
 
 model Match {
   id              Int         @id @default(autoincrement())
   date            DateTime
-  score           String
 
   teams           MatchTeam[]
-  goals           Goal[]
-
   location        Location    @relation(fields: [locationId], references: [id])
   locationId      Int
+
+  goals           Goal[]
 }
 
 model MatchTeam {
@@ -60,6 +57,8 @@ model MatchTeam {
   team            Team        @relation(fields: [teamId], references: [id])
   teamId          Int
 
+  goals           Goal[]
+
   @@id([matchId, teamId])
 }
 
@@ -67,11 +66,16 @@ model Goal {
   id              Int         @id @default(autoincrement())
   time            Int
 
-  match           Match       @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  match           Match       @relation(fields: [matchId], references: [id])
   matchId         Int
 
+  team            Team        @relation(fields: [teamId], references: [id])
+  teamId          Int
+
+  matchTeam       MatchTeam   @relation(fields: [matchId, teamId], references: [matchId, teamId], onDelete: Cascade)
+
   player          User        @relation(fields: [playerId], references: [id], onDelete: Cascade)
-  playerId        Int        
+  playerId        Int
 }
 
 model Location {
@@ -80,7 +84,7 @@ model Location {
   city            String
   streetName      String
   zipCode         String
-  number          Int
+  number          String
 
   matches         Match[]
 }
