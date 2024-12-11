@@ -43,6 +43,7 @@
             "players": "Players",
             "teams": "Teams",
             "matches": "Matches",
+            "users": "Users",
             "login": "Login",
             "register": "Register",
             "logout": "Logout"
