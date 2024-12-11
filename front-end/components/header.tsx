@@ -47,16 +47,20 @@ const Header: React.FC = () => {
                     >
                         {t('header.nav.teams')}
                     </Link>
-                    <Link
-                        className="px-2 text-white text-xl hover:bg-slate-600 rounded-lg"
-                        href="/matches"
-                    >
-                        {t('header.nav.matches')}
-                    </Link>
+                    {loggedInUser?.role === 'USER' && (
+                        <>
+                            <Link
+                                className="px-2 text-white text-xl hover:bg-slate-600 rounded-lg"
+                                href="/matches"
+                            >
+                                {t('header.nav.matches')}
+                            </Link>
+                        </>
+                    )}
                     {loggedInUser ? (
                         <>
                             <p className="text-white ms-5 mt-2 md:mt-0 pt-1 md:pt-0 grow">
-                                {t('header.welcome')}, {loggedInUser.firstName}!
+                                {t('header.welcome')}, {loggedInUser.username}!
                             </p>
                             <button
                                 onClick={handleClick}

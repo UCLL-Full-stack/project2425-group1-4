@@ -1,8 +1,12 @@
 import teamDb from '../repository/team.db';
 import userDb from '../repository/user.db';
 import { Team } from '../model/team';
+import { Role } from '../types';
 
-const getAllTeams = async (): Promise<Team[]> => {
+const getAllTeams = async ({ role }: { role: string }): Promise<Team[]> => {
+    if (role === 'USER') {
+        return await teamDb.getAllTeams();
+    }
     return await teamDb.getAllTeams();
 };
 

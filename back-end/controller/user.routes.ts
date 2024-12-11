@@ -286,7 +286,6 @@ userRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const request = req as Request & { auth: { role: Role } };
         const { role } = request.auth;
-        console.log('Decoded token:', request.auth);
         const users = await userService.getAllUsers({ role });
         res.status(200).json(users);
     } catch (error) {

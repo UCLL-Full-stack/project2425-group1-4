@@ -7,6 +7,7 @@
 
 import express, { Request, Response } from 'express';
 import teamService from '../service/team.service';
+import { Role } from '../types';
 
 const teamRouter = express.Router();
 
@@ -41,7 +42,9 @@ const teamRouter = express.Router();
  */
 teamRouter.get('/', async (req: Request, res: Response) => {
     try {
-        const teams = await teamService.getAllTeams();
+        const request = req as Request & { auth: { role: Role } };
+        const { role } = request.auth;
+        const teams = await teamService.getAllTeams({ role });
         res.status(200).json(teams);
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
