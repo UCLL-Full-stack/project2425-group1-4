@@ -10,13 +10,28 @@ const getAllPlayers = async () => {
 };
 
 const getAllUsers = async () => {
+    const loggedInUserString = localStorage.getItem('loggedInUser');
+
+    if (!loggedInUserString) {
+        throw new Error('Log in first, please');
+    }
+
+    const loggedInUser = JSON.parse(loggedInUserString);
+    const token = loggedInUser.token;
+
+    if (!token) {
+        throw new Error('No authorization token found. Log in first, please');
+    }
+
     return fetch(process.env.NEXT_PUBLIC_API_URL + '/users', {
-        method: "GET",
+        method: 'GET',
         headers: {
-            'content-Type': 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
         },
     });
 };
+
 
 const updateUser = async (user: User) => {
     return fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/${user.id}`, {
@@ -63,7 +78,7 @@ const UserService = {
     updateUser,
     getUserById,
     loginUser,
-    registerUser
+    registerUser,
 };
 
 export default UserService;

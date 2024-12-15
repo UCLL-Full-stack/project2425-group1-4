@@ -43,7 +43,7 @@ const UserGrid: React.FC<Props> = ({ Users }: Props) => {
                                 className="bg-white p-4 rounded-lg shadow-md text-center hover:shadow-lg transition-shadow"
                             >
                                 <p className="font-semibold text-lg text-gray-800">
-                                    {User.firstName}
+                                    {User.firstName} {User.lastName}
                                 </p>
                             </div>
                         ))

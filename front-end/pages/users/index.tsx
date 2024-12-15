@@ -1,5 +1,6 @@
 import Header from '@components/header';
 import UserGrid from '@components/users/userGrid';
+import UserService from '@services/UserService';
 import { User } from '@types';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
@@ -7,43 +8,34 @@ import Head from 'next/head';
 import React from 'react';
 import useSWR from 'swr';
 
-const fetchUsers = async (): Promise<User[] | null> => {
-    try {
-        const token = localStorage.getItem('authToken');
-
-        if (!token) {
-            console.error('No authorization token found in memory or localStorage');
-            return null;
-        }
-
-        const response = await fetch('/users', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
-            },
-        });
-
-        if (!response.ok) {
-            const error = await response.json();
-            console.error('API Response:', error);
-            return null;
-        }
-
-        // Parse and return the users
-        const users = await response.json();
-        return users;
-    } catch (error) {
-        console.error('Error fetching users:', error);
-        return null;
-    }
-};
-
 const UsersPage: React.FC = () => {
     const { t } = useTranslation();
-    const { data: users, isLoading, error } = useSWR('fetchUsers', fetchUsers);
 
-    // Debugging Users
+    const fetchUsers = async (): Promise<User[] | null> => {
+        try {
+            // const token = localStorage.getItem('authToken');
+
+            // if (!token) {
+            //     console.error('No authorization token found in memory or localStorage');
+            //     return null;
+            // }
+
+            const response = await UserService.getAllUsers();
+            const users = await response.json();
+            return users;
+        } catch (error) {
+            console.error('Error fetching users:', error);
+            return null;
+        }
+    };
+
+    const {
+        data: users,
+        isLoading,
+        error,
+    } = useSWR('fetchUsers', fetchUsers, {
+        refreshInterval: 10000,
+    });
     console.log('Users in UsersPage:', users);
 
     return (
