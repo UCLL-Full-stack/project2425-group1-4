@@ -46,7 +46,6 @@ const getAllUsers = async () => {
     });
 };
 
-
 const updateUser = async (user: User) => {
     return fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/${user.id}`, {
         method: 'PUT',
@@ -57,8 +56,8 @@ const updateUser = async (user: User) => {
     });
 };
 
-const getUserById = async (userId: string) => {
-    return await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/${userId}`, {
+const getUserByUsername = async (username: string) => {
+    return await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/${username}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -89,8 +88,8 @@ const registerUser = (user: User) => {
 const UserService = {
     getAllPlayers,
     getAllUsers,
+    getUserByUsername,
     updateUser,
-    getUserById,
     loginUser,
     registerUser,
 };

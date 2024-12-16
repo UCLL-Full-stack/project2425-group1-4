@@ -81,6 +81,9 @@ const getUserByUsername = async ({ username }: { username: string }): Promise<Us
     try {
         const userPrisma = await database.user.findFirst({
             where: { username },
+            include: {
+                playerOfTeam: true,
+            },
         });
 
         return userPrisma ? User.from(userPrisma) : null;

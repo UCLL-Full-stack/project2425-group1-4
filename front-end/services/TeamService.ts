@@ -1,11 +1,25 @@
 import { Team } from '@types';
 
 const getAllTeams = async (): Promise<Team[]> => {
+    const loggedInUserString = localStorage.getItem('loggedInUser');
+
+    if (!loggedInUserString) {
+        throw new Error('Log in first, please');
+    }
+
+    const loggedInUser = JSON.parse(loggedInUserString);
+    const token = loggedInUser.token;
+
+    if (!token) {
+        throw new Error('No authorization token found. Log in first, please');
+    }
+
     try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/teams`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
             },
         });
 
@@ -22,11 +36,25 @@ const getAllTeams = async (): Promise<Team[]> => {
 };
 
 const getTeamById = async (teamId: number): Promise<Team | null> => {
+    const loggedInUserString = localStorage.getItem('loggedInUser');
+
+    if (!loggedInUserString) {
+        throw new Error('Log in first, please');
+    }
+
+    const loggedInUser = JSON.parse(loggedInUserString);
+    const token = loggedInUser.token;
+
+    if (!token) {
+        throw new Error('No authorization token found. Log in first, please');
+    }
+
     try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/teams/${teamId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
             },
         });
 
@@ -43,11 +71,25 @@ const getTeamById = async (teamId: number): Promise<Team | null> => {
 };
 
 const updateTeam = async (team: Team): Promise<boolean> => {
+    const loggedInUserString = localStorage.getItem('loggedInUser');
+
+    if (!loggedInUserString) {
+        throw new Error('Log in first, please');
+    }
+
+    const loggedInUser = JSON.parse(loggedInUserString);
+    const token = loggedInUser.token;
+
+    if (!token) {
+        throw new Error('No authorization token found. Log in first, please');
+    }
+
     try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/teams/${team.id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify(team),
         });
@@ -60,6 +102,19 @@ const updateTeam = async (team: Team): Promise<boolean> => {
 };
 
 const addPlayerToTeam = async (teamId: number, playerId: number): Promise<boolean> => {
+    const loggedInUserString = localStorage.getItem('loggedInUser');
+
+    if (!loggedInUserString) {
+        throw new Error('Log in first, please');
+    }
+
+    const loggedInUser = JSON.parse(loggedInUserString);
+    const token = loggedInUser.token;
+
+    if (!token) {
+        throw new Error('No authorization token found. Log in first, please');
+    }
+
     try {
         const response = await fetch(
             `${process.env.NEXT_PUBLIC_API_URL}/teams/${teamId}/addPlayer`,
@@ -67,6 +122,7 @@ const addPlayerToTeam = async (teamId: number, playerId: number): Promise<boolea
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({ playerId }),
             }
@@ -80,6 +136,19 @@ const addPlayerToTeam = async (teamId: number, playerId: number): Promise<boolea
 };
 
 const removePlayerFromTeam = async (teamId: number, playerId: number): Promise<boolean> => {
+    const loggedInUserString = localStorage.getItem('loggedInUser');
+
+    if (!loggedInUserString) {
+        throw new Error('Log in first, please');
+    }
+
+    const loggedInUser = JSON.parse(loggedInUserString);
+    const token = loggedInUser.token;
+
+    if (!token) {
+        throw new Error('No authorization token found. Log in first, please');
+    }
+
     try {
         const response = await fetch(
             `${process.env.NEXT_PUBLIC_API_URL}/teams/${teamId}/removePlayer`,
@@ -87,6 +156,7 @@ const removePlayerFromTeam = async (teamId: number, playerId: number): Promise<b
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({ playerId }),
             }

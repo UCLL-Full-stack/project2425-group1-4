@@ -45,6 +45,7 @@
             "teams": "Teams",
             "matches": "Matches",
             "users": "Users",
+            "edit": "Edit Profile",
             "login": "Login",
             "register": "Register",
             "logout": "Logout"

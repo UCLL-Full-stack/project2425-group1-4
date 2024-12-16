@@ -3,10 +3,7 @@ import userDb from '../repository/user.db';
 import { Team } from '../model/team';
 import { Role } from '../types';
 
-const getAllTeams = async ({ role }: { role: string }): Promise<Team[]> => {
-    if (role === 'USER') {
-        return await teamDb.getAllTeams();
-    }
+const getAllTeams = async (): Promise<Team[]> => {
     return await teamDb.getAllTeams();
 };
 
@@ -39,7 +36,6 @@ const getTeamById = async (id: string | number): Promise<Team> => {
 
     return team;
 };
-
 
 const getTeamNameById = async (id: number): Promise<string | null> => {
     const team: Team | null = await teamDb.getTeamById(id);

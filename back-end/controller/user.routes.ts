@@ -204,13 +204,13 @@ userRouter.get('/players', async (req: Request, res: Response, next: NextFunctio
  *                   example: "User not found."
  */
 
-userRouter.get('/:id', async (req: Request, res: Response) => {
-    const userId = parseInt(req.params.id, 10);
-    const user = await userService.getUserById(userId);
-    if (user) {
+userRouter.get('/:username', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const username = req.params.username;
+        const user = await userService.getUserByUsername({ username });
         res.json(user);
-    } else {
-        res.status(404).json({ message: 'User not found' });
+    } catch (error) {
+        next(error);
     }
 });
 

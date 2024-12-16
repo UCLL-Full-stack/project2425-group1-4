@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import BackButton from './backButton';
 import Language from './language/Language';
 import OverviewDropdown from './overviewDropdown';
+import UserDropdown from './userDropdown';
 
 const Header: React.FC = () => {
     const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
@@ -16,11 +17,6 @@ const Header: React.FC = () => {
             setLoggedInUser(JSON.parse(storedUser));
         }
     }, []);
-
-    const handleClick = () => {
-        localStorage.removeItem('loggedInUser');
-        setLoggedInUser(null);
-    };
 
     return (
         <nav className="bg-slate-800 text-white p-4">
@@ -54,7 +50,7 @@ const Header: React.FC = () => {
                         </>
                     ) : (
                         <>
-                            <OverviewDropdown t={t} loggedInUser={loggedInUser} />
+                            {loggedInUser && <OverviewDropdown t={t} loggedInUser={loggedInUser} />}
                         </>
                     )}
 
@@ -69,18 +65,13 @@ const Header: React.FC = () => {
                         </>
                     )}
 
-                 
                     {loggedInUser ? (
                         <>
-                            <p className="text-white ms-5 mt-2 md:mt-0 pt-1 md:pt-0 grow">
-                                {t('header.welcome')}, {loggedInUser.username}!
-                            </p>
-                            <button
-                                onClick={handleClick}
-                                className="px-2 text-white text-xl hover:bg-slate-600 rounded-lg"
-                            >
-                                {t('header.nav.logout')}
-                            </button>
+                            <UserDropdown
+                                t={t}
+                                loggedInUser={loggedInUser}
+                                setLoggedInUser={setLoggedInUser}
+                            />
                         </>
                     ) : (
                         <>

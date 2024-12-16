@@ -65,7 +65,7 @@
  *           example: "PLAYER"
  */
 
-import express, { Request, Response } from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import teamService from '../service/team.service';
 import { Role } from '../types';
 
@@ -100,15 +100,12 @@ const teamRouter = express.Router();
  *                   type: string
  *                   example: "An error occurred."
  */
-teamRouter.get('/', async (req: Request, res: Response) => {
+teamRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const request = req as Request & { auth: { role: Role } };
-        const { role } = request.auth;
-        const teams = await teamService.getAllTeams({ role });
+        const teams = await teamService.getAllTeams();
         res.status(200).json(teams);
     } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
-        res.status(400).json({ status: 'error', errorMessage });
+        next(error);
     }
 });
 
@@ -160,7 +157,7 @@ teamRouter.get('/', async (req: Request, res: Response) => {
  *                   example: "An error occurred."
  */
 
-teamRouter.get('/:id', async (req: Request, res: Response) => {
+teamRouter.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     try {
         const team = await teamService.getTeamById(Number(id));
@@ -169,8 +166,7 @@ teamRouter.get('/:id', async (req: Request, res: Response) => {
         }
         res.status(200).json(team);
     } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
-        res.status(400).json({ status: 'error', errorMessage });
+        next(error);
     }
 });
 
@@ -232,7 +228,7 @@ teamRouter.get('/:id', async (req: Request, res: Response) => {
  *                   example: "An error occurred."
  */
 
-teamRouter.put('/:id', async (req: Request, res: Response) => {
+teamRouter.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     const updatedTeamData = req.body;
 
@@ -249,8 +245,7 @@ teamRouter.put('/:id', async (req: Request, res: Response) => {
 
         res.status(200).json({ message: 'Team updated successfully' });
     } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
-        res.status(400).json({ status: 'error', errorMessage });
+        next(error);
     }
 });
 
@@ -317,7 +312,7 @@ teamRouter.put('/:id', async (req: Request, res: Response) => {
  *                   example: "An error occurred."
  */
 
-teamRouter.put('/:id/addPlayer', async (req: Request, res: Response) => {
+teamRouter.put('/:id/addPlayer', async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     const { playerId } = req.body;
 
@@ -328,7 +323,7 @@ teamRouter.put('/:id/addPlayer', async (req: Request, res: Response) => {
         }
         res.status(200).json({ message: 'Player added to team successfully' });
     } catch (error) {
-        res.status(400).json({ message: 'Error adding player to team' });
+        next(error);
     }
 });
 
@@ -388,7 +383,7 @@ teamRouter.put('/:id/addPlayer', async (req: Request, res: Response) => {
  *                   type: string
  *                   example: Error removing player from team
  */
-teamRouter.put('/:id/removePlayer', async (req: Request, res: Response) => {
+teamRouter.put('/:id/removePlayer', async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     const { playerId } = req.body;
 
@@ -399,7 +394,7 @@ teamRouter.put('/:id/removePlayer', async (req: Request, res: Response) => {
         }
         res.status(200).json({ message: 'Player removed from team successfully' });
     } catch (error) {
-        res.status(400).json({ message: 'Error removing player from team' });
+        next(error);
     }
 });
 

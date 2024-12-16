@@ -1,4 +1,5 @@
 import { User } from '@types';
+import Link from 'next/link';
 import React, { useState } from 'react';
 
 type Props = {
@@ -31,14 +32,15 @@ const PlayerGrid: React.FC<Props> = ({ players }: Props) => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                         {filteredPlayers.length > 0 ? (
                             filteredPlayers.map((player) => (
-                                <div
+                                <Link
+                                    href={`/user/${player.username}`}
                                     key={player.id}
                                     className="bg-white p-4 rounded-lg shadow-md text-center hover:shadow-lg transition-shadow"
                                 >
                                     <p className="font-semibold text-lg text-gray-800">
                                         {player.firstName} {player.lastName}
                                     </p>
-                                </div>
+                                </Link>
                             ))
                         ) : (
                             <p className="text-center col-span-full text-gray-500">

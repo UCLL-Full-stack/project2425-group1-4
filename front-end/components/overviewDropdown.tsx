@@ -1,13 +1,20 @@
+import { User } from '@types';
 import { ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
+import { TFunction } from 'i18next';
 
-export default function OverviewDropdown({ t, loggedInUser }) {
+interface LoggedInUser {
+    t: TFunction;
+    loggedInUser: User;
+}
+
+export default function OverviewDropdown({ t, loggedInUser }: LoggedInUser) {
     const [isOpen, setIsOpen] = useState(false);
-    const dropdownRef = useRef(null);
+    const dropdownRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        function handleClickOutside(event) {
+        function handleClickOutside(event: { target: any; }) {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
                 setIsOpen(false);
             }
@@ -58,7 +65,7 @@ export default function OverviewDropdown({ t, loggedInUser }) {
                         {loggedInUser?.role === 'ADMIN' && (
                             <>
                                 <Link
-                                    className="px-2 text-white text-xl hover:bg-slate-600 rounded-lg"
+                                    className="block px-2 py-1 text-black text-xl hover:bg-gray-200 "
                                     href="/users"
                                 >
                                     {t('header.nav.users')}

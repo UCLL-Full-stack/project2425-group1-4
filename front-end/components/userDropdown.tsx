@@ -1,13 +1,21 @@
+import { User } from '@types';
 import { ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
+import { TFunction } from 'i18next';
 
-export default function UserDropdown({ t, loggedInUser }) {
+interface UserDropdownProps {
+    t: TFunction;
+    loggedInUser: User;
+    setLoggedInUser: (user: any) => void;
+}
+
+export default function UserDropdown({ t, loggedInUser, setLoggedInUser }: UserDropdownProps) {
     const [isOpen, setIsOpen] = useState(false);
-    const dropdownRef = useRef(null);
+    const dropdownRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        function handleClickOutside(event) {
+        function handleClickOutside(event: { target: any }) {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
                 setIsOpen(false);
             }
@@ -19,6 +27,11 @@ export default function UserDropdown({ t, loggedInUser }) {
         };
     }, []);
 
+    const handleClick = () => {
+        localStorage.removeItem('loggedInUser');
+        setLoggedInUser(null);
+    };
+
     return (
         <div className="relative inline-block text-left" ref={dropdownRef}>
             <button
@@ -26,7 +39,7 @@ export default function UserDropdown({ t, loggedInUser }) {
                 className="px-2 text-white text-xl hover:bg-slate-600 rounded-lg inline-flex items-center"
                 onClick={() => setIsOpen(!isOpen)}
             >
-                {t('header.nav.overview')}
+                {loggedInUser.username}
                 <ChevronDown
                     className={`ml-2 h-5 w-5 text-white transition-transform duration-200 ${
                         isOpen ? 'rotate-180' : ''
@@ -38,33 +51,16 @@ export default function UserDropdown({ t, loggedInUser }) {
                     <div className="py-1">
                         <Link
                             className="block px-2 py-1 text-black text-xl hover:bg-gray-200 "
-                            href="/players"
+                            href={`/user/${loggedInUser.username}`}
                         >
-                            {t('header.nav.players')}
+                            {t('header.nav.edit')}
                         </Link>
-                        <Link
+                        <a
+                            onClick={handleClick}
                             className="block px-2 py-1 text-black text-xl hover:bg-gray-200 "
-                            href="/teams"
                         >
-                            {t('header.nav.teams')}
-                        </Link>
-                        <Link
-                            className="block px-2 py-1 text-black text-xl hover:bg-gray-200 "
-                            href="/matches"
-                        >
-                            {t('header.nav.matches')}
-                        </Link>
-
-                        {loggedInUser?.role === 'ADMIN' && (
-                            <>
-                                <Link
-                                    className="px-2 text-white text-xl hover:bg-slate-600 rounded-lg"
-                                    href="/users"
-                                >
-                                    {t('header.nav.users')}
-                                </Link>
-                            </>
-                        )}
+                            {t('header.nav.logout')}
+                        </a>
                     </div>
                 </div>
             )}

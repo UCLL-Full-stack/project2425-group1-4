@@ -40,10 +40,12 @@
         "welcome": "Welkom",
         "nav": {
             "home": "Home",
+            "overview": "Overzicht",
             "players": "Spelers",
             "teams": "Teams",
             "matches": "Wedstrijden",
             "users": "Gebruikers",
+            "edit": "Account Bewerken",
             "login": "Inloggen",
             "register": "Registreren",
             "logout": "Uitloggen"
