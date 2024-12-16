@@ -2,8 +2,8 @@ import { User } from '@types';
 import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
-import Language from './language/Language';
 import BackButton from './backButton';
+import Language from './language/Language';
 
 const Header: React.FC = () => {
     const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
@@ -96,17 +96,6 @@ const Header: React.FC = () => {
                         </>
                     )}
                     <Language />
-
-                    {loggedInUser && loggedInUser.role === 'ADMIN' && (
-                        <>
-                            <Link
-                                className="px-2 text-white text-xl hover:bg-slate-600 rounded-lg"
-                                href="/users"
-                            >
-                                Users
-                            </Link>
-                        </>
-                    )}
                 </div>
             </div>
         </nav>

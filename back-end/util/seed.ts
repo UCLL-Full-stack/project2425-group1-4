@@ -1,324 +1,160 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
-import { set } from 'date-fns';
 
 const prisma = new PrismaClient();
 
 const main = async () => {
+    // Clean up the database
     await prisma.goal.deleteMany();
     await prisma.location.deleteMany();
     await prisma.match.deleteMany();
     await prisma.team.deleteMany();
     await prisma.user.deleteMany();
 
-    const maxim = await prisma.user.create({
-        data: {
-            firstName: 'Maxim',
-            lastName: 'Delloye',
-            password: await bcrypt.hash('abcdefghij', 10),
-            birthDate: new Date('2003-10-01'),
-            email: 'r0898568@ucll.be',
-            username: 'maximdel',
-            description: 'hello world',
-            role: 'ADMIN',
-        },
-    });
-
-    const mathieu = await prisma.user.create({
-        data: {
-            firstName: 'Mathieu',
-            lastName: 'Sibret',
-            password: await bcrypt.hash('abcdefghij', 10),
-            birthDate: new Date('2001-06-09'),
-            email: 'r0833900@ucll.be',
-            username: 'msibret',
-            description: 'hola',
-            role: 'ADMIN',
-        },
-    });
-
-    const jane = await prisma.user.create({
-        data: {
-            firstName: 'Jane',
-            lastName: 'Doe',
-            password: await bcrypt.hash('abcdefghij', 10),
-            birthDate: new Date('1990-07-21'),
-            email: 'janedoe@example.com',
-            username: 'jdoe',
-            description: 'Jane Doe',
-            role: 'USER',
-        },
-    });
-
-    const john = await prisma.user.create({
-        data: {
-            firstName: 'John',
-            lastName: 'Smith',
-            password: await bcrypt.hash('abcdefghij', 10),
-            birthDate: new Date('1985-05-15'),
-            email: 'johnsmith@example.com',
-            username: 'jsmith',
-            description: 'Look at my very interesting description!',
-            role: 'USER',
-        },
-    });
-
-    const alice = await prisma.user.create({
-        data: {
-            firstName: 'Alice',
-            lastName: 'Johnson',
-            password: await bcrypt.hash('abcdefghij', 10),
-            birthDate: new Date('1992-11-30'),
-            email: 'alicejohnson@example.com',
-            username: 'alicej',
-            description: 'This is my description :D',
-            role: 'USER',
-        },
-    });
-
-    const bob = await prisma.user.create({
-        data: {
-            firstName: 'Bob',
-            lastName: 'Marley',
-            password: await bcrypt.hash('abcdefghij', 10),
-            birthDate: new Date('1952-10-11'),
-            email: 'bobmarly@example.com',
-            username: 'bobm',
-            description: 'Heeelooooo',
-            role: 'PLAYER',
-        },
-    });
-
-    const lionel = await prisma.user.create({
-        data: {
-            firstName: 'Lionel',
-            lastName: 'Messi',
-            password: await bcrypt.hash('abcdefghij', 10),
-            birthDate: new Date('1987-06-24'),
-            email: 'lionel.messi@example.com',
-            username: 'lionelm',
-            description: 'Best player in the world',
-            role: 'PLAYER',
-        },
-    });
-
-    const andres = await prisma.user.create({
-        data: {
-            firstName: 'Andres',
-            lastName: 'Iniesta',
-            password: await bcrypt.hash('abcdefghij', 10),
-            birthDate: new Date('1984-05-11'),
-            email: 'azdazd@outlook.com',
-            username: 'andresi',
-            description: 'Best midfielder in the world',
-            role: 'PLAYER',
-        },
-    });
-
-    const barcolona = await prisma.team.create({
-        data: {
-            name: 'FC Barcelona',
-            coach: {
-                create: {
-                    firstName: 'Pep',
-                    lastName: 'Guardiola',
-                    password: await bcrypt.hash('abcdefghij', 10),
-                    birthDate: new Date('1971-01-18'),
-                    email: 'pep.guardiola@example.com',
-                    username: 'pepg',
-                    description: 'Best coach in the world',
-                    role: 'COACH',
-                },
+    // Create users with different roles
+    const [maxim, mathieu, lionel, admin, cristiano, sergio, coachPep, coachZidane] = await Promise.all([
+        prisma.user.create({
+            data: {
+                firstName: 'Maxim',
+                lastName: 'Delloye',
+                password: await bcrypt.hash('abcdefghij', 10),
+                birthDate: new Date('2003-10-01'),
+                email: 'r0898568@ucll.be',
+                username: 'maximdel',
+                description: 'hello world',
+                role: 'ADMIN',
             },
-            players: {
-                connect: [{ id: bob.id }, { id: lionel.id }, { id: andres.id }],
+        }),
+        prisma.user.create({
+            data: {
+                firstName: 'Mathieu',
+                lastName: 'Sibret',
+                password: await bcrypt.hash('abcdefghij', 10),
+                birthDate: new Date('2001-06-09'),
+                email: 'r0833900@ucll.be',
+                username: 'msibret',
+                description: 'hola',
+                role: 'ADMIN',
             },
-            description: 'Best team in the world',
-        },
+        }),
+        prisma.user.create({
+            data: {
+                firstName: 'Admin',
+                lastName: 'UCLL',
+                password: await bcrypt.hash('secure12345', 10),
+                birthDate: new Date('1995-01-01'),
+                email: 'admin@ucll.be',
+                username: 'admin',
+                description: 'the one and only',
+                role: 'ADMIN',
+            },
+        }),
+        prisma.user.create({
+            data: {
+                firstName: 'Lionel',
+                lastName: 'Messi',
+                password: await bcrypt.hash('abcdefghij', 10),
+                birthDate: new Date('1987-06-24'),
+                email: 'lionel.messi@example.com',
+                username: 'lionelm',
+                description: 'Best player in the world',
+                role: 'PLAYER',
+            },
+        }),
+        prisma.user.create({
+            data: {
+                firstName: 'Cristiano',
+                lastName: 'Ronaldo',
+                password: await bcrypt.hash('abcdefghij', 10),
+                birthDate: new Date('1985-02-05'),
+                email: 'cristiano.ronaldo@example.com',
+                username: 'cristianor',
+                description: 'Top scorer',
+                role: 'PLAYER',
+            },
+        }),
+        prisma.user.create({
+            data: {
+                firstName: 'Sergio',
+                lastName: 'Ramos',
+                password: await bcrypt.hash('abcdefghij', 10),
+                birthDate: new Date('1986-03-30'),
+                email: 'sergio.ramos@example.com',
+                username: 'sergior',
+                description: 'Defensive leader',
+                role: 'PLAYER',
+            },
+        }),
+        prisma.user.create({
+            data: {
+                firstName: 'Pep',
+                lastName: 'Guardiola',
+                password: await bcrypt.hash('abcdefghij', 10),
+                birthDate: new Date('1971-01-18'),
+                email: 'pep.guardiola@example.com',
+                username: 'pepg',
+                description: 'Best coach in the world',
+                role: 'COACH',
+            },
+        }),
+        prisma.user.create({
+            data: {
+                firstName: 'Zinedine',
+                lastName: 'Zidane',
+                password: await bcrypt.hash('abcdefghij', 10),
+                birthDate: new Date('1972-06-23'),
+                email: 'zinedine.zidane@example.com',
+                username: 'zizou',
+                description: 'Iconic coach and player',
+                role: 'COACH',
+            },
+        }),
+    ]);
+
+    // Create locations
+    const locations = await prisma.location.createMany({
+        data: [
+            { country: 'Belgium', city: 'Brussels', streetName: 'Rue de la Loi', zipCode: '1000', number: '16' },
+            { country: 'France', city: 'Paris', streetName: 'Champs-Élysées', zipCode: '75008', number: '101' },
+            { country: 'Netherlands', city: 'Amsterdam', streetName: 'Dam Square', zipCode: '1012', number: '5' },
+        ],
     });
 
-    const matheo = await prisma.user.create({
-        data: {
-            firstName: 'Matheo',
-            lastName: 'Laurent',
-            password: await bcrypt.hash('abcdefghij', 10),
-            birthDate: new Date('1995-08-22'),
-            email: 'matheo.laurent@example.com',
-            username: 'matheol',
-            description: 'Passionate player with high energy',
-            role: 'PLAYER',
-        },
+    // Create teams
+    const [barcelona, madrid] = await Promise.all([
+        prisma.team.create({
+            data: {
+                name: 'FC Barcelona',
+                description: 'Best team in the world',
+                coach: { connect: { id: coachPep.id } },
+                players: { connect: [{ id: lionel.id }] },
+            },
+        }),
+        prisma.team.create({
+            data: {
+                name: 'Real Madrid',
+                description: 'Historic team with many titles',
+                coach: { connect: { id: coachZidane.id } },
+                players: { connect: [{ id: cristiano.id }, { id: sergio.id }] },
+            },
+        }),
+    ]);
+
+    // Create matches
+    const matches = await prisma.match.createMany({
+        data: [
+            { date: new Date(), locationId: 1 },
+            { date: new Date(), locationId: 2 },
+        ],
     });
 
-    const christiano = await prisma.user.create({
-        data: {
-            firstName: 'Cristiano',
-            lastName: 'Ronaldo',
-            password: await bcrypt.hash('abcdefghij', 10),
-            birthDate: new Date('1985-02-05'),
-            email: 'cristiano.ronaldo@example.com',
-            username: 'cristianor',
-            description: 'Top scorer',
-            role: 'PLAYER',
-        },
-    });
-
-    const sergio = await prisma.user.create({
-        data: {
-            firstName: 'Sergio',
-            lastName: 'Ramos',
-            password: await bcrypt.hash('abcdefghij', 10),
-            birthDate: new Date('1986-03-30'),
-            email: 'sergio.ramos@example.com',
-            username: 'sergior',
-            description: 'Defensive leader',
-            role: 'PLAYER',
-        },
-    });
-
-    const madrid = await prisma.team.create({
-        data: {
-            name: 'Real Madrid',
-            coach: {
-                create: {
-                    firstName: 'Zinedine',
-                    lastName: 'Zidane',
-                    password: await bcrypt.hash('abcdefghij', 10),
-                    birthDate: new Date('1972-06-23'),
-                    email: 'zinedine.zidane@example.com',
-                    username: 'zizou',
-                    description: 'Iconic coach and player',
-                    role: 'COACH',
-                },
-            },
-            players: {
-                connect: [{ id: matheo.id }, { id: christiano.id }, { id: sergio.id }],
-            },
-            description: 'Historic team with many titles',
-        },
-    });
-    const locations = [
-        {
-            country: 'Belgium',
-            city: 'Brussels',
-            streetName: 'Rue de la Loi',
-            zipCode: 1000,
-            number: 16,
-        },
-        {
-            country: 'France',
-            city: 'Paris',
-            streetName: 'Champs-Élysées',
-            zipCode: 75008,
-            number: 101,
-        },
-        {
-            country: 'Netherlands',
-            city: 'Amsterdam',
-            streetName: 'Dam Square',
-            zipCode: 1012,
-            number: 5,
-        },
-    ];
-
-    // teams data
-    const teams = [
-        {
-            name: 'FC Brussels',
-            description: 'A strong team from Brussels',
-            coach: {
-                connectOrCreate: {
-                    where: { email: 'coach1@fcbrussels.com' },
-                    create: {
-                        firstName: 'Jane',
-                        lastName: 'Doe',
-                        email: 'coach1@fcbrussels.com',
-                        role: 'Coach',
-                        password: await bcrypt.hash('abcdefghij', 10),
-                    },
-                },
-            },
-            players: {
-                connectOrCreate: [
-                    {
-                        where: { email: 'player1@fcbrussels.com' },
-                        create: {
-                            firstName: 'Alice',
-                            lastName: 'Smith',
-                            email: 'player1@fcbrussels.com',
-                            role: 'Player',
-                            password: await bcrypt.hash('abcdefghij', 10),
-                        },
-                    },
-                    {
-                        where: { email: 'player2@fcbrussels.com' },
-                        create: {
-                            firstName: 'Bob',
-                            lastName: 'Johnson',
-                            email: 'player2@fcbrussels.com',
-                            role: 'Player',
-                            password: await bcrypt.hash('abcdefghij', 10),
-                        },
-                    },
-                ],
-            },
-            location: {
-                connect: { id: 1 }, // Connect this team to the first location (FC Brussels in Brussels)
-            },
-        },
-        {
-            name: 'Paris United',
-            description: 'Top team from Paris',
-            coach: {
-                connectOrCreate: {
-                    where: { email: 'coach1@parisunited.com' },
-                    create: {
-                        firstName: 'Clara',
-                        lastName: 'Dupont',
-                        email: 'coach1@parisunited.com',
-                        role: 'Coach',
-                        password: await bcrypt.hash('abcdefghij', 10),
-                    },
-                },
-            },
-            players: {
-                connectOrCreate: [
-                    {
-                        where: { email: 'player1@parisunited.com' },
-                        create: {
-                            firstName: 'Emily',
-                            lastName: 'Durand',
-                            email: 'player1@parisunited.com',
-                            role: 'Player',
-                            password: await bcrypt.hash('abcdefghij', 10),
-                        },
-                    },
-                    {
-                        where: { email: 'player2@parisunited.com' },
-                        create: {
-                            firstName: 'Victor',
-                            lastName: 'Rousseau',
-                            email: 'player2@parisunited.com',
-                            role: 'Player',
-                            password: await bcrypt.hash('abcdefghij', 10),
-                        },
-                    },
-                ],
-            },
-            location: {
-                connect: { id: 2 }, // Connect this team to the second location (Paris United in Paris)
-            },
-        },
-    ];
+    console.log('Seeding completed');
 };
 
-(async () => {
-    try {
-        await main();
-        await prisma.$disconnect();
-    } catch (error) {
+main()
+    .then(() => prisma.$disconnect())
+    .catch((error) => {
         console.error(error);
-        await prisma.$disconnect();
+        prisma.$disconnect();
         process.exit(1);
-    }
-})();
+    });

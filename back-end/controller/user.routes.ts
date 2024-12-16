@@ -1,8 +1,90 @@
 /**
  * @swagger
- * tags:
- *   name: Users
- *   description: Endpoints for user management.
+ * components:
+ *   schemas:
+ *     User:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *           example: 1
+ *         firstName:
+ *           type: string
+ *           example: "John"
+ *         lastName:
+ *           type: string
+ *           example: "Doe"
+ *         email:
+ *           type: string
+ *           example: "john.doe@example.com"
+ *         username:
+ *           type: string
+ *           example: "johndoe"
+ *         password:
+ *           type: string
+ *           example: "securepassword123"
+ *         description:
+ *           type: string
+ *           example: "An enthusiastic football player."
+ *         role:
+ *           type: string
+ *           enum: [ADMIN, COACH, PLAYER, USER]
+ *           example: "PLAYER"
+ *         birthDate:
+ *           type: string
+ *           format: date-time
+ *           example: "1990-01-01T00:00:00.000Z"
+ *     Team:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *           example: 1
+ *         name:
+ *           type: string
+ *           example: "Team A"
+ *         description:
+ *           type: string
+ *           example: "A competitive football team."
+ *         coach:
+ *           $ref: '#/components/schemas/User'
+ *         players:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/User'
+ *     AuthenticationRequest:
+ *       type: object
+ *       properties:
+ *         username:
+ *           type: string
+ *           example: "admin"
+ *         password:
+ *           type: string
+ *           example: "secure12345"
+ *     AuthenticationResponse:
+ *       type: object
+ *       properties:
+ *         token:
+ *           type: string
+ *           example: "eyJhbGciOiJIUzI1NiIsInR5c..."
+ *         username:
+ *           type: string
+ *           example: "admin"
+ *         fullname:
+ *           type: string
+ *           example: "Admin UCLL"
+ *         role:
+ *           type: string
+ *           example: "ADMIN"
+ *     Error:
+ *       type: object
+ *       properties:
+ *         status:
+ *           type: string
+ *           example: "error"
+ *         errorMessage:
+ *           type: string
+ *           example: "An error occurred while processing your request."
  */
 
 import express, { NextFunction, Request, Response } from 'express';
@@ -11,6 +93,42 @@ import userService from '../service/user.service';
 import { Role, UserInput } from '../types';
 
 const userRouter = express.Router();
+
+/**
+ * @swagger
+ * /users:
+ *   get:
+ *     security:
+ *       - bearerAuth: []
+ *     summary: Get a list of all users
+ *     tags: [Users]
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved a list of users
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Bad request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+userRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const request = req as Request & { auth: { role: Role } };
+        const { role } = request.auth;
+        console.log('Decoded token:', request.auth);
+        const users = await userService.getAllUsers({ role });
+        res.status(200).json(users);
+    } catch (error) {
+        next(error);
+    }
+});
 
 /**
  * @swagger
@@ -26,23 +144,7 @@ const userRouter = express.Router();
  *             schema:
  *               type: array
  *               items:
- *                 type: object
- *                 properties:
- *                   id:
- *                     type: integer
- *                     example: 12345
- *                   firstName:
- *                     type: string
- *                     example: "John"
- *                   lastName:
- *                     type: string
- *                     example: "Doe"
- *                   email:
- *                     type: string
- *                     example: "johndoe@example.com"
- *                   role:
- *                     type: string
- *                     example: "Player"
+ *                 $ref: '#/components/schemas/User'
  *       400:
  *         description: Bad request due to an error
  *         content:
@@ -55,8 +157,9 @@ const userRouter = express.Router();
  *                   example: "error"
  *                 errorMessage:
  *                   type: string
- *                   example: "Error message"
+ *                   example: "An error occurred while fetching players."
  */
+
 userRouter.get('/players', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const players = await userService.getAllPlayers();
@@ -81,33 +184,11 @@ userRouter.get('/players', async (req: Request, res: Response, next: NextFunctio
  *         description: The ID of the user
  *     responses:
  *       200:
- *         description: User data retrieved successfully
+ *         description: Successfully retrieved user details
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 id:
- *                   type: integer
- *                   example: 12345
- *                 firstName:
- *                   type: string
- *                   example: "John"
- *                 lastName:
- *                   type: string
- *                   example: "Doe"
- *                 email:
- *                   type: string
- *                   example: "johndoe@example.com"
- *                 role:
- *                   type: string
- *                   example: "Player"
- *                 teamId:
- *                   type: integer
- *                   example: 5
- *                 description:
- *                   type: string
- *                   example: "An avid football player"
+ *               $ref: '#/components/schemas/User'
  *       404:
  *         description: User not found
  *         content:
@@ -115,19 +196,23 @@ userRouter.get('/players', async (req: Request, res: Response, next: NextFunctio
  *             schema:
  *               type: object
  *               properties:
- *                 message:
+ *                 status:
  *                   type: string
- *                   example: "User not found"
+ *                   example: "error"
+ *                 errorMessage:
+ *                   type: string
+ *                   example: "User not found."
  */
-// userRouter.get('/:id', async (req: Request, res: Response) => {
-//     const userId = parseInt(req.params.id, 10);
-//     const user = await userService.getUserById(userId);
-//     if (user) {
-//         res.json(user);
-//     } else {
-//         res.status(404).json({ message: 'User not found' });
-//     }
-// });
+
+userRouter.get('/:id', async (req: Request, res: Response) => {
+    const userId = parseInt(req.params.id, 10);
+    const user = await userService.getUserById(userId);
+    if (user) {
+        res.json(user);
+    } else {
+        res.status(404).json({ message: 'User not found' });
+    }
+});
 
 /**
  * @swagger
@@ -147,85 +232,68 @@ userRouter.get('/players', async (req: Request, res: Response, next: NextFunctio
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               teamId:
- *                 type: integer
- *                 example: 5
- *               description:
- *                 type: string
- *                 example: "A passionate midfielder"
+ *             $ref: '#/components/schemas/User'
  *     responses:
  *       200:
  *         description: User information updated successfully
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 id:
- *                   type: integer
- *                   example: 12345
- *                 firstName:
- *                   type: string
- *                   example: "John"
- *                 lastName:
- *                   type: string
- *                   example: "Doe"
- *                 email:
- *                   type: string
- *                   example: "johndoe@example.com"
- *                 role:
- *                   type: string
- *                   example: "Player"
- *                 teamId:
- *                   type: integer
- *                   example: 5
- *                 description:
- *                   type: string
- *                   example: "A passionate midfielder"
+ *               $ref: '#/components/schemas/User'
  *       404:
- *         description: User not found for update
+ *         description: User not found
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 message:
+ *                 status:
  *                   type: string
- *                   example: "User not found"
+ *                   example: "error"
+ *                 errorMessage:
+ *                   type: string
+ *                   example: "User not found."
  */
-// userRouter.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
-//     try {
-//         const userId = parseInt(req.params.id, 10);
-//         const editedUser = req.body;
 
-//         const updatedUser = await userService.updateUser(userId, editedUser);
-//         res.json(updatedUser);
-//     } catch (error) {
-//         next(error);
-//     }
-// });
+userRouter.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const userId = parseInt(req.params.id, 10);
+        const editedUser = req.body;
+
+        const updatedUser = await userService.updateUser(userId, editedUser);
+        res.json(updatedUser);
+    } catch (error) {
+        next(error);
+    }
+});
 
 /**
  * @swagger
  * /users/login:
  *   post:
- *      summary: Login using username/password. Returns an object with JWT token and user name when succesful.
- *      requestBody:
- *        required: true
- *        content:
- *          application/json:
- *            schema:
- *              $ref: '#/components/schemas/AuthenticationRequest'
- *      responses:
- *         200:
- *            description: The created user object
- *            content:
- *              application/json:
- *                schema:
- *                  $ref: '#/components/schemas/AuthenticationResponse'
+ *     summary: Authenticate a user and return a JWT token
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/AuthenticationRequest'
+ *     responses:
+ *       200:
+ *         description: Authentication successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AuthenticationResponse'
+ *       400:
+ *         description: Invalid credentials or other error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
+
 userRouter.post('/login', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const userInput = <UserInput>req.body;
@@ -240,54 +308,34 @@ userRouter.post('/login', async (req: Request, res: Response, next: NextFunction
  * @swagger
  * /users/register:
  *   post:
- *      summary: Create a user
- *      requestBody:
- *        required: true
- *        content:
- *          application/json:
- *            schema:
- *              $ref: '#/components/schemas/UserInput'
- *      responses:
- *         200:
- *            description: The created user object
- *            content:
- *              application/json:
- *                schema:
- *                  $ref: '#/components/schemas/User'
+ *     summary: Register a new user
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/User'
+ *     responses:
+ *       201:
+ *         description: User registered successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Validation error or other issue
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
+
 userRouter.post('/register', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const userInput = <UserInput>req.body;
         const user = await userService.createUser(userInput);
         res.status(200).json(user);
-    } catch (error) {
-        next(error);
-    }
-});
-
-/**
- * @swagger
- * /users:
- *   get:
- *     security:
- *       - bearerAuth: []
- *     summary: Get a list of all users
- *     responses:
- *       200:
- *         description: A list of users.
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                  $ref: '#/components/schemas/User'
- */
-userRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const request = req as Request & { auth: { role: Role } };
-        const { role } = request.auth;
-        const users = await userService.getAllUsers({ role });
-        res.status(200).json(users);
     } catch (error) {
         next(error);
     }

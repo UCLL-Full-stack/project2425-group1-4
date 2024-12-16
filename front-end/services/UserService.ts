@@ -1,10 +1,24 @@
 import { User } from '@types';
 
 const getAllPlayers = async () => {
+    const loggedInUserString = localStorage.getItem('loggedInUser');
+
+    if (!loggedInUserString) {
+        throw new Error('Log in first, please');
+    }
+
+    const loggedInUser = JSON.parse(loggedInUserString);
+    const token = loggedInUser.token;
+
+    if (!token) {
+        throw new Error('No authorization token found. Log in first, please');
+    }
+
     return fetch(process.env.NEXT_PUBLIC_API_URL + '/users/players', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
         },
     });
 };

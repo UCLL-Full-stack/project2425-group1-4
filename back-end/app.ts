@@ -1,16 +1,16 @@
 import * as bodyParser from 'body-parser';
 import cors from 'cors';
-import express, { Request, Response, NextFunction } from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 
 import * as dotenv from 'dotenv';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 
-import userRouter from './controller/user.routes';
-import teamRouter from './controller/team.routes';
-import matchRouter from './controller/match.routes';
 import { expressjwt } from 'express-jwt';
 import helmet from 'helmet';
+import matchRouter from './controller/match.routes';
+import teamRouter from './controller/team.routes';
+import userRouter from './controller/user.routes';
 
 const app = express();
 app.use(helmet());
@@ -63,6 +63,20 @@ const swaggerOpts = {
             title: 'Courses API',
             version: '1.0.0',
         },
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: 'http',
+                    scheme: 'bearer',
+                    bearerFormat: 'JWT',
+                },
+            },
+        },
+        security: [
+            {
+                bearerAuth: [],
+            },
+        ],
     },
     apis: ['./controller/*.routes.ts'],
 };

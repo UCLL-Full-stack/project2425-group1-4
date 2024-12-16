@@ -8,8 +8,6 @@ type Props = {
 const UserGrid: React.FC<Props> = ({ Users }: Props) => {
     const [searchTerm, setSearchTerm] = useState('');
 
-    console.log('Users passed to UserGrid:', Users);
-
     // Filter Users
     const filteredUsers = Array.isArray(Users)
         ? Users.filter(

@@ -13,13 +13,6 @@ const UsersPage: React.FC = () => {
 
     const fetchUsers = async (): Promise<User[] | null> => {
         try {
-            // const token = localStorage.getItem('authToken');
-
-            // if (!token) {
-            //     console.error('No authorization token found in memory or localStorage');
-            //     return null;
-            // }
-
             const response = await UserService.getAllUsers();
             const users = await response.json();
             return users;
