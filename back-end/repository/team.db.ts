@@ -17,6 +17,10 @@ const getAllTeams = async (): Promise<Team[]> => {
 };
 
 const getTeamById = async (id: number): Promise<Team | null> => {
+    if (!id || typeof id !== 'number') {
+        throw new Error('Invalid team ID provided.');
+    }
+
     try {
         const teamPrisma = await database.team.findUnique({
             where: {
@@ -27,12 +31,14 @@ const getTeamById = async (id: number): Promise<Team | null> => {
                 players: true,
             },
         });
+
         return teamPrisma ? Team.from(teamPrisma) : null;
     } catch (error) {
-        console.error(error);
-        throw new Error('Database error, See server log for details.');
+        console.error('Error in getTeamById:', error);
+        throw new Error('Database error, see server log for details.');
     }
 };
+
 
 const addTeam = async (team: Team): Promise<Team> => {
     try {

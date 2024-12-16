@@ -1,7 +1,7 @@
 import {
-    Match as MatchPrisma,
     Goal as GoalPrisma,
     Location as LocationPrisma,
+    Match as MatchPrisma,
 } from '@prisma/client';
 import { Goal } from './goal';
 import { Location } from './location';
@@ -72,18 +72,17 @@ export class Match {
     static from({
         id,
         date,
-        goals,
         location,
-    }: MatchPrisma & { location: LocationPrisma; goals: GoalPrisma[] }) {
+        goals,
+    }: MatchPrisma & {
+        location: LocationPrisma;
+        goals: GoalPrisma[];
+    }): Match {
         return new Match({
             id,
             date,
-            goals: goals.map((goal) => Goal.from(goal)),
             location: Location.from(location),
+            goals: goals.map((goal) => Goal.from(goal)),
         });
-    }
-
-    equals(match: Match): boolean {
-        return this.id === match.getId() && this.date === match.getDate();
     }
 }

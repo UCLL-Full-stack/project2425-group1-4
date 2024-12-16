@@ -34,4 +34,93 @@ const getMatchById = async (id: string): Promise<Match | null> => {
     }
 };
 
-export default { getAllMatches, getMatchById };
+const createMatch = async ({
+    date,
+    locationId,
+    teams,
+    goals,
+}: {
+    date: Date;
+    locationId: number;
+    teams: { teamId: number }[];
+    goals: number[];
+}) => {
+    try {
+        return await database.match.create({
+            data: {
+                date,
+                location: {
+                    connect: {
+                        id: locationId,
+                    },
+                },
+                teams: {
+                    create: teams.map((team) => ({
+                        team: {
+                            connect: {
+                                id: team.teamId,
+                            },
+                        },
+                    })),
+                },
+                goals: {
+                    connect: goals.map((goalId) => ({ id: goalId })),
+                },
+            },
+            include: {
+                location: true,
+                goals: true,
+                teams: {
+                    include: {
+                        team: true,
+                    },
+                },
+            },
+        });
+    } catch (error) {
+        console.error('Error creating match in database:', error);
+        throw new Error('Database error. See server logs for details.');
+    }
+};
+
+
+const updateMatch = async (
+    id: number,
+    matchData: {
+        date?: Date;
+        locationId?: number;
+        teams?: { teamId: number; isHome: boolean }[];
+        goals?: { id: number }[];
+    }
+) => {
+    const updatedMatch = await database.match.update({
+        where: { id },
+        data: {
+            date: matchData.date,
+            location: matchData.locationId ? { connect: { id: matchData.locationId } } : undefined,
+            teams: matchData.teams
+                ? {
+                      deleteMany: {}, // Clear existing teams
+                      create: matchData.teams.map((team) => ({
+                          team: { connect: { id: team.teamId } },
+                          isHome: team.isHome,
+                      })),
+                  }
+                : undefined,
+            goals: matchData.goals
+                ? {
+                      connect: matchData.goals,
+                  }
+                : undefined,
+        },
+        include: {
+            location: true,
+            goals: true,
+            teams: { include: { team: true } },
+        },
+    });
+
+    return updatedMatch;
+};
+
+export default { getAllMatches, getMatchById, createMatch, updateMatch };

@@ -32,6 +32,7 @@
         "express-jwt": "^8.4.1",
         "helmet": "^7.1.0",
         "jsonwebtoken": "^9.0.0",
+        "lucide-react": "^0.468.0",
         "react": "^18.3.1",
         "react-router-dom": "^6.27.0",
         "swagger-jsdoc": "^6.2.0",

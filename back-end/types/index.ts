@@ -34,10 +34,9 @@ type GoalInput = {
 
 type MatchInput = {
     id?: number;
-    homeTeam: number;
-    awayTeam: number;
     date: Date;
     location: number;
+    teams: { teamId: number }[];
     goals: number[];
 };
 

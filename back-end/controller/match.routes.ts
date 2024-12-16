@@ -1,12 +1,43 @@
 /**
  * @swagger
- * tags:
- *   name: Matches
- *   description: Match management endpoints.
+ * components:
+ *   schemas:
+ *     Match:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *           example: 1
+ *         date:
+ *           type: string
+ *           format: date-time
+ *           example: "2024-12-01T15:00:00Z"
+ *         locationId:
+ *           type: integer
+ *           example: 1
+ *         teams:
+ *           type: array
+ *           items:
+ *             type: object
+ *             properties:
+ *               teamId:
+ *                 type: integer
+ *                 example: 1
+ *           example: [
+ *             { "teamId": 1 },
+ *             { "teamId": 2 }
+ *           ]
+ *         goals:
+ *           type: array
+ *           items:
+ *             type: integer
+ *             example: 101
+ *           example: [1, 2]
  */
 
 import express, { NextFunction, Request, Response } from 'express';
 import matchService from '../service/match.service';
+import { MatchInput, Role } from '../types';
 
 const matchRouter = express.Router();
 
@@ -34,10 +65,10 @@ const matchRouter = express.Router();
  *               properties:
  *                 status:
  *                   type: string
- *                   example: error
+ *                   example: "error"
  *                 errorMessage:
  *                   type: string
- *                   example: Error message
+ *                   example: "An error occurred."
  */
 matchRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -67,11 +98,7 @@ matchRouter.get('/', async (req: Request, res: Response, next: NextFunction) => 
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 id:
- *                   type: integer
- *                   example: 12345
+ *               $ref: '#/components/schemas/Match'
  *       404:
  *         description: Match not found
  *         content:
@@ -79,13 +106,29 @@ matchRouter.get('/', async (req: Request, res: Response, next: NextFunction) => 
  *             schema:
  *               type: object
  *               properties:
- *                 message:
+ *                 status:
  *                   type: string
- *                   example: "Match not found"
+ *                   example: "error"
+ *                 errorMessage:
+ *                   type: string
+ *                   example: "Match not found."
+ *       400:
+ *         description: Bad request due to an error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: "error"
+ *                 errorMessage:
+ *                   type: string
+ *                   example: "An error occurred."
  */
 matchRouter.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const matchId = req.params.id;
+        const matchId = req.params.id as string;
         const match = await matchService.getMatchById(matchId);
         res.status(200).json(match);
     } catch (error) {
@@ -93,4 +136,120 @@ matchRouter.get('/:id', async (req: Request, res: Response, next: NextFunction) 
     }
 });
 
+/**
+ * @swagger
+ * /matches:
+ *   post:
+ *     summary: Create a new match
+ *     tags: [Matches]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Match'
+ *     responses:
+ *       201:
+ *         description: Match created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Match'
+ *       400:
+ *         description: Error creating match
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: "error"
+ *                 errorMessage:
+ *                   type: string
+ *                   example: "Invalid request data"
+ */
+matchRouter.post('/', async (req: Request, res: Response, next: NextFunction) => {
+    const newMatch = req.body;
+
+    const request = req as Request & { auth: { role: Role } };
+    const { role } = request.auth;
+
+    try {
+        const match = await matchService.createMatch(newMatch, { role });
+        res.status(201).json(match);
+    } catch (error) {
+        next(error);
+    }
+});
+
+/**
+ * @swagger
+ * /matches/{id}:
+ *   put:
+ *     summary: Update match information
+ *     tags: [Matches]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Match ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               date:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2024-12-01T15:00:00Z"
+ *               location:
+ *                 type: integer
+ *                 description: Location ID
+ *                 example: 1
+ *               homeTeam:
+ *                 type: integer
+ *                 description: Home team ID
+ *                 example: 2
+ *               awayTeam:
+ *                 type: integer
+ *                 description: Away team ID
+ *                 example: 3
+ *               goals:
+ *                 type: array
+ *                 description: List of goal IDs
+ *                 items:
+ *                   type: integer
+ *                   example: 101
+ *     responses:
+ *       200:
+ *         description: Match updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Match'
+ *       404:
+ *         description: Match not found
+ *       400:
+ *         description: Error updating match
+ */
+matchRouter.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { id } = req.params;
+        const matchData: Partial<MatchInput> = req.body;
+
+        const request = req as Request & { auth: { role: Role } };
+        const user = request.auth;
+
+        const updatedMatch = await matchService.updateMatch(Number(id), matchData, user);
+
+        res.status(200).json(updatedMatch);
+    } catch (error) {
+        next(error);
+    }
+});
 export default matchRouter;

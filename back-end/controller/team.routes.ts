@@ -1,8 +1,68 @@
 /**
  * @swagger
- * tags:
- *   name: Teams
- *   description: Team management endpoints.
+ * components:
+ *   schemas:
+ *     Team:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *           example: 1
+ *         name:
+ *           type: string
+ *           example: "FC Barcelona"
+ *         description:
+ *           type: string
+ *           example: "The best football team in the world."
+ *         coach:
+ *           $ref: '#/components/schemas/User'
+ *         players:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/User'
+ *         matches:
+ *           type: array
+ *           items:
+ *             type: object
+ *             properties:
+ *               matchId:
+ *                 type: integer
+ *                 example: 1
+ *               teamId:
+ *                 type: integer
+ *                 example: 2
+ *         goals:
+ *           type: array
+ *           items:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: integer
+ *                 example: 123
+ *               time:
+ *                 type: integer
+ *                 example: 45
+ *               matchId:
+ *                 type: integer
+ *                 example: 1
+ *               teamId:
+ *                 type: integer
+ *                 example: 1
+ *     User:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *           example: 123
+ *         firstName:
+ *           type: string
+ *           example: "Lionel"
+ *         lastName:
+ *           type: string
+ *           example: "Messi"
+ *         role:
+ *           type: string
+ *           example: "PLAYER"
  */
 
 import express, { Request, Response } from 'express';
@@ -35,10 +95,10 @@ const teamRouter = express.Router();
  *               properties:
  *                 status:
  *                   type: string
- *                   example: error
+ *                   example: "error"
  *                 errorMessage:
  *                   type: string
- *                   example: Error message
+ *                   example: "An error occurred."
  */
 teamRouter.get('/', async (req: Request, res: Response) => {
     try {
@@ -67,7 +127,7 @@ teamRouter.get('/', async (req: Request, res: Response) => {
  *         description: The unique identifier of the team
  *     responses:
  *       200:
- *         description: Successfully retrieved team data
+ *         description: Successfully retrieved the team
  *         content:
  *           application/json:
  *             schema:
@@ -81,10 +141,10 @@ teamRouter.get('/', async (req: Request, res: Response) => {
  *               properties:
  *                 status:
  *                   type: string
- *                   example: error
+ *                   example: "error"
  *                 errorMessage:
  *                   type: string
- *                   example: Team not found
+ *                   example: "Team not found."
  *       400:
  *         description: Bad request due to an error
  *         content:
@@ -94,11 +154,12 @@ teamRouter.get('/', async (req: Request, res: Response) => {
  *               properties:
  *                 status:
  *                   type: string
- *                   example: error
+ *                   example: "error"
  *                 errorMessage:
  *                   type: string
- *                   example: Error message
+ *                   example: "An error occurred."
  */
+
 teamRouter.get('/:id', async (req: Request, res: Response) => {
     const { id } = req.params;
     try {
@@ -117,7 +178,7 @@ teamRouter.get('/:id', async (req: Request, res: Response) => {
  * @swagger
  * /teams/{id}:
  *   put:
- *     summary: Update team information by ID
+ *     summary: Update a team's information
  *     tags: [Teams]
  *     parameters:
  *       - in: path
@@ -134,7 +195,7 @@ teamRouter.get('/:id', async (req: Request, res: Response) => {
  *             $ref: '#/components/schemas/Team'
  *     responses:
  *       200:
- *         description: Team updated successfully
+ *         description: Successfully updated the team
  *         content:
  *           application/json:
  *             schema:
@@ -142,7 +203,7 @@ teamRouter.get('/:id', async (req: Request, res: Response) => {
  *               properties:
  *                 message:
  *                   type: string
- *                   example: Team updated successfully
+ *                   example: "Team updated successfully."
  *       404:
  *         description: Team not found
  *         content:
@@ -152,10 +213,10 @@ teamRouter.get('/:id', async (req: Request, res: Response) => {
  *               properties:
  *                 status:
  *                   type: string
- *                   example: error
+ *                   example: "error"
  *                 errorMessage:
  *                   type: string
- *                   example: Team not found
+ *                   example: "Team not found."
  *       400:
  *         description: Bad request due to an error
  *         content:
@@ -165,11 +226,12 @@ teamRouter.get('/:id', async (req: Request, res: Response) => {
  *               properties:
  *                 status:
  *                   type: string
- *                   example: error
+ *                   example: "error"
  *                 errorMessage:
  *                   type: string
- *                   example: Error message
+ *                   example: "An error occurred."
  */
+
 teamRouter.put('/:id', async (req: Request, res: Response) => {
     const { id } = req.params;
     const updatedTeamData = req.body;
@@ -214,11 +276,11 @@ teamRouter.put('/:id', async (req: Request, res: Response) => {
  *             properties:
  *               playerId:
  *                 type: integer
- *                 description: The unique identifier of the player to add
+ *                 description: The unique identifier of the player
  *                 example: 123
  *     responses:
  *       200:
- *         description: Player added to team successfully
+ *         description: Player successfully added to the team
  *         content:
  *           application/json:
  *             schema:
@@ -226,7 +288,7 @@ teamRouter.put('/:id', async (req: Request, res: Response) => {
  *               properties:
  *                 message:
  *                   type: string
- *                   example: Player added to team successfully
+ *                   example: "Player added to team successfully."
  *       404:
  *         description: Team or player not found
  *         content:
@@ -234,9 +296,12 @@ teamRouter.put('/:id', async (req: Request, res: Response) => {
  *             schema:
  *               type: object
  *               properties:
- *                 message:
+ *                 status:
  *                   type: string
- *                   example: Team or player not found
+ *                   example: "error"
+ *                 errorMessage:
+ *                   type: string
+ *                   example: "Team or player not found."
  *       400:
  *         description: Bad request due to an error
  *         content:
@@ -244,10 +309,14 @@ teamRouter.put('/:id', async (req: Request, res: Response) => {
  *             schema:
  *               type: object
  *               properties:
- *                 message:
+ *                 status:
  *                   type: string
- *                   example: Error adding player to team
+ *                   example: "error"
+ *                 errorMessage:
+ *                   type: string
+ *                   example: "An error occurred."
  */
+
 teamRouter.put('/:id/addPlayer', async (req: Request, res: Response) => {
     const { id } = req.params;
     const { playerId } = req.body;

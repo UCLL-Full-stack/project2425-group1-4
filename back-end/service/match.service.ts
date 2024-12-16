@@ -1,5 +1,8 @@
-import matchDb from '../repository/match.db';
 import { Match } from '../model/match';
+import matchDb from '../repository/match.db';
+import { MatchInput, Role } from '../types';
+import goalService from './goal.service';
+import teamService from './team.service';
 
 const getAllMatches = async (): Promise<Match[]> => {
     return await matchDb.getAllMatches();
@@ -13,7 +16,92 @@ const getMatchById = async (id: string): Promise<Match> => {
     return match;
 };
 
+const createMatch = async (matchData: MatchInput, user: { role: Role }): Promise<Match> => {
+    if (user.role !== 'ADMIN' && user.role !== 'COACH') {
+        throw new Error('Unauthorized access');
+    }
+
+    // Ensure exactly two teams are provided
+    if (!matchData.teams || matchData.teams.length !== 2) {
+        throw new Error('Exactly two teams must be provided.');
+    }
+
+    // Validate each team ID
+    await Promise.all(
+        matchData.teams.map(async (team) => {
+            const teamExists = await teamService.getTeamById(team.teamId);
+            if (!teamExists) {
+                throw new Error(`Team with ID ${team.teamId} does not exist.`);
+            }
+        })
+    );
+
+    // Validate goal IDs
+    await goalService.validateGoalIds(matchData.goals);
+
+    const match = {
+        date: matchData.date,
+        locationId: matchData.location,
+        teams: matchData.teams,
+        goals: matchData.goals,
+    };
+
+    const createdMatch = await matchDb.createMatch(match);
+    return Match.from(createdMatch);
+};
+
+const updateMatch = async (
+    id: number,
+    matchData: Partial<MatchInput>,
+    user: { role: Role }
+): Promise<Match> => {
+    if (user.role !== 'ADMIN' && user.role !== 'COACH') {
+        throw new Error('Unauthorized access');
+    }
+
+    // Validate and prepare teams if provided
+    let teams;
+    if (matchData.teams) {
+        if (matchData.teams.length !== 2) {
+            throw new Error('A match must have exactly two teams.');
+        }
+
+        const teamIds = matchData.teams.map((team) => team.teamId);
+
+        const [team1, team2] = await Promise.all(teamIds.map((id) => teamService.getTeamById(id)));
+
+        if (!team1 || !team2) {
+            throw new Error('One or both team IDs do not exist.');
+        }
+
+        teams = [
+            { teamId: teamIds[0], isHome: true },
+            { teamId: teamIds[1], isHome: false },
+        ];
+    }
+
+    // Validate goal IDs if provided
+    if (matchData.goals) {
+        await goalService.validateGoalIds(matchData.goals);
+    }
+
+    // Prepare the data for the database update
+    const dbMatchData = {
+        date: matchData.date,
+        locationId: matchData.location,
+        teams,
+        goals: matchData.goals ? matchData.goals.map((goalId) => ({ id: goalId })) : undefined,
+    };
+
+    // Update the match in the database
+    const updatedMatch = await matchDb.updateMatch(id, dbMatchData);
+
+    return Match.from(updatedMatch);
+};
+
 export default {
     getAllMatches,
     getMatchById,
+    createMatch,
+    updateMatch,
 };

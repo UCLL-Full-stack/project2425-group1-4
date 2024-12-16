@@ -4,6 +4,7 @@ import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import BackButton from './backButton';
 import Language from './language/Language';
+import OverviewDropdown from './overviewDropdown';
 
 const Header: React.FC = () => {
     const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
@@ -35,19 +36,29 @@ const Header: React.FC = () => {
                     >
                         {t('header.nav.home')}
                     </Link>
-                    <Link
-                        className="px-2 text-white text-xl hover:bg-slate-600 rounded-lg"
-                        href="/players"
-                    >
-                        {t('header.nav.players')}
-                    </Link>
-                    <Link
-                        className="px-2 text-white text-xl hover:bg-slate-600 rounded-lg"
-                        href="/teams"
-                    >
-                        {t('header.nav.teams')}
-                    </Link>
-                    {loggedInUser?.role === 'USER' && (
+
+                    {!['COACH', 'PLAYER', 'ADMIN'].includes(loggedInUser?.role ?? '') ? (
+                        <>
+                            <Link
+                                className="px-2 text-white text-xl hover:bg-slate-600 rounded-lg"
+                                href="/players"
+                            >
+                                {t('header.nav.players')}
+                            </Link>
+                            <Link
+                                className="px-2 text-white text-xl hover:bg-slate-600 rounded-lg"
+                                href="/teams"
+                            >
+                                {t('header.nav.teams')}
+                            </Link>
+                        </>
+                    ) : (
+                        <>
+                            <OverviewDropdown t={t} loggedInUser={loggedInUser} />
+                        </>
+                    )}
+
+                    {loggedInUser && ['USER'].includes(loggedInUser.role ?? '') && (
                         <>
                             <Link
                                 className="px-2 text-white text-xl hover:bg-slate-600 rounded-lg"
@@ -57,16 +68,8 @@ const Header: React.FC = () => {
                             </Link>
                         </>
                     )}
-                    {loggedInUser?.role === 'ADMIN' && (
-                        <>
-                            <Link
-                                className="px-2 text-white text-xl hover:bg-slate-600 rounded-lg"
-                                href="/users"
-                            >
-                                {t('header.nav.users')}
-                            </Link>
-                        </>
-                    )}
+
+                 
                     {loggedInUser ? (
                         <>
                             <p className="text-white ms-5 mt-2 md:mt-0 pt-1 md:pt-0 grow">

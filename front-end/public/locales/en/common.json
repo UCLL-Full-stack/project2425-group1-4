@@ -40,6 +40,7 @@
         "welcome": "Welcome",
         "nav": {
             "home": "Home",
+            "overview": "Overview",
             "players": "Players",
             "teams": "Teams",
             "matches": "Matches",

@@ -7,12 +7,13 @@ const main = async () => {
     // Clean up the database
     await prisma.goal.deleteMany();
     await prisma.location.deleteMany();
+    await prisma.matchTeam.deleteMany();
     await prisma.match.deleteMany();
     await prisma.team.deleteMany();
     await prisma.user.deleteMany();
 
     // Create users with different roles
-    const [maxim, mathieu, lionel, admin, cristiano, sergio, coachPep, coachZidane] = await Promise.all([
+    const [maxim, mathieu, admin, lionel, cristiano, sergio, coachPep, coachZidane] = await Promise.all([
         prisma.user.create({
             data: {
                 firstName: 'Maxim',
@@ -116,7 +117,6 @@ const main = async () => {
         data: [
             { country: 'Belgium', city: 'Brussels', streetName: 'Rue de la Loi', zipCode: '1000', number: '16' },
             { country: 'France', city: 'Paris', streetName: 'Champs-Élysées', zipCode: '75008', number: '101' },
-            { country: 'Netherlands', city: 'Amsterdam', streetName: 'Dam Square', zipCode: '1012', number: '5' },
         ],
     });
 
@@ -141,10 +141,49 @@ const main = async () => {
     ]);
 
     // Create matches
-    const matches = await prisma.match.createMany({
+    const match1 = await prisma.match.create({
+        data: {
+            date: new Date(),
+            location: { connect: { id: 1 } },
+            teams: {
+                create: [
+                    { team: { connect: { id: barcelona.id } } },
+                    { team: { connect: { id: madrid.id } } },
+                ],
+            },
+        },
+        include: { teams: true },
+    });
+
+    const match2 = await prisma.match.create({
+        data: {
+            date: new Date(),
+            location: { connect: { id: 2 } },
+            teams: {
+                create: [
+                    { team: { connect: { id: madrid.id } } },
+                    { team: { connect: { id: barcelona.id } } },
+                ],
+            },
+        },
+        include: { teams: true },
+    });
+
+    // Create goals
+    await prisma.goal.createMany({
         data: [
-            { date: new Date(), locationId: 1 },
-            { date: new Date(), locationId: 2 },
+            {
+                time: 15,
+                matchId: match1.id,
+                teamId: barcelona.id,
+                playerId: lionel.id,
+            },
+            {
+                time: 45,
+                matchId: match2.id,
+                teamId: madrid.id,
+                playerId: cristiano.id,
+            },
         ],
     });
 

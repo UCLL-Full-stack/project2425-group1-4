@@ -21,15 +21,25 @@ const getTeamsByName = async (name: string): Promise<Team[]> => {
 };
 
 const getTeamById = async (id: string | number): Promise<Team> => {
+    if (!id) {
+        throw new Error('Team ID is required.');
+    }
+
     const numericId = typeof id === 'string' ? parseInt(id, 10) : id;
+
+    if (isNaN(numericId)) {
+        throw new Error('Invalid Team ID. It must be a number.');
+    }
+
     const team = await teamDb.getTeamById(numericId);
 
     if (!team) {
-        throw new Error('Team not found');
+        throw new Error(`Team with ID ${numericId} not found.`);
     }
 
     return team;
 };
+
 
 const getTeamNameById = async (id: number): Promise<string | null> => {
     const team: Team | null = await teamDb.getTeamById(id);
