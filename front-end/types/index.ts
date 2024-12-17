@@ -2,6 +2,7 @@ export type Goal = {
     id: number;
     time: number;
     player: User;
+    team: Team;
 };
 
 export type Location = {

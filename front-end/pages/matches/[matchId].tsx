@@ -76,14 +76,14 @@ const MatchPage = () => {
                                 {new Date(match?.date ?? '').toLocaleString()}
                             </p>
                         </div>
-                        {/* <ul>
+                        <ul>
                             {match?.goals.map((goal) => (
                             <li key={goal.id}>
                                 {goal.time}' - {goal.player?.firstName || 'Unknown'}{' '}
                                 {goal.player?.lastName || ''} ({goal.team?.name || 'Unknown Team'})
                             </li>
                         ))}
-                        </ul> */}
+                        </ul>
                     </div>
                 </div>
             </div>
