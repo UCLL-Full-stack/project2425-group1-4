@@ -156,9 +156,40 @@ const updateMatch = async (
     return updatedMatch;
 };
 
+const getLatestMatches = async (limit: number) => {
+    try {
+        return await database.match.findMany({
+            take: limit,
+            orderBy: { date: 'desc' },
+            include: {
+                location: true,
+                goals: {
+                    include: {
+                        player: { select: { firstName: true, lastName: true } },
+                        team: { select: { id: true, name: true } },
+                    },
+                },
+                teams: {
+                    include: {
+                        team: {
+                            select: { id: true, name: true, description: true },
+                        },
+                        goals: true,
+                    },
+                },
+            },
+        });
+    } catch (error) {
+        console.error('Error fetching latest matches:', error);
+        throw new Error('Database error, See server log for details.');
+    }
+};
+
+
 export default {
     getAllMatches,
     getMatchById,
     createMatch,
     updateMatch,
+    getLatestMatches,
 };

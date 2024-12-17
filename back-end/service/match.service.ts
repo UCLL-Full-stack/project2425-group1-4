@@ -99,9 +99,28 @@ const getMatchById = async (id: string): Promise<Match> => {
 //     return Match.from(updatedMatch);
 // };
 
+const getLatestMatches = async (limit: number) => {
+    try {
+        if (limit <= 0) {
+            throw new Error('Limit must be a positive number');
+        }
+
+        const matches = await matchDb.getLatestMatches(limit);
+        return matches;
+    } catch (error) {
+        if (error instanceof Error) {
+            console.error('Error fetching latest matches:', error.message);
+        } else {
+            console.error('Error fetching latest matches:', error);
+        }
+        throw new Error('Failed to fetch latest matches');
+    }
+};
+
 export default {
     getAllMatches,
     getMatchById,
     // createMatch,
     // updateMatch,
+    getLatestMatches,
 };

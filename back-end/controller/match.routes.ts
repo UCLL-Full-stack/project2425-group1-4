@@ -43,7 +43,6 @@
 
 import express, { NextFunction, Request, Response } from 'express';
 import matchService from '../service/match.service';
-import { MatchInput, Role } from '../types';
 
 const matchRouter = express.Router();
 
@@ -79,6 +78,66 @@ const matchRouter = express.Router();
 matchRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const matches = await matchService.getAllMatches();
+        res.status(200).json(matches);
+    } catch (error) {
+        next(error);
+    }
+});
+
+/**
+ * @swagger
+ * /matches/latest:
+ *   get:
+ *     summary: Retrieve the latest matches with an optional limit
+ *     tags: [Matches]
+ *     parameters:
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *           minimum: 1
+ *         description: The number of matches to retrieve (default is 10)
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved the latest matches
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Match'
+ *       400:
+ *         description: Invalid limit parameter
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: "error"
+ *                 errorMessage:
+ *                   type: string
+ *                   example: "Invalid request. Limit must be a positive number."
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: "error"
+ *                 errorMessage:
+ *                   type: string
+ *                   example: "Failed to fetch latest matches."
+ */
+matchRouter.get('/latest', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const limit = Number(req.query.limit) || 10;
+        const matches = await matchService.getLatestMatches(limit);
         res.status(200).json(matches);
     } catch (error) {
         next(error);

@@ -4,7 +4,7 @@ import { useTranslation } from 'next-i18next';
 import Head from 'next/head';
 import React, { useEffect, useState } from 'react';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import MatchGrid from '@components/matchGrid/matchGrid';
+import MatchGrid from '@components/match/matchGrid';
 import MatchService from '@services/MatchService';
 
 const MatchesPage: React.FC = () => {

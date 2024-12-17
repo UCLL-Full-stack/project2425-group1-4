@@ -4,6 +4,12 @@
     "permissions": {
         "unauthorized": "You are not authorized to access this page."
     },
+    "home": {
+        "username": "Username",
+        "password": "Password",
+        "role": "Role",
+        "noMatches": "No matches were found."
+    },
     "login": {
         "title": "Login",
         "button": "Login",

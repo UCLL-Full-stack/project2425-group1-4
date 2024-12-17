@@ -104,11 +104,19 @@ const updateMatch = async (id: string, matchData: Partial<Match>): Promise<Match
     return await response.json();
 };
 
+const getLatestMatches = async (limit: number) => {
+    return await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matches?limit=${limit}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+    });
+};
+
 const MatchService = {
     getAllMatches,
     getMatchById,
     updateMatch,
-    createMatch
+    createMatch,
+    getLatestMatches,
 };
 
 export default MatchService;

@@ -1,15 +1,14 @@
 import {
     Goal as GoalPrisma,
     Location as LocationPrisma,
-    Team as TeamPrisma,
     Match as MatchPrisma,
     MatchTeam as MatchTeamPrisma,
+    Team as TeamPrisma,
     User as UserPrisma,
 } from '@prisma/client';
-import { Location } from './location';
-import { Team } from './team';
-import { MatchTeam } from './matchTeam';
 import { Goal } from './goal';
+import { Location } from './location';
+import { MatchTeam } from './matchTeam';
 
 export class Match {
     private id: number;
