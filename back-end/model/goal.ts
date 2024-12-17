@@ -1,20 +1,24 @@
-import { Goal as GoalPrisma } from '@prisma/client';
+import { Goal as GoalPrisma, User as UserPrisma, Team as TeamPrisma } from '@prisma/client';
+import { Team } from './team';
+import { User } from './user';
 
 export class Goal {
     private id: number;
     private time: number;
-    private teamId: number;
+    private team: Team;
+    private player: User;
 
-    constructor(goal: { id: number; time: number; teamId: number }) {
+    constructor(goal: { id: number; time: number; team: Team; player: User }) {
         this.validate(goal);
 
         this.id = goal.id;
         this.time = goal.time;
-        this.teamId = goal.teamId;
+        this.team = goal.team;
+        this.player = goal.player;
     }
 
     // Needs to properly be implemented
-    validate(goal: { id: number; time: number; teamId: number }) {
+    validate(goal: { id: number; time: number; team: Team; player: User }) {
         if (!goal.id) {
             throw new Error('Goal id is required');
         }
@@ -28,7 +32,6 @@ export class Goal {
         if (goal.time > 90) {
             throw new Error('Goal time must be under 90');
         }
-        if (!goal.teamId) throw new Error('Team ID is required');
     }
 
     // Getters
@@ -40,8 +43,12 @@ export class Goal {
         return this.time;
     }
 
-    getTeamId(): number {
-        return this.teamId;
+    getTeam() {
+        return this.team;
+    }
+
+    getPlayer() {
+        return this.player;
     }
 
     // Setters
@@ -53,16 +60,29 @@ export class Goal {
         this.time = time;
     }
 
-    setTeamId(teamId: number) {
-        this.teamId = teamId;
+    setTeam(team: Team) {
+        this.team = team;
     }
 
-    // Prisma Goal to Goal
-    static from({ id, time, teamId }: GoalPrisma) {
-        return new Goal({ id, time, teamId });
+    setPlayer(player: User) {
+        this.player = player;
+    }
+
+    static from({ id, time, team, player }: GoalPrisma & { team: TeamPrisma; player: UserPrisma }) {
+        return new Goal({
+            id,
+            time,
+            team: Team.from(team),
+            player: User.from(player),
+        });
     }
 
     equals(goal: Goal) {
-        return this.id === goal.id && this.time === goal.time && this.teamId === goal.teamId;
+        return (
+            this.id === goal.id &&
+            this.time === goal.time &&
+            this.team === goal.team &&
+            this.player === goal.player
+        );
     }
 }

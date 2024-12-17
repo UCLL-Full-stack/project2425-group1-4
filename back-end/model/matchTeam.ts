@@ -2,6 +2,7 @@ import {
     MatchTeam as MatchTeamPrisma,
     Goal as GoalPrisma,
     Team as TeamPrisma,
+    User as UserPrisma,
 } from '@prisma/client';
 import { Goal } from './goal';
 import { Team } from './team';
@@ -21,11 +22,14 @@ export class MatchTeam {
         matchId,
         team,
         goals,
-    }: MatchTeamPrisma & { team: TeamPrisma; goals: GoalPrisma[] }): MatchTeam {
+    }: MatchTeamPrisma & {
+        team: TeamPrisma;
+        goals: (GoalPrisma & { team: TeamPrisma; player: UserPrisma })[];
+    }): MatchTeam {
         return new MatchTeam({
             matchId,
             team: Team.from(team),
-            goals: goals ? goals.map((goal) => Goal.from(goal)) : [],
+            goals: goals.map((goal) => Goal.from(goal)),
         });
     }
 

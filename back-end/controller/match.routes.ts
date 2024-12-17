@@ -175,19 +175,19 @@ matchRouter.get('/:id', async (req: Request, res: Response, next: NextFunction) 
  *                   type: string
  *                   example: "Invalid request data"
  */
-matchRouter.post('/', async (req: Request, res: Response, next: NextFunction) => {
-    const newMatch = req.body;
+// matchRouter.post('/', async (req: Request, res: Response, next: NextFunction) => {
+//     const newMatch = req.body;
 
-    const request = req as Request & { auth: { role: Role } };
-    const { role } = request.auth;
+//     const request = req as Request & { auth: { role: Role } };
+//     const { role } = request.auth;
 
-    try {
-        const match = await matchService.createMatch(newMatch, { role });
-        res.status(201).json(match);
-    } catch (error) {
-        next(error);
-    }
-});
+//     try {
+//         const match = await matchService.createMatch(newMatch, { role });
+//         res.status(201).json(match);
+//     } catch (error) {
+//         next(error);
+//     }
+// });
 
 /**
  * @swagger
@@ -243,19 +243,19 @@ matchRouter.post('/', async (req: Request, res: Response, next: NextFunction) =>
  *       400:
  *         description: Error updating match
  */
-matchRouter.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const { id } = req.params;
-        const matchData: Partial<MatchInput> = req.body;
+// matchRouter.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
+//     try {
+//         const { id } = req.params;
+//         const matchData: Partial<MatchInput> = req.body;
 
-        const request = req as Request & { auth: { role: Role } };
-        const user = request.auth;
+//         const request = req as Request & { auth: { role: Role } };
+//         const user = request.auth;
 
-        const updatedMatch = await matchService.updateMatch(Number(id), matchData, user);
+//         const updatedMatch = await matchService.updateMatch(Number(id), matchData, user);
 
-        res.status(200).json(updatedMatch);
-    } catch (error) {
-        next(error);
-    }
-});
+//         res.status(200).json(updatedMatch);
+//     } catch (error) {
+//         next(error);
+//     }
+// });
 export default matchRouter;

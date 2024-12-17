@@ -6,10 +6,21 @@ const getAllMatches = async (): Promise<Match[]> => {
         const matchesPrisma = await database.match.findMany({
             include: {
                 location: true,
-                goals: true,
+                goals: {
+                    include: {
+                        player: true,
+                        team: true,
+                    },
+                },
                 teams: {
                     include: {
                         team: true,
+                        goals: {
+                            include: {
+                                player: true,
+                                team: true,
+                            },
+                        },
                     },
                 },
             },
@@ -28,11 +39,21 @@ const getMatchById = async (id: number) => {
             where: { id },
             include: {
                 location: true,
-                goals: true, // Ensure goals are included explicitly
+                goals: {
+                    include: {
+                        player: true,
+                        team: true,
+                    },
+                },
                 teams: {
                     include: {
                         team: true,
-                        goals: true, // Include goals for each team explicitly
+                        goals: {
+                            include: {
+                                player: true,
+                                team: true,
+                            },
+                        },
                     },
                 },
             },

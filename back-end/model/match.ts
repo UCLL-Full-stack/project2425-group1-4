@@ -3,22 +3,35 @@ import {
     Location as LocationPrisma,
     Team as TeamPrisma,
     Match as MatchPrisma,
+    MatchTeam as MatchTeamPrisma,
     User as UserPrisma,
 } from '@prisma/client';
 import { Location } from './location';
 import { Team } from './team';
+import { MatchTeam } from './matchTeam';
+import { Goal } from './goal';
 
 export class Match {
     private id: number;
     private date: Date;
     private location: Location;
+    private goals: Goal[];
+    private teams: MatchTeam[];
 
-    constructor(match: { id: number; date: Date; location: Location }) {
+    constructor(match: {
+        id: number;
+        date: Date;
+        location: Location;
+        goals?: Goal[];
+        teams?: MatchTeam[];
+    }) {
         this.validate(match);
 
         this.id = match.id;
         this.date = match.date;
         this.location = match.location;
+        this.goals = match.goals || [];
+        this.teams = match.teams || [];
     }
 
     // Needs to be properly implemented
@@ -47,6 +60,14 @@ export class Match {
         return this.location;
     }
 
+    getGoals(): Goal[] {
+        return this.goals;
+    }
+
+    getTeams(): MatchTeam[] {
+        return this.teams;
+    }
+
     // Setters
     setId(id: number): void {
         this.id = id;
@@ -60,17 +81,56 @@ export class Match {
         this.location = location;
     }
 
+    setGoals(goals: Goal[]): void {
+        this.goals = goals;
+    }
+
+    setTeams(teams: MatchTeam[]): void {
+        this.teams = teams;
+    }
+
+    // static from({
+    //     id,
+    //     date,
+    //     location,
+    // }: MatchPrisma & {
+    //     location: LocationPrisma;
+    // }): Match {
+    //     return new Match({
+    //         id,
+    //         date,
+    //         location: Location.from(location),
+    //     });
+    // }
+
     static from({
         id,
         date,
         location,
+        goals,
+        teams,
     }: MatchPrisma & {
         location: LocationPrisma;
+        goals?: (GoalPrisma & { team: TeamPrisma; player: UserPrisma })[];
+        teams?: (MatchTeamPrisma & {
+            team: TeamPrisma;
+            goals: (GoalPrisma & { team: TeamPrisma; player: UserPrisma })[];
+        })[];
     }): Match {
         return new Match({
             id,
             date,
             location: Location.from(location),
+            goals: goals ? goals.map((goal) => Goal.from(goal)) : [],
+            teams: teams
+                ? teams.map((team) =>
+                      MatchTeam.from({
+                          ...team,
+                          team: team.team,
+                          goals: team.goals || [],
+                      })
+                  )
+                : [],
         });
     }
 

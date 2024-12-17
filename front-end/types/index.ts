@@ -17,11 +17,16 @@ export type Match = {
     id: number;
     date: Date;
     location: Location;
-    teams: Team[];
+    teams: MatchForm[];
     goals: Goal[];
 };
 
-
+export type MatchForm = {
+    date: Date;
+    location: Location;
+    team: Team;
+    goals: Goal[];
+};
 
 export type Team = {
     id: number;
@@ -52,7 +57,6 @@ export type StatusMessage = {
     type: 'error' | 'success';
 };
 
-
 export interface DecodedToken {
     email: string;
     role: string;
@@ -60,4 +64,3 @@ export interface DecodedToken {
     exp: number;
     iss: string;
 }
-
