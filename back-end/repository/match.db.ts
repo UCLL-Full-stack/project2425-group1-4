@@ -28,15 +28,11 @@ const getMatchById = async (id: number) => {
             where: { id },
             include: {
                 location: true,
+                goals: true, // Ensure goals are included explicitly
                 teams: {
                     include: {
                         team: true,
-                    },
-                },
-                goals: {
-                    include: {
-                        player: true,
-                        team: true,
+                        goals: true, // Include goals for each team explicitly
                     },
                 },
             },
@@ -139,4 +135,9 @@ const updateMatch = async (
     return updatedMatch;
 };
 
-export default { getAllMatches, getMatchById, createMatch, updateMatch };
+export default {
+    getAllMatches,
+    getMatchById,
+    createMatch,
+    updateMatch,
+};

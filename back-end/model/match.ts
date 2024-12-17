@@ -1,32 +1,24 @@
 import {
     Goal as GoalPrisma,
     Location as LocationPrisma,
+    Team as TeamPrisma,
     Match as MatchPrisma,
+    User as UserPrisma,
 } from '@prisma/client';
-import { Goal } from './goal';
 import { Location } from './location';
+import { Team } from './team';
 
 export class Match {
     private id: number;
     private date: Date;
-    private goals: Goal[];
     private location: Location;
-    private teams: { id: number; name: string; description: string }[];
 
-    constructor(match: {
-        id: number;
-        date: Date;
-        goals?: Goal[];
-        location: Location;
-        teams?: { id: number; name: string; description: string }[];
-    }) {
+    constructor(match: { id: number; date: Date; location: Location }) {
         this.validate(match);
 
         this.id = match.id;
         this.date = match.date;
-        this.goals = match.goals || [];
         this.location = match.location;
-        this.teams = match.teams || [];
     }
 
     // Needs to be properly implemented
@@ -51,26 +43,8 @@ export class Match {
         return this.date;
     }
 
-    getGoals(): Goal[] {
-        return this.goals;
-    }
-
     getLocation(): Location {
         return this.location;
-    }
-
-    getTeams(): { id: number; name: string; description: string }[] {
-        return this.teams;
-    }
-
-    getTeamScores(): { teamAScore: number; teamBScore: number } {
-        const teamAScore = this.goals.filter((goal) => goal.getTeamId() === this.teams[0]?.id).length;
-        const teamBScore = this.goals.filter((goal) => goal.getTeamId() === this.teams[1]?.id).length;
-
-        return {
-            teamAScore,
-            teamBScore,
-        };
     }
 
     // Setters
@@ -82,41 +56,61 @@ export class Match {
         this.date = date;
     }
 
-    setGoals(goals: Goal[]): void {
-        this.goals = goals;
-    }
-
     setLocation(location: Location): void {
         this.location = location;
-    }
-
-    setTeams(teams: { id: number; name: string; description: string }[]) {
-        this.teams = teams;
     }
 
     static from({
         id,
         date,
         location,
-        goals,
-        teams,
     }: MatchPrisma & {
         location: LocationPrisma;
-        goals: GoalPrisma[];
-        teams: {
-            team: { id: number; name: string; description: string };
-        }[];
     }): Match {
         return new Match({
             id,
             date,
             location: Location.from(location),
-            goals: goals.map((goal) => Goal.from(goal)), // Updated Goal class handles teamId
-            teams: teams.map((matchTeam) => ({
-                id: matchTeam.team.id,
-                name: matchTeam.team.name,
-                description: matchTeam.team.description,
-            })),
         });
     }
+
+    // static from({
+    //     id,
+    //     date,
+    //     location,
+    //     goals,
+    //     teams,
+    // }: MatchPrisma & {
+    //     location: LocationPrisma;
+    //     goals: GoalPrisma[];
+    //     teams: Team[];
+    // }): Match {
+    //     return new Match({
+    //         id,
+    //         date,
+    //         location: Location.from(location),
+    //         goals: goals.map((goal) => Goal.from(goal)),
+    //         teams: teams.map((team) => Team.from(team)),
+    //     });
+    // }
+
+    // static from({
+    //     id,
+    //     date,
+    //     location,
+    //     goals,
+    //     teams,
+    // }: MatchPrisma & {
+    //     location: LocationPrisma;
+    //     goals: GoalPrisma[];
+    //     teams: (TeamPrisma & { players: UserPrisma[] })[];
+    // }): Match {
+    //     return new Match({
+    //         id,
+    //         date,
+    //         location: Location.from(location),
+    //         goals: goals.map((goal) => Goal.from(goal)),
+    //         teams: teams.map((team) => Team.from(team)), // Use Team.from here
+    //     });
+    // }
 }

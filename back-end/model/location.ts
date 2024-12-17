@@ -1,7 +1,7 @@
 import { Location as LocationPrisma } from '@prisma/client';
 
 export class Location {
-    private id?: number;
+    private id: number;
     private country: string;
     private city: string;
     private streetName: string;

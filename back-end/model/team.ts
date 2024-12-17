@@ -4,7 +4,7 @@ import { User } from './user';
 export class Team {
     private id: number;
     private name: string;
-    private coach: User | undefined;
+    private coach?: User;
     private players: User[];
     private description: string;
 
@@ -91,21 +91,74 @@ export class Team {
     setDescription(description: string): void {
         this.description = description;
     }
+    
 
-    static from(
-        team: TeamPrisma & {
-            coach: UserPrisma | null;
-            players: UserPrisma[];
-        }
-    ) {
+    static from(team: TeamPrisma & { coach?: UserPrisma | null; players?: UserPrisma[] }): Team {
         return new Team({
             id: team.id,
             name: team.name,
             coach: team.coach ? User.from(team.coach) : undefined,
-            players: team.players.map((player) => User.from(player)),
+            players: team.players ? team.players.map((player) => User.from(player)) : [],
             description: team.description,
         });
     }
+    
+
+
+    // static from({
+    //     id,
+    //     name,
+    //     coach,
+    //     players,
+    //     description,
+    // }: TeamPrisma & { coach: UserPrisma; players: UserPrisma[] }): Team {
+    //     return new Team({
+    //         id: id,
+    //         name: name,
+    //         coach: coach ? User.from(coach) : undefined,
+    //         players: players.map((player) => User.from(player)),
+    //         description: description,
+    //     });
+    // }
+
+    // static from(
+    //     team: TeamPrisma & {
+    //         coach: UserPrisma | null;
+    //         players: UserPrisma[];
+    //     }
+    // ) {
+    //     return new Team({
+    //         id: team.id,
+    //         name: team.name,
+    //         coach: team.coach ? User.from(team.coach) : undefined,
+    //         players: team.players.map((player) => User.from(player)),
+    //         description: team.description,
+    //     });
+    // }
+
+    // static from(teamPrisma: TeamPrisma & { players: UserPrisma[] }): Team {
+    //     return new Team({
+    //         id: teamPrisma.id,
+    //         name: teamPrisma.name,
+    //         description: teamPrisma.description,
+    //         players: teamPrisma.players.map((user) => User.from(user)),
+    //     });
+    // }
+
+    // static from({
+    //     id,
+    //     name,
+    //     coach,
+    //     players,
+    //     description,
+    // }: TeamPrisma & { players: UserPrisma[] }): Team {
+    //     return new Team({
+    //         id: teamPrisma.id,
+    //         name: teamPrisma.name,
+    //         description: teamPrisma.description,
+    //         players: teamPrisma.players.map((user) => User.from(user)),
+    //     });
+    // }
 
     equals(team: Team): boolean {
         return (

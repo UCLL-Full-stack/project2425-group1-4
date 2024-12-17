@@ -12,7 +12,7 @@ const getAllMatches = async () => {
     });
 };
 
-const getMatchById = async (id: string) => {
+const getMatchById = async (id: number) => {
     const loggedInUserString = localStorage.getItem('loggedInUser');
 
     if (!loggedInUserString) {

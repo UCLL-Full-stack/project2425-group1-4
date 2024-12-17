@@ -57,7 +57,7 @@ model MatchTeam {
   team            Team        @relation(fields: [teamId], references: [id])
   teamId          Int
 
-  goals           Goal[]
+  goals           Goal[]    // Goals scored by this team in this match
 
   @@id([matchId, teamId])
 }
