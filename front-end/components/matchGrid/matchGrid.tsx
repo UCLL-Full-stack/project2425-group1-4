@@ -33,12 +33,12 @@ const MatchGrid: React.FC<Props> = ({ matches }: Props) => {
                         {filteredMatches.length > 0 ? (
                             filteredMatches.map((match) => (
                                 <Link
-                                    href={`/matches/${match.id}`}
+                                    href={`matches/${match.id}`}
                                     key={match.id}
                                     className="bg-white p-4 rounded-lg shadow-md text-center hover:shadow-lg transition-shadow"
                                 >
                                     <p className="font-semibold text-lg text-gray-800">
-                                        {match.id}
+                                        Match {match.id}
                                     </p>
                                 </Link>
                             ))

@@ -1,6 +1,7 @@
 export type Goal = {
     id: number;
     time: number;
+    player: User;
 };
 
 export type Location = {
@@ -15,7 +16,12 @@ export type Location = {
 export type Match = {
     id: number;
     date: Date;
+    location: Location;
+    teams: Team[];
+    goals: Goal[];
 };
+
+
 
 export type Team = {
     id: number;

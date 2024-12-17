@@ -7,30 +7,47 @@ const getAllMatches = async (): Promise<Match[]> => {
             include: {
                 location: true,
                 goals: true,
+                teams: {
+                    include: {
+                        team: true,
+                    },
+                },
             },
         });
+
         return matchesPrisma.map((matchPrisma) => Match.from(matchPrisma));
     } catch (error) {
-        console.error(error);
+        console.error('Error fetching matches:', error);
         throw new Error('Database error, See server log for details.');
     }
 };
 
-const getMatchById = async (id: string): Promise<Match | null> => {
+const getMatchById = async (id: number) => {
     try {
         const matchPrisma = await database.match.findUnique({
-            where: {
-                id: parseInt(id),
-            },
+            where: { id },
             include: {
                 location: true,
-                goals: true,
+                teams: {
+                    include: {
+                        team: true,
+                    },
+                },
+                goals: {
+                    include: {
+                        player: true,
+                        team: true,
+                    },
+                },
             },
         });
-        return matchPrisma ? Match.from(matchPrisma) : null;
+
+        if (!matchPrisma) return null;
+
+        return Match.from(matchPrisma);
     } catch (error) {
         console.error(error);
-        throw new Error('Database error, See server log for details.');
+        throw new Error('Error retrieving match from the database.');
     }
 };
 
@@ -82,7 +99,6 @@ const createMatch = async ({
         throw new Error('Database error. See server logs for details.');
     }
 };
-
 
 const updateMatch = async (
     id: number,

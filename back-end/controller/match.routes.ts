@@ -33,6 +33,12 @@
  *             type: integer
  *             example: 101
  *           example: [1, 2]
+ *         teamAScore:
+ *           type: integer
+ *           example: 2
+ *         teamBScore:
+ *           type: integer
+ *           example: 3
  */
 
 import express, { NextFunction, Request, Response } from 'express';

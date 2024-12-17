@@ -9,7 +9,7 @@ const getAllMatches = async (): Promise<Match[]> => {
 };
 
 const getMatchById = async (id: string): Promise<Match> => {
-    const match = await matchDb.getMatchById(id);
+    const match = await matchDb.getMatchById(Number(id));
     if (!match) {
         throw new Error(`Match with id: ${id} does not exist.`);
     }

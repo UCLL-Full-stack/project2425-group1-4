@@ -11,14 +11,22 @@ export class Match {
     private date: Date;
     private goals: Goal[];
     private location: Location;
+    private teams: { id: number; name: string; description: string }[];
 
-    constructor(match: { id: number; date: Date; goals?: Goal[]; location: Location }) {
+    constructor(match: {
+        id: number;
+        date: Date;
+        goals?: Goal[];
+        location: Location;
+        teams?: { id: number; name: string; description: string }[];
+    }) {
         this.validate(match);
 
         this.id = match.id;
         this.date = match.date;
         this.goals = match.goals || [];
         this.location = match.location;
+        this.teams = match.teams || [];
     }
 
     // Needs to be properly implemented
@@ -51,6 +59,20 @@ export class Match {
         return this.location;
     }
 
+    getTeams(): { id: number; name: string; description: string }[] {
+        return this.teams;
+    }
+
+    getTeamScores(): { teamAScore: number; teamBScore: number } {
+        const teamAScore = this.goals.filter((goal) => goal.getTeamId() === this.teams[0]?.id).length;
+        const teamBScore = this.goals.filter((goal) => goal.getTeamId() === this.teams[1]?.id).length;
+
+        return {
+            teamAScore,
+            teamBScore,
+        };
+    }
+
     // Setters
     setId(id: number): void {
         this.id = id;
@@ -68,21 +90,33 @@ export class Match {
         this.location = location;
     }
 
-    // Prisma Match to Match
+    setTeams(teams: { id: number; name: string; description: string }[]) {
+        this.teams = teams;
+    }
+
     static from({
         id,
         date,
         location,
         goals,
+        teams,
     }: MatchPrisma & {
         location: LocationPrisma;
         goals: GoalPrisma[];
+        teams: {
+            team: { id: number; name: string; description: string };
+        }[];
     }): Match {
         return new Match({
             id,
             date,
             location: Location.from(location),
-            goals: goals.map((goal) => Goal.from(goal)),
+            goals: goals.map((goal) => Goal.from(goal)), // Updated Goal class handles teamId
+            teams: teams.map((matchTeam) => ({
+                id: matchTeam.team.id,
+                name: matchTeam.team.name,
+                description: matchTeam.team.description,
+            })),
         });
     }
 }

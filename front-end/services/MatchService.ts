@@ -1,4 +1,4 @@
-import { Match, User } from '@types';
+import { Match } from '@types';
 
 const getAllMatches = async () => {
     const token = JSON.parse(localStorage.getItem('loggedInUser') || '{}')?.token;
@@ -12,7 +12,50 @@ const getAllMatches = async () => {
     });
 };
 
-const createMatch = async (matchData: Match, token: string): Promise<Match> => {
+const getMatchById = async (id: string) => {
+    const loggedInUserString = localStorage.getItem('loggedInUser');
+
+    if (!loggedInUserString) {
+        throw new Error('Log in first, please');
+    }
+
+    const loggedInUser = JSON.parse(loggedInUserString);
+    const token = loggedInUser.token;
+
+    if (!token) {
+        throw new Error('No authorization token found. Log in first, please');
+    }
+
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matches/${id}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        },
+    });
+
+    if (!response.ok) {
+        const error = await response.json().catch(() => ({ message: 'Unknown error' }));
+        throw new Error(error.message || 'Failed to fetch match');
+    }
+
+    return await response
+};
+
+const createMatch = async (matchData: Match): Promise<Match> => {
+    const loggedInUserString = localStorage.getItem('loggedInUser');
+
+    if (!loggedInUserString) {
+        throw new Error('Log in first, please');
+    }
+
+    const loggedInUser = JSON.parse(loggedInUserString);
+    const token = loggedInUser.token;
+
+    if (!token) {
+        throw new Error('No authorization token found. Log in first, please');
+    }
+
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matches`, {
         method: 'POST',
         headers: {
@@ -30,9 +73,18 @@ const createMatch = async (matchData: Match, token: string): Promise<Match> => {
     return await response.json();
 };
 
-const updateMatch = async (id: string, matchData: Partial<Match>, token: string): Promise<Match> => {
+const updateMatch = async (id: string, matchData: Partial<Match>): Promise<Match> => {
+    const loggedInUserString = localStorage.getItem('loggedInUser');
+
+    if (!loggedInUserString) {
+        throw new Error('Log in first, please');
+    }
+
+    const loggedInUser = JSON.parse(loggedInUserString);
+    const token = loggedInUser.token;
+
     if (!token) {
-        throw new Error('Authorization token is missing');
+        throw new Error('No authorization token found. Log in first, please');
     }
 
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matches/${id}`, {
@@ -52,10 +104,11 @@ const updateMatch = async (id: string, matchData: Partial<Match>, token: string)
     return await response.json();
 };
 
-const UserService = {
+const MatchService = {
     getAllMatches,
+    getMatchById,
     updateMatch,
     createMatch
 };
 
-export default UserService;
+export default MatchService;

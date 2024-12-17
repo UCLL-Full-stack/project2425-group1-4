@@ -8,6 +8,7 @@ import swaggerUi from 'swagger-ui-express';
 
 import { expressjwt } from 'express-jwt';
 import helmet from 'helmet';
+import goalRouter from './controller/goal.routes';
 import matchRouter from './controller/match.routes';
 import teamRouter from './controller/team.routes';
 import userRouter from './controller/user.routes';
@@ -35,7 +36,15 @@ app.use(
         secret: process.env.JWT_SECRET || 'default_secret',
         algorithms: ['HS256'],
     }).unless({
-        path: ['/api-docs', /^\/api-docs\/.*/, '/users/login', /^\/users\/[^/]+$/, '/status'],
+        path: [
+            '/api-docs',
+            /^\/api-docs\/.*/,
+            '/users/login',
+            /^\/users\/[^/]+$/,
+            '/status',
+            '/matches',
+            /^\/goals\/match\/\d+$/,
+        ],
     })
 );
 
@@ -43,6 +52,7 @@ app.use(
 app.use('/users', userRouter);
 app.use('/matches', matchRouter);
 app.use('/teams', teamRouter);
+app.use('/goals', goalRouter);
 
 app.get('/status', (req, res) => {
     res.json({ message: 'Back-end is running...' });

@@ -1,3 +1,4 @@
+import { getgid } from 'process';
 import goalDb from '../repository/goal.db';
 
 const validateGoalIds = async (goalIds: number[]): Promise<void> => {
@@ -8,6 +9,11 @@ const validateGoalIds = async (goalIds: number[]): Promise<void> => {
     }
 };
 
+const getGoalsWithDetails = async (matchId: number) => {
+    return await goalDb.getGoalsWithDetails(matchId)
+};
+
 export default {
     validateGoalIds,
+    getGoalsWithDetails,
 };
