@@ -1,11 +1,11 @@
-import Header from '@components/header';
+import Header from '@components/header/header';
 import PlayerGrid from '@components/playerGrid/playerGrid';
 import UserService from '@services/UserService';
 import { User } from '@types';
 import { useTranslation } from 'next-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Head from 'next/head';
 import React, { useEffect, useState } from 'react';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 const PlayersPage: React.FC = () => {
     const [players, setPlayers] = useState<User[]>([]);

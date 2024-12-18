@@ -2,10 +2,10 @@ import { UserStorage } from '@types';
 import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
-import BackButton from './backButton';
-import Language from './language/Language';
+import Language from '../language/Language';
 import OverviewDropdown from './overviewDropdown';
 import UserDropdown from './userDropdown';
+import BackButton from './backButton';
 
 const Header: React.FC = () => {
     const [loggedInUser, setLoggedInUser] = useState<UserStorage | null>(null);

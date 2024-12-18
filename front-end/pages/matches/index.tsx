@@ -1,11 +1,11 @@
-import Header from '@components/header';
-import { Match } from '@types';
-import { useTranslation } from 'next-i18next';
-import Head from 'next/head';
-import React, { useEffect, useState } from 'react';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import Header from '@components/header/header';
 import MatchGrid from '@components/match/matchGrid';
 import MatchService from '@services/MatchService';
+import { Match } from '@types';
+import { useTranslation } from 'next-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import Head from 'next/head';
+import React, { useEffect, useState } from 'react';
 
 const MatchesPage: React.FC = () => {
     const [matches, setMatches] = useState<Match[]>([]);

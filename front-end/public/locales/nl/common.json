@@ -8,7 +8,7 @@
         "username": "Gebruikersnaam",
         "password": "Wachtwoord",
         "role": "Rol",
-        "noMatches": "Geen matchen gevonden."
+        "noMatches": "Log in om de laatste matches te bekijken."
     },
     "login": {
         "title": "Inloggen",
@@ -57,5 +57,9 @@
             "register": "Registreren",
             "logout": "Uitloggen"
         }
+    },
+    "modal": {
+        "sessionExpiredTitle": "Sessis is verlopen",
+        "sessionExpired": "Jouw sessie is verlopen. Log opnieuw in."
     }
 }

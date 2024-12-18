@@ -1,14 +1,11 @@
-import Header from '@components/header';
-import GoalService from '@services/GoalService';
+import Header from '@components/header/header';
 import MatchService from '@services/MatchService';
 import { Match } from '@types';
+import { useTranslation } from 'next-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useTranslation } from 'next-i18next';
-
-import useSWR from 'swr';
 
 const MatchPage = () => {
     const router = useRouter();
@@ -27,6 +24,18 @@ const MatchPage = () => {
             fetchMatch(Number(matchId));
         }
     }, [matchId]);
+
+    const getTeamColor = (teamIndex: number) => {
+        if (!match) return 'bg-gray-100'; // Default color
+
+        const team1Goals = match.teams[0]?.goals.length || 0;
+        const team2Goals = match.teams[1]?.goals.length || 0;
+
+        if (teamIndex === 0 && team1Goals > team2Goals) return 'bg-green-200';
+        if (teamIndex === 1 && team2Goals > team1Goals) return 'bg-green-200';
+
+        return 'bg-gray-100'; // Default color
+    };
 
     return (
         <>
@@ -47,11 +56,22 @@ const MatchPage = () => {
                             <p className="text-gray-600">{match?.id}</p>
                         </div>
 
-                        <div className="bg-gray-100 p-4 rounded-lg shadow-md">
-                            <h2 className="text-xl font-semibold mb-2 text-gray-800">Teams</h2>
-                            <p className="text-gray-600">
-                                {match?.teams[0].team.name} vs {match?.teams[1].team.name}
-                            </p>
+                        <div className="flex gap-4">
+                            {match?.teams.map((teamData, index) => (
+                                <a
+                                    key={index}
+                                    href={`/teams/${teamData.team.id}`}
+                                    className={`flex-1 rounded-lg shadow-md p-4 hover:bg-green-300 transition duration-200 ${getTeamColor(
+                                        index
+                                    )}`}
+                                >
+                                    <div className="text-center">
+                                        <h3 className="text-lg font-semibold text-gray-800">
+                                            {teamData.team.name}
+                                        </h3>
+                                    </div>
+                                </a>
+                            ))}
                         </div>
 
                         <div className="bg-gray-100 p-4 rounded-lg shadow-md">
@@ -76,13 +96,20 @@ const MatchPage = () => {
                                 {new Date(match?.date ?? '').toLocaleString()}
                             </p>
                         </div>
-                        <ul>
+                        <ul className="p-5">
                             {match?.goals.map((goal) => (
-                            <li key={goal.id}>
-                                {goal.time}' - {goal.player?.firstName || 'Unknown'}{' '}
-                                {goal.player?.lastName || ''} ({goal.team?.name || 'Unknown Team'})
-                            </li>
-                        ))}
+                                <li key={goal.id} className="hover:font-bold">
+                                    {goal.time}' -{' '}
+                                    <a
+                                        href={`/user/${goal.player.username}`}
+                                        className="text-blue-600 hover:underline"
+                                    >
+                                        {goal.player?.firstName || 'Unknown'}{' '}
+                                        {goal.player?.lastName || ''}
+                                    </a>{' '}
+                                    ({goal.team?.name || 'Unknown Team'})
+                                </li>
+                            ))}
                         </ul>
                     </div>
                 </div>

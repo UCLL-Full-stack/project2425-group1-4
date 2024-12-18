@@ -4,10 +4,26 @@ import React from 'react';
 
 type MatchTileProps = {
     match: Match;
+    teamId: number;
 };
 
-const MatchTile: React.FC<MatchTileProps> = ({ match }) => {
-    console.log(match);
+const MatchTile: React.FC<MatchTileProps> = ({ match, teamId }) => {
+    // Determine the team scores
+    const team1Score = match?.teams[0]?.goals.length || 0;
+    const team2Score = match?.teams[1]?.goals.length || 0;
+
+    // Determine which team is the current team
+    const isTeam1 = match?.teams[0]?.team.id === teamId;
+
+    // Set colors for the current team's score
+    const getScoreColor = (score: number, otherScore: number, isCurrentTeam: boolean) => {
+        if (score === otherScore) return ''; // Equal score: no color
+        if (isCurrentTeam) return score > otherScore ? 'text-green-500' : 'text-red-500';
+        return '';
+    };
+
+    const team1Color = getScoreColor(team1Score, team2Score, isTeam1);
+    const team2Color = getScoreColor(team2Score, team1Score, !isTeam1);
 
     return (
         <div
@@ -21,9 +37,9 @@ const MatchTile: React.FC<MatchTileProps> = ({ match }) => {
                 </h3>
                 {/* Score */}
                 <div className="text-3xl font-bold text-gray-900 mx-4">
-                    {match?.teams[0]?.goals.length}
+                    <span className={team1Color}>{team1Score}</span>
                     <span className="mx-3">-</span>
-                    {match?.teams[1]?.goals.length}
+                    <span className={team2Color}>{team2Score}</span>
                 </div>
                 <h3 className="text-md font-semibold text-gray-800 truncate w-2/5 text-right">
                     {match?.teams[1]?.team.name}

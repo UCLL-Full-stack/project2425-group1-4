@@ -43,6 +43,7 @@ app.use(
             /^\/users\/[^/]+$/,
             '/status',
             '/matches',
+            /^\/matches\/\d+$/, // `/matches/:id`
             /^\/goals\/match\/\d+$/,
         ],
     })

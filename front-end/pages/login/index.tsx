@@ -1,8 +1,8 @@
-import Head from 'next/head';
+import Header from '@components/header/header';
 import UserLoginForm from '@components/users/UserLoginForm';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import Header from '@components/header';
+import Head from 'next/head';
 
 const Login: React.FC = () => {
     const { t } = useTranslation();

@@ -8,7 +8,7 @@
         "username": "Username",
         "password": "Password",
         "role": "Role",
-        "noMatches": "No matches were found."
+        "noMatches": "Log in to see the latest matches"
     },
     "login": {
         "title": "Login",
@@ -57,5 +57,9 @@
             "register": "Register",
             "logout": "Logout"
         }
+    },
+    "modal": {
+        "sessionExpiredTitle": "Session Expired",
+        "sessionExpired": "Your session has expired. Please log in again."
     }
 }

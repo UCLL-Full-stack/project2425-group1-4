@@ -136,14 +136,18 @@ matchRouter.get('/', async (req: Request, res: Response, next: NextFunction) => 
  */
 matchRouter.get('/latest', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const limit = Number(req.query.limit) || 10;
-        const matches = await matchService.getLatestMatches(limit);
-        res.status(200).json(matches);
+        const { teamId, limit } = req.query;
+
+        const matches = await matchService.getLatestMatches({
+            teamId: teamId ? Number(teamId) : undefined,
+            limit: limit ? Number(limit) : 5,
+        });
+
+        return res.status(200).json(matches);
     } catch (error) {
         next(error);
     }
 });
-
 /**
  * @swagger
  * /matches/{id}:

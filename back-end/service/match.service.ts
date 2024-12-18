@@ -99,21 +99,26 @@ const getMatchById = async (id: string): Promise<Match> => {
 //     return Match.from(updatedMatch);
 // };
 
-const getLatestMatches = async (limit: number) => {
+type MatchFilter = {
+    teamId?: number;
+    limit?: number;
+};
+
+const getLatestMatches = async ({ teamId, limit }: MatchFilter) => {
     try {
-        if (limit <= 0) {
+        if (limit !== undefined && limit <= 0) {
             throw new Error('Limit must be a positive number');
         }
 
-        const matches = await matchDb.getLatestMatches(limit);
+        const matches = await matchDb.getLatestMatches({
+            teamId: teamId,
+            limit: limit || 5,
+        });
+
         return matches;
     } catch (error) {
-        if (error instanceof Error) {
-            console.error('Error fetching latest matches:', error.message);
-        } else {
-            console.error('Error fetching latest matches:', error);
-        }
-        throw new Error('Failed to fetch latest matches');
+        console.error('Error fetching latest matches:', error);
+        throw new Error('Failed to fetch latest matches.');
     }
 };
 

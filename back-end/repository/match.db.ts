@@ -68,6 +68,37 @@ const getMatchById = async (id: number) => {
     }
 };
 
+const getLatestMatchesByTeamId = async (teamId: number) => {
+    try {
+        const matches = await database.match.findMany({
+            where: {
+                teams: {
+                    some: {
+                        teamId: teamId,
+                    },
+                },
+            },
+            include: {
+                location: true,
+                teams: {
+                    include: {
+                        team: true,
+                    },
+                },
+            },
+            orderBy: {
+                date: 'desc',
+            },
+            take: 5,
+        });
+
+        return matches;
+    } catch (error) {
+        console.error('Error fetching matches:', error);
+        throw new Error('Database error, See server log for details.');
+    }
+};
+
 const createMatch = async ({
     date,
     locationId,
@@ -156,11 +187,19 @@ const updateMatch = async (
     return updatedMatch;
 };
 
-const getLatestMatches = async (limit: number) => {
+type MatchFilter = {
+    teamId?: number;
+    limit: number;
+};
+
+const getLatestMatches = async ({ teamId, limit }: MatchFilter) => {
     try {
-        return await database.match.findMany({
-            take: limit,
+        const matches = await database.match.findMany({
+            where: teamId
+                ? { teams: { some: { teamId: teamId } } }
+                : {}, // Fetch all matches if no teamId is provided
             orderBy: { date: 'desc' },
+            take: limit, // Apply limit
             include: {
                 location: true,
                 goals: {
@@ -179,9 +218,11 @@ const getLatestMatches = async (limit: number) => {
                 },
             },
         });
+
+        return matches;
     } catch (error) {
-        console.error('Error fetching latest matches:', error);
-        throw new Error('Database error, See server log for details.');
+        console.error('Error querying matches:', error);
+        throw new Error('Failed to retrieve matches from database.');
     }
 };
 
@@ -192,4 +233,5 @@ export default {
     createMatch,
     updateMatch,
     getLatestMatches,
+    getLatestMatchesByTeamId,
 };

@@ -1,11 +1,12 @@
-import Header from '@components/header';
+import Header from '@components/header/header';
 import { Team, User } from '@types';
+import { useTranslation } from 'next-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useTranslation } from 'next-i18next';
 
+import LatestMatches from '@components/team/latestMatches';
 import TeamService from '@services/TeamService';
 import UserService from '@services/UserService';
 
@@ -208,6 +209,7 @@ const TeamPage = () => {
                                     </>
                                 )}
                             </div>
+                            <LatestMatches teamId={Number(team.id)}></LatestMatches>
                         </div>
 
                         {/* Right Column - Players */}

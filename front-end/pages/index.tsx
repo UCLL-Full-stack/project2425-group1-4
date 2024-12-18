@@ -1,11 +1,11 @@
-import Header from '@components/header';
+import Header from '@components/header/header';
+import MatchTile from '@components/match/matchTile';
+import MatchService from '@services/MatchService';
+import { Match } from '@types';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Head from 'next/head';
 import React, { useEffect, useState } from 'react';
-import MatchService from '@services/MatchService';
-import MatchTile from '@components/match/matchTile';
-import { Match } from '@types';
 
 const HomePage: React.FC = () => {
     const { t } = useTranslation();
@@ -42,9 +42,9 @@ const HomePage: React.FC = () => {
                         <table className="table-auto w-full">
                             <thead>
                                 <tr>
-                                    <th className="px-4 py-2">{t("home.username")}</th>
-                                    <th className="px-4 py-2">{t("home.password")}</th>
-                                    <th className="px-4 py-2">{t("home.role")}</th>
+                                    <th className="px-4 py-2">{t('home.username')}</th>
+                                    <th className="px-4 py-2">{t('home.password')}</th>
+                                    <th className="px-4 py-2">{t('home.role')}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -54,7 +54,9 @@ const HomePage: React.FC = () => {
                                     <td className="border px-4 py-2">Admin</td>
                                 </tr>
                                 <tr>
-                                    <td className="border px-4 py-2">zinedine.zidane@example.com</td>
+                                    <td className="border px-4 py-2">
+                                        zinedine.zidane@example.com
+                                    </td>
                                     <td className="border px-4 py-2">abcdefghij</td>
                                     <td className="border px-4 py-2">Coach</td>
                                 </tr>
@@ -85,7 +87,9 @@ const HomePage: React.FC = () => {
                 {/* Match Tiles Section */}
                 <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
                     {matches.length > 0 ? (
-                        matches.map((match) => <MatchTile key={match.id} match={match} />)
+                        matches.map((match) => (
+                            <MatchTile key={match.id} match={match} teamId={0} />
+                        ))
                     ) : (
                         <p className="text-center col-span-full text-gray-500">
                             {t('home.noMatches')}

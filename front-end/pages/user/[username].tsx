@@ -1,14 +1,13 @@
+import Header from '@components/header/header';
+import TeamService from '@services/TeamService';
 import UserService from '@services/UserService';
 import { Team, User } from '@types';
+import { useTranslation } from 'next-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import ProfileHeader from '../../components/profileHeader';
 import StatsGrid from '../../components/statsGrid';
-import Head from 'next/head';
-import Header from '@components/header';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useTranslation } from 'next-i18next';
-import TeamService from '@services/TeamService';
 
 const UserPage = () => {
     const router = useRouter();
