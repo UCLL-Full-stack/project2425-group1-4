@@ -8,13 +8,14 @@ import { useEffect, useState } from 'react';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'next-i18next';
 
-import useSWR from 'swr';
 import TeamService from '@services/TeamService';
 
 const TeamPage = () => {
     const router = useRouter();
     const { teamId } = router.query;
     const [team, setTeam] = useState<Team | null>(null);
+    const [editedTeam, setEditedTeam] = useState<Team | null>(null);
+    const [isEditing, setIsEditing] = useState(false);
     const { t } = useTranslation();
 
     const fetchTeam = async (teamId: number) => {
@@ -28,6 +29,38 @@ const TeamPage = () => {
             fetchTeam(Number(teamId));
         }
     }, [teamId]);
+
+    const handleEditToggle = () => {
+        setIsEditing(!isEditing);
+        if (!isEditing) {
+            setEditedTeam(team);
+        } else {
+            setEditedTeam(null);
+        }
+    };
+
+    const handleSave = async () => {
+        try {
+            if (editedTeam && JSON.stringify(team) !== JSON.stringify(editedTeam)) {
+                const response = await TeamService.updateTeam(editedTeam);
+                if (response.ok) {
+                    const updatedTeam = await response.json();
+                    setTeam(updatedTeam);
+                    setIsEditing(false);
+                    setEditedTeam(null);
+                } else {
+                    const { message } = await response.json();
+                    alert(message || 'Failed to update team. Please try again.');
+                }
+            } else {
+                setIsEditing(false);
+                setEditedTeam(null);
+            }
+        } catch (error) {
+            console.error('Error updating team:', error);
+            alert('An error occurred while updating the team. Please try again later.');
+        }
+    };
 
     return (
         <>
@@ -48,22 +81,73 @@ const TeamPage = () => {
                             {/* Team Name */}
                             <div className="bg-gray-100 p-4 rounded-lg shadow-md">
                                 <h2 className="text-xl font-semibold text-gray-800">Team Name</h2>
-                                <p className="text-gray-600">{team.name}</p>
+                                {isEditing ? (
+                                    <input
+                                        className="w-full p-2 border rounded-lg"
+                                        value={editedTeam?.name || ''}
+                                        onChange={(e) =>
+                                            setEditedTeam({
+                                                ...editedTeam,
+                                                name: e.target.value,
+                                            } as Team)
+                                        }
+                                    />
+                                ) : (
+                                    <p className="text-gray-600">{team.name}</p>
+                                )}
                             </div>
 
                             {/* Team Description */}
                             <div className="bg-gray-100 p-4 rounded-lg shadow-md">
                                 <h2 className="text-xl font-semibold text-gray-800">Description</h2>
-                                <p className="text-gray-600">{team.description}</p>
+                                {isEditing ? (
+                                    <textarea
+                                        className="w-full p-2 border rounded-lg"
+                                        value={editedTeam?.description || ''}
+                                        onChange={(e) =>
+                                            setEditedTeam({
+                                                ...editedTeam,
+                                                description: e.target.value,
+                                            } as Team)
+                                        }
+                                        placeholder="Enter team description"
+                                    />
+                                ) : (
+                                    <p className="text-gray-600">{team.description}</p>
+                                )}
                             </div>
 
                             {/* Coach Info */}
                             <div className="bg-gray-100 p-4 rounded-lg shadow-md">
                                 <h2 className="text-xl font-semibold text-gray-800">Coach</h2>
-                                <p className="text-gray-600">
-                                    {team.coach?.firstName} {team.coach?.lastName}
-                                </p>
-                                <p className="text-gray-500">{team.coach?.description || ''}</p>
+                                {isEditing ? (
+                                    <input
+                                        className="w-full p-2 border rounded-lg"
+                                        value={`${editedTeam?.coach?.firstName || ''} ${
+                                            editedTeam?.coach?.lastName || ''
+                                        }`.trim()}
+                                        onChange={(e) =>
+                                            setEditedTeam({
+                                                ...editedTeam,
+                                                coach: {
+                                                    ...(editedTeam?.coach || {}),
+                                                    firstName: e.target.value.split(' ')[0] || '',
+                                                    lastName: e.target.value.split(' ')[1] || '',
+                                                },
+                                            } as Team)
+                                        }
+                                        placeholder="Enter coach name"
+                                    />
+                                ) : (
+                                    <>
+                                        <p className="text-gray-600">
+                                            {team.coach?.firstName} {team.coach?.lastName}
+                                        </p>
+                                        <p className="text-gray-500">
+                                            {team.coach?.description || ''}
+                                        </p>
+                                    </>
+                                )}
                             </div>
                         </div>
 
@@ -93,6 +177,46 @@ const TeamPage = () => {
                 ) : (
                     <p className="text-gray-600 mt-8">Loading team details...</p>
                 )}
+
+                {/* Edit and Save Button */}
+                <div className="mt-6">
+                    {isEditing ? (
+                        <div className="flex gap-4">
+                            <button
+                                onClick={handleSave}
+                                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                            >
+                                Save
+                            </button>
+                            <button
+                                onClick={handleEditToggle}
+                                className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    ) : (
+                        <button
+                            onClick={handleEditToggle}
+                            className="p-2 hover:bg-gray-200 rounded-full"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-6 w-6 text-gray-600"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    d="M15.232 5.232l3.536 3.536M9 11l3.536-3.536a1.5 1.5 0 012.121 0l3.536 3.536a1.5 1.5 0 010 2.121L11 21H6v-5L15.232 5.232z"
+                                />
+                            </svg>
+                        </button>
+                    )}
+                </div>
             </div>
         </>
     );
