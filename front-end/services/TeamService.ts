@@ -37,38 +37,17 @@ const updateTeam = async (team: Team) => {
     });
 };
 
-const addPlayerToTeam = async (teamId: number, playerId: number): Promise<boolean> => {
-    const loggedInUserString = localStorage.getItem('loggedInUser');
+const addPlayerToTeam = async (teamId: number, playerId: number) => {
+    const token = JSON.parse(localStorage.getItem('loggedInUser') || '{}')?.token;
 
-    if (!loggedInUserString) {
-        throw new Error('Log in first, please');
-    }
-
-    const loggedInUser = JSON.parse(loggedInUserString);
-    const token = loggedInUser.token;
-
-    if (!token) {
-        throw new Error('No authorization token found. Log in first, please');
-    }
-
-    try {
-        const response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/teams/${teamId}/addPlayer`,
-            {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({ playerId }),
-            }
-        );
-
-        return response.ok;
-    } catch (error) {
-        console.error('Error adding player to team:', error);
-        return false;
-    }
+    return fetch(`${process.env.NEXT_PUBLIC_API_URL}/teams/${teamId}/addPlayer`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ playerId }),
+    });
 };
 
 const removePlayerFromTeam = async (teamId: number, playerId: number): Promise<boolean> => {

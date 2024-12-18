@@ -16,6 +16,9 @@ const TeamPage = () => {
     const [editedTeam, setEditedTeam] = useState<Team | null>(null);
     const [isEditing, setIsEditing] = useState(false);
     const [users, setUsers] = useState<User[]>([]);
+    const [isAddingPlayer, setIsAddingPlayer] = useState(false);
+    const [selectedUser, setSelectedUser] = useState<User | null>(null);
+
     const { t } = useTranslation();
 
     const fetchTeam = async (teamId: number) => {
@@ -59,6 +62,36 @@ const TeamPage = () => {
             setEditedTeam(team);
         } else {
             setEditedTeam(null);
+        }
+    };
+
+    const handleAddPlayer = async () => {
+        if (!selectedUser || !selectedUser.id) {
+            alert('Please select a user to add.');
+            return;
+        }
+
+        // Ensure team is not null
+        if (!team || !team.id) {
+            alert('Team data is not loaded. Please try again.');
+            return;
+        }
+
+        try {
+            const response = await TeamService.addPlayerToTeam(team.id, selectedUser.id);
+
+            if (response.ok) {
+                const updatedTeam = await response.json();
+                setTeam(updatedTeam); // Update the team state with the new player
+                setIsAddingPlayer(false); // Close the add player UI
+                setSelectedUser(null); // Clear the selected user
+            } else {
+                const { message } = await response.json();
+                alert(message || 'Failed to add player. Please try again.');
+            }
+        } catch (error) {
+            console.error('Error adding player:', error);
+            alert('An error occurred while adding the player. Please try again later.');
         }
     };
 
@@ -183,6 +216,8 @@ const TeamPage = () => {
                                 <h2 className="text-xl font-semibold text-gray-800 mb-4">
                                     Players
                                 </h2>
+
+                                {/* Players List */}
                                 {team.players && team.players.length > 0 ? (
                                     <ul className="space-y-2">
                                         {team.players.map((player) => (
@@ -196,6 +231,47 @@ const TeamPage = () => {
                                     </ul>
                                 ) : (
                                     <p className="text-gray-500">No players available.</p>
+                                )}
+
+                                {/* Add Player (Only in Edit Mode) */}
+                                {isEditing && (
+                                    <div className="mt-4">
+                                        <button
+                                            onClick={() => setIsAddingPlayer(!isAddingPlayer)}
+                                            className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
+                                        >
+                                            {isAddingPlayer ? 'Cancel' : 'Add Player'}
+                                        </button>
+
+                                        {/* Add Player Dropdown */}
+                                        {isAddingPlayer && (
+                                            <div className="mt-4">
+                                                <select
+                                                    className="w-full p-2 border rounded-lg"
+                                                    onChange={(e) => {
+                                                        const selected = users.find(
+                                                            (user) =>
+                                                                user.id === parseInt(e.target.value)
+                                                        );
+                                                        setSelectedUser(selected || null); // Update state with the selected user object
+                                                    }}
+                                                >
+                                                    <option value="">Select a user</option>
+                                                    {users.map((user) => (
+                                                        <option key={user.id} value={user.id}>
+                                                            {user.firstName} {user.lastName}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                                <button
+                                                    onClick={handleAddPlayer}
+                                                    className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                                                >
+                                                    Add to Team
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
                                 )}
                             </div>
                         </div>

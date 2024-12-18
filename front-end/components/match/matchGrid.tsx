@@ -35,11 +35,26 @@ const MatchGrid: React.FC<Props> = ({ matches }: Props) => {
                                 <Link
                                     href={`matches/${match.id}`}
                                     key={match.id}
-                                    className="bg-white p-4 rounded-lg shadow-md text-center hover:shadow-lg transition-shadow"
+                                    className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow flex flex-col items-center text-center"
                                 >
-                                    <p className="font-semibold text-lg text-gray-800">
-                                        Match {match.id}
-                                    </p>
+                                    {/* Team Names */}
+                                    <div className="flex justify-between w-full text-gray-800 font-semibold text-lg">
+                                        <span className="flex-1 text-right pr-4">
+                                            {match.teams[0].team.name}
+                                        </span>
+                                        <span className="text-gray-500 font-normal text-base">
+                                            vs
+                                        </span>
+                                        <span className="flex-1 text-left pl-4">
+                                            {match.teams[1].team.name}
+                                        </span>
+                                    </div>
+
+                                    {/* Score */}
+                                    <div className="text-gray-700 font-bold text-xl mt-2">
+                                        {match.teams[0].goals.length} -{' '}
+                                        {match.teams[1].goals.length}
+                                    </div>
                                 </Link>
                             ))
                         ) : (
