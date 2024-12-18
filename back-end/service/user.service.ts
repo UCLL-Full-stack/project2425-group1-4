@@ -5,6 +5,7 @@ import teamDb from '../repository/team.db';
 import bcrypt from 'bcrypt';
 import { generateJwtToken } from '../util/jwt';
 import { UnauthorizedError } from 'express-jwt';
+import { Role } from '@prisma/client';
 
 const getAllPlayers = async (): Promise<User[]> => {
     const players = await userDb.getAllPlayers();
@@ -94,6 +95,14 @@ const getUserByUsername = async ({ username }: { username: string }): Promise<Us
     return user;
 };
 
+const getUsersByRole = async (role: Role): Promise<User[]> => {
+    const users = await userDb.getUsersByRole(role);
+    if (!users) {
+        throw new Error('No users found.');
+    }
+    return users;
+}
+
 const authenticate = async ({ username, password }: UserInput): Promise<AuthenticationResponse> => {
     const user = await getUserByUsername({ username });
 
@@ -145,6 +154,7 @@ export default {
     updateUser,
     getUserById,
     getUserByUsername,
+    getUsersByRole,
     authenticate,
     createUser,
 };

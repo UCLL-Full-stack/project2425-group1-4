@@ -65,6 +65,18 @@ const getUserByUsername = async (username: string) => {
     });
 };
 
+const getUsersByRole = async (role: string) => {
+    const token = JSON.parse(localStorage.getItem('loggedInUser') || '{}')?.token;
+
+    return await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/role/${role}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
 const loginUser = (user: User) => {
     return fetch(process.env.NEXT_PUBLIC_API_URL + '/users/login', {
         method: 'POST',
@@ -89,6 +101,7 @@ const UserService = {
     getAllPlayers,
     getAllUsers,
     getUserByUsername,
+    getUsersByRole,
     updateUser,
     loginUser,
     registerUser,

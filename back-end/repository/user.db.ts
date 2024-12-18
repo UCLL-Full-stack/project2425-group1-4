@@ -1,3 +1,4 @@
+import { Role } from '@prisma/client';
 import { User } from '../model/user';
 import database from './database';
 import goalDb from './goal.db';
@@ -56,6 +57,20 @@ const getUserByEmail = async (email: string): Promise<User | null> => {
             },
         });
         return userPrisma ? User.from(userPrisma) : null;
+    } catch (error) {
+        console.error(error);
+        throw new Error('Database error, See server log for details.');
+    }
+};
+
+const getUsersByRole = async (role: Role): Promise<User[]> => {
+    try {
+        const usersPrisma = await database.user.findMany({
+            where: {
+                role,
+            },
+        });
+        return usersPrisma.map((userPrisma) => User.from(userPrisma));
     } catch (error) {
         console.error(error);
         throw new Error('Database error, See server log for details.');
@@ -144,6 +159,7 @@ export default {
     getUserById,
     updateUser,
     getUserByEmail,
+    getUsersByRole,
     getUserByUsername,
     createUser,
 };

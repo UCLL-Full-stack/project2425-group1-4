@@ -1,7 +1,5 @@
 import Header from '@components/header';
-import GoalService from '@services/GoalService';
-import MatchService from '@services/MatchService';
-import { Team } from '@types';
+import { Team, User } from '@types';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -9,6 +7,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'next-i18next';
 
 import TeamService from '@services/TeamService';
+import UserService from '@services/UserService';
 
 const TeamPage = () => {
     const router = useRouter();
@@ -16,12 +15,30 @@ const TeamPage = () => {
     const [team, setTeam] = useState<Team | null>(null);
     const [editedTeam, setEditedTeam] = useState<Team | null>(null);
     const [isEditing, setIsEditing] = useState(false);
+    const [users, setUsers] = useState<User[]>([]);
     const { t } = useTranslation();
 
     const fetchTeam = async (teamId: number) => {
-        const [teamResponse] = await Promise.all([TeamService.getTeamById(teamId)]);
-        const [team] = await Promise.all([teamResponse.json()]);
-        setTeam(team);
+        const teamResponse = await TeamService.getTeamById(teamId);
+        const teamData = await teamResponse.json();
+        setTeam(teamData);
+    };
+
+    const fetchUsersByRole = async (currentCoach: User | null) => {
+        try {
+            const response = await UserService.getUsersByRole('USER'); // Fetch users with 'USER' role
+            const usersData = await response.json();
+
+            // Add current coach to the list if not already included
+            if (currentCoach && !usersData.some((user: User) => user.id === currentCoach.id)) {
+                usersData.push(currentCoach);
+            }
+
+            setUsers(usersData);
+        } catch (error) {
+            console.error('Error fetching users:', error);
+            setUsers([]); // Fallback to empty array
+        }
     };
 
     useEffect(() => {
@@ -29,6 +46,12 @@ const TeamPage = () => {
             fetchTeam(Number(teamId));
         }
     }, [teamId]);
+
+    useEffect(() => {
+        if (team) {
+            fetchUsersByRole(team.coach);
+        }
+    }, [team]);
 
     const handleEditToggle = () => {
         setIsEditing(!isEditing);
@@ -121,23 +144,26 @@ const TeamPage = () => {
                             <div className="bg-gray-100 p-4 rounded-lg shadow-md">
                                 <h2 className="text-xl font-semibold text-gray-800">Coach</h2>
                                 {isEditing ? (
-                                    <input
+                                    <select
                                         className="w-full p-2 border rounded-lg"
-                                        value={`${editedTeam?.coach?.firstName || ''} ${
-                                            editedTeam?.coach?.lastName || ''
-                                        }`.trim()}
-                                        onChange={(e) =>
+                                        value={editedTeam?.coach?.id || ''}
+                                        onChange={(e) => {
+                                            const selectedCoach = users.find(
+                                                (user) => user.id === parseInt(e.target.value)
+                                            );
                                             setEditedTeam({
                                                 ...editedTeam,
-                                                coach: {
-                                                    ...(editedTeam?.coach || {}),
-                                                    firstName: e.target.value.split(' ')[0] || '',
-                                                    lastName: e.target.value.split(' ')[1] || '',
-                                                },
-                                            } as Team)
-                                        }
-                                        placeholder="Enter coach name"
-                                    />
+                                                coach: selectedCoach || null, // Set the selected user as coach
+                                            } as Team);
+                                        }}
+                                    >
+                                        <option value="">Select a coach</option>
+                                        {users.map((user) => (
+                                            <option key={user.id} value={user.id}>
+                                                {user.firstName} {user.lastName}
+                                            </option>
+                                        ))}
+                                    </select>
                                 ) : (
                                     <>
                                         <p className="text-gray-600">
