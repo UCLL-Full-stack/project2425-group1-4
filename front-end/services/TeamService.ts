@@ -12,39 +12,16 @@ const getAllTeams = async () => {
     });
 };
 
-const getTeamById = async (teamId: number): Promise<Team | null> => {
-    const loggedInUserString = localStorage.getItem('loggedInUser');
+const getTeamById = async (teamId: number) => {
+    const token = JSON.parse(localStorage.getItem('loggedInUser') || '{}')?.token;
 
-    if (!loggedInUserString) {
-        throw new Error('Log in first, please');
-    }
-
-    const loggedInUser = JSON.parse(loggedInUserString);
-    const token = loggedInUser.token;
-
-    if (!token) {
-        throw new Error('No authorization token found. Log in first, please');
-    }
-
-    try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/teams/${teamId}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
-            },
-        });
-
-        if (!response.ok) {
-            throw new Error(`Failed to fetch team with ID ${teamId}`);
-        }
-
-        const team: Team = await response.json();
-        return team;
-    } catch (error) {
-        console.error(`Error fetching team by ID ${teamId}:`, error);
-        return null;
-    }
+    return fetch(`${process.env.NEXT_PUBLIC_API_URL}/teams/${teamId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        },
+    });
 };
 
 const updateTeam = async (team: Team): Promise<boolean> => {
