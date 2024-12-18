@@ -14,11 +14,11 @@ const getAllPlayers = async (): Promise<User[]> => {
     return players;
 };
 
-const getAllUsers = async ({ role }: { role: string}): Promise<User[]> => {
-    if (role === "ADMIN") {
+const getAllUsers = async ({ role }: { role: string }): Promise<User[]> => {
+    if (role === 'ADMIN') {
         return userDb.getAllUsers();
     } else {
-        throw new UnauthorizedError("credentials_required", {
+        throw new UnauthorizedError('credentials_required', {
             message: 'You are not authorized to access this resource',
         });
     }
@@ -26,6 +26,8 @@ const getAllUsers = async ({ role }: { role: string}): Promise<User[]> => {
 
 const updateUser = async (userId: number, editedUser: UserInput): Promise<User | null> => {
     const user = await userDb.getUserById(userId);
+
+    console.log('user', editedUser);
 
     // Return null if the user is not found
     if (!user) {
@@ -35,19 +37,21 @@ const updateUser = async (userId: number, editedUser: UserInput): Promise<User |
     // Destructure properties from editedUser
     const { playerOfTeam, description, email, password } = editedUser;
 
-    // Update fields only if they are provided and different from current values
+    // Update team if provided and different
     if (
-        playerOfTeam !== undefined &&
-        playerOfTeam !== null &&
-        user.getPlayerOfTeam() !== playerOfTeam
+        playerOfTeam?.id !== undefined &&
+        playerOfTeam.id !== null &&
+        playerOfTeam.id !== user.getPlayerOfTeam()?.getId()
     ) {
-        const teamExists = await teamDb.getTeamById(playerOfTeam);
-        if (!teamExists) {
+        const team = await teamDb.getTeamById(playerOfTeam.id);
+        console.log('team', team);
+        if (!team) {
             throw new Error('Team does not exist');
         }
-        user.setPlayerOfTeam(playerOfTeam);
+        user.setPlayerOfTeam(team); // Use the actual Team object
     }
 
+    // Update description if provided and different
     if (
         description !== undefined &&
         description !== null &&
@@ -56,6 +60,7 @@ const updateUser = async (userId: number, editedUser: UserInput): Promise<User |
         user.setDescription(description);
     }
 
+    // Update email if provided and different
     if (email !== undefined && email !== null && user.getEmail() !== email) {
         const existingEmail = await userDb.getUserByEmail(email);
         if (existingEmail) {
@@ -64,13 +69,13 @@ const updateUser = async (userId: number, editedUser: UserInput): Promise<User |
         user.setEmail(email);
     }
 
+    // Update password if provided and different
     if (password !== undefined && password !== null && user.getPassword() !== password) {
         user.setPassword(password);
     }
 
     // Save the updated user in the database
-    await userDb.updateUser(user);
-    return user;
+    return userDb.updateUser(user);
 };
 
 const getUserById = async (userId: number): Promise<User> => {

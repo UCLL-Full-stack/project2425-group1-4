@@ -1,38 +1,15 @@
 import { Team } from '@types';
 
-const getAllTeams = async (): Promise<Team[]> => {
-    const loggedInUserString = localStorage.getItem('loggedInUser');
+const getAllTeams = async () => {
+    const token = JSON.parse(localStorage.getItem('loggedInUser') || '{}')?.token;
 
-    if (!loggedInUserString) {
-        throw new Error('Log in first, please');
-    }
-
-    const loggedInUser = JSON.parse(loggedInUserString);
-    const token = loggedInUser.token;
-
-    if (!token) {
-        throw new Error('No authorization token found. Log in first, please');
-    }
-
-    try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/teams`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
-            },
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to fetch teams');
-        }
-
-        const teams: Team[] = await response.json();
-        return teams;
-    } catch (error) {
-        console.error('Error fetching all teams:', error);
-        return [];
-    }
+    return fetch(process.env.NEXT_PUBLIC_API_URL + '/teams', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        },
+    });
 };
 
 const getTeamById = async (teamId: number): Promise<Team | null> => {

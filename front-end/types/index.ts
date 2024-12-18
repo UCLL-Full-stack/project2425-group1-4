@@ -48,8 +48,8 @@ export type User = {
     username?: string;
     description?: string;
     role?: string;
-    coachOfTeam?: number;
-    playerOfTeam?: number;
+    coachOfTeam?: Team;
+    playerOfTeam?: Team;
     goals?: Goal[];
 };
 

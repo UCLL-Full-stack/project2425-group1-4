@@ -71,7 +71,7 @@ const addPlayerToTeam = async (teamId: number, playerId: number): Promise<boolea
     return true;
 };
 
-const removePlayerFromTeam = async (teamId: number, playerId: number): Promise<boolean> => {
+const removePlayerFromTeam = async (teamId: number, playerId: number) => {
     const team = await teamDb.getTeamById(teamId);
 
     if (!team) {
@@ -83,9 +83,7 @@ const removePlayerFromTeam = async (teamId: number, playerId: number): Promise<b
         return false; // Player not found
     }
     // team.removePlayer(player); // Assuming `removePlayer` is a method that removes a player by User object
-    player.setPlayerOfTeam(teamId);
-    await teamDb.updateTeam(team);
-    return true;
+    return teamDb.updateTeam(team);
 };
 
 export default {

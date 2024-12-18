@@ -1,5 +1,6 @@
 import { Goal } from './goal';
-import { Role, User as UserPrisma } from '@prisma/client';
+import { Role, User as UserPrisma, Team as TeamPrisma, Goal as GoalPrisma } from '@prisma/client';
+import { Team } from './team';
 
 export class User {
     private id?: number;
@@ -12,8 +13,8 @@ export class User {
     private description?: string;
     private role: Role;
 
-    private coachOfTeam?: number;
-    private playerOfTeam?: number;
+    private coachOfTeam?: Team;
+    private playerOfTeam?: Team;
     private goals: Goal[];
 
     constructor(user: {
@@ -26,8 +27,8 @@ export class User {
         username: string;
         description?: string;
         role?: Role;
-        coachOfTeam?: number;
-        playerOfTeam?: number;
+        coachOfTeam?: Team;
+        playerOfTeam?: Team;
         goals?: Goal[];
     }) {
         this.validate(user);
@@ -117,17 +118,18 @@ export class User {
         return this.role;
     }
 
-    getCoachOfTeam(): number | undefined {
+    getCoachOfTeam(): Team | undefined {
         return this.coachOfTeam;
     }
 
-    getPlayerOfTeam(): number | undefined {
+    getPlayerOfTeam(): Team | undefined {
         return this.playerOfTeam;
     }
 
     getGoals(): Goal[] {
         return this.goals;
     }
+
 
     // Setters with validation as needed
     setFirstName(firstName: string): void {
@@ -172,11 +174,11 @@ export class User {
         this.role = role;
     }
 
-    setCoachOfTeam(team: number): void {
+    setCoachOfTeam(team: Team): void {
         this.coachOfTeam = team;
     }
 
-    setPlayerOfTeam(team: number): void {
+    setPlayerOfTeam(team: Team): void {
         this.playerOfTeam = team;
     }
 
@@ -212,7 +214,14 @@ export class User {
         username,
         description,
         role,
-    }: UserPrisma) {
+        coachOfTeam,
+        playerOfTeam,
+        goals,
+    }: UserPrisma & {
+        coachOfTeam?: TeamPrisma | null;
+        playerOfTeam?: TeamPrisma | null;
+        goals?: (GoalPrisma & { team: TeamPrisma; player: UserPrisma })[];
+    }): User {
         return new User({
             id,
             firstName,
@@ -222,7 +231,10 @@ export class User {
             email,
             username,
             description: description ?? undefined,
-            role: role as Role,
+            role,
+            coachOfTeam: coachOfTeam ? Team.from(coachOfTeam) : undefined,
+            playerOfTeam: playerOfTeam ? Team.from(playerOfTeam) : undefined,
+            goals: goals ? goals.map((goal) => Goal.from(goal)) : [],
         });
     }
 }

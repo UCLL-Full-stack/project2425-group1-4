@@ -10,8 +10,8 @@ type UserInput = {
     username: string;
     description?: string;
     role: string;
-    coachOfTeam?: number;
-    playerOfTeam?: number;
+    coachOfTeam?: TeamInput;
+    playerOfTeam?: TeamInput;
     goals?: GoalInput[];
 };
 

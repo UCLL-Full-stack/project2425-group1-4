@@ -1,5 +1,6 @@
 import { User } from '../model/user';
 import database from './database';
+import goalDb from './goal.db';
 
 const getAllPlayers = async (): Promise<User[]> => {
     try {
@@ -28,8 +29,16 @@ const getAllUsers = async (): Promise<User[]> => {
 const getUserById = async (id: number): Promise<User | null> => {
     try {
         const userPrisma = await database.user.findUnique({
-            where: {
-                id: id,
+            where: { id },
+            include: {
+                playerOfTeam: true,
+                coachOfTeam: true,
+                goals: {
+                    include: {
+                        team: true,
+                        player: true,
+                    },
+                },
             },
         });
         return userPrisma ? User.from(userPrisma) : null;
@@ -68,6 +77,20 @@ const updateUser = async (user: User): Promise<User> => {
                 username: user.getUsername(),
                 description: user.getDescription() ?? '',
                 role: user.getRole(),
+                playerOfTeam: user.getPlayerOfTeam()
+                    ? { connect: { id: user.getPlayerOfTeam()?.getId() } }
+                    : undefined,
+                coachOfTeam: user.getCoachOfTeam()
+                    ? { connect: { id: user.getCoachOfTeam()?.getId() } }
+                    : undefined,
+            },
+            include: {
+                playerOfTeam: {
+                    include: {
+                        coach: true,
+                        players: true,
+                    },
+                },
             },
         });
         return User.from(userPrisma);
