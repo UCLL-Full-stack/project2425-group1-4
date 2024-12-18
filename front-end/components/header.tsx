@@ -1,4 +1,4 @@
-import { User } from '@types';
+import { UserStorage } from '@types';
 import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
@@ -8,7 +8,7 @@ import OverviewDropdown from './overviewDropdown';
 import UserDropdown from './userDropdown';
 
 const Header: React.FC = () => {
-    const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
+    const [loggedInUser, setLoggedInUser] = useState<UserStorage | null>(null);
     const { t } = useTranslation();
 
     useEffect(() => {
@@ -61,6 +61,17 @@ const Header: React.FC = () => {
                                 href="/matches"
                             >
                                 {t('header.nav.matches')}
+                            </Link>
+                        </>
+                    )}
+
+                    {loggedInUser && ['COACH', 'PLAYER'].includes(loggedInUser.role ?? '') && (
+                        <>
+                            <Link
+                                className="px-2 text-white text-xl hover:bg-slate-600 rounded-lg"
+                                href={`/teams/${loggedInUser.teamId}`}
+                            >
+                                {t('header.nav.myTeam')}
                             </Link>
                         </>
                     )}

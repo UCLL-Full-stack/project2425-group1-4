@@ -57,6 +57,7 @@ type AuthenticationResponse = {
     username: string;
     fullname: string;
     role: string;
+    teamId?: number;
 };
 export type {
     AuthenticationRequest,

@@ -1,4 +1,5 @@
 import { Team } from '@types';
+import Link from 'next/link';
 import React, { useState } from 'react';
 
 type Props = {
@@ -9,7 +10,7 @@ const TeamGrid: React.FC<Props> = ({ teams }: Props) => {
     const [searchTerm, setSearchTerm] = useState('');
 
     // Filter teams
-    const filteredTeams = teams.filter((team) =>
+    const filteredTeams = (Array.isArray(teams) ? teams : []).filter((team) =>
         `${team.name}`.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
@@ -31,14 +32,15 @@ const TeamGrid: React.FC<Props> = ({ teams }: Props) => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                         {filteredTeams.length > 0 ? (
                             filteredTeams.map((team) => (
-                                <div
+                                <Link
+                                    href={`/teams/${team.id}`}
                                     key={team.id}
                                     className="bg-white p-4 rounded-lg shadow-md text-center hover:shadow-lg transition-shadow"
                                 >
                                     <p className="font-semibold text-lg text-gray-800">
                                         {team.name}
                                     </p>
-                                </div>
+                                </Link>
                             ))
                         ) : (
                             <p className="text-center col-span-full text-gray-500">

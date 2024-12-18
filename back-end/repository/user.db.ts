@@ -106,6 +106,7 @@ const getUserByUsername = async ({ username }: { username: string }): Promise<Us
             where: { username },
             include: {
                 playerOfTeam: true,
+                coachOfTeam: true,
             },
         });
 

@@ -12,7 +12,8 @@ const TeamsPage: React.FC = () => {
     const { t } = useTranslation();
 
     const fetchTeams = async () => {
-        const [teams] = await Promise.all([TeamService.getAllTeams()]);
+        const [playersResponse] = await Promise.all([TeamService.getAllTeams()]);
+        const [teams] = await Promise.all([playersResponse.json()]);
         setTeams(teams);
     };
 

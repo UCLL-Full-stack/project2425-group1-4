@@ -102,11 +102,14 @@ const authenticate = async ({ username, password }: UserInput): Promise<Authenti
     if (!isValidPassword) {
         throw new Error('Incorrect password.');
     }
+    const teamId = user.getCoachOfTeam()?.getId() ?? user.getPlayerOfTeam()?.getId();
+
     return {
         token: generateJwtToken({ username, role: user.getRole() }),
         username: username,
         fullname: `${user.getFirstName()} ${user.getLastName()}`,
         role: user.getRole(),
+        ...(teamId !== undefined && { teamId: teamId }),
     };
 };
 

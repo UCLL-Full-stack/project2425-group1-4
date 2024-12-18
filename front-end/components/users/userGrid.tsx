@@ -1,4 +1,5 @@
 import { User } from '@types';
+import Link from 'next/link';
 import React, { useState } from 'react';
 
 type Props = {
@@ -35,15 +36,16 @@ const UserGrid: React.FC<Props> = ({ Users }: Props) => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                     {filteredUsers.length > 0 ? (
-                        filteredUsers.map((User) => (
-                            <div
-                                key={User.id}
+                        filteredUsers.map((user) => (
+                            <Link
+                                href={`/user/${user.username}`}
+                                key={user.id}
                                 className="bg-white p-4 rounded-lg shadow-md text-center hover:shadow-lg transition-shadow"
                             >
                                 <p className="font-semibold text-lg text-gray-800">
-                                    {User.firstName} {User.lastName}
+                                    {user.firstName} {user.lastName}
                                 </p>
-                            </div>
+                            </Link>
                         ))
                     ) : (
                         <p className="text-center col-span-full text-gray-500">No Users found.</p>

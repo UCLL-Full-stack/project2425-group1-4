@@ -38,6 +38,14 @@ export type Team = {
     description: string;
 };
 
+export type UserStorage = {
+    token: string;
+    fullname: string;
+    username: string;
+    role: string;
+    teamId?: number;
+};
+
 export type User = {
     id?: number;
     firstName?: string;
