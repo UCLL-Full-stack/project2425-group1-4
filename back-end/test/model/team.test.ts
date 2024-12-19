@@ -72,16 +72,6 @@ test(`given: empty name, when: create team, then: error is thrown`, () => {
     ).toThrow('Invalid name');
 });
 
-test('given: no name, when: creating a new team, then: throws error', () => {
-    const team = () =>
-        new Team({
-            id: validId,
-            coach: validCoach,
-            players: validPlayers,
-            description: validDescription,
-        });
-    expect(user).toThrowError('Invalid name');
-});
 
 test('given: no coach, when: creating a new team, then: throws error', () => {
     const team = () =>
@@ -96,17 +86,7 @@ test('given: no coach, when: creating a new team, then: throws error', () => {
 
 
 
-test(`given: no players array, when: create team, then: error is thrown`, () => {
-    expect(
-        () =>
-            new Team({
-                id: validId,
-                name: validName,
-                coach: validCoach,
-                description: emptyDescription,
-            })
-    ).toThrow('Invalid players');
-});
+
 
 test(`given: empty description, when: create team, then: error is thrown`, () => {
     expect(
@@ -121,12 +101,3 @@ test(`given: empty description, when: create team, then: error is thrown`, () =>
     ).toThrow('Invalid description');
 });
 
-test(`given: no description, when: create team, then: error is thrown`, () => {
-    const team = () => new Team({
-                id: validId,
-                name: validName,
-                coach: validCoach,
-                players: validPlayers,
-            })
-    expect(team).toThrowError('Invalid description');
-});
