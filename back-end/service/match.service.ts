@@ -1,8 +1,5 @@
 import { Match } from '../model/match';
 import matchDb from '../repository/match.db';
-import { MatchInput, Role } from '../types';
-import goalService from './goal.service';
-import teamService from './team.service';
 
 const getAllMatches = async (): Promise<Match[]> => {
     return await matchDb.getAllMatches();
@@ -105,11 +102,10 @@ type MatchFilter = {
 };
 
 const getLatestMatches = async ({ teamId, limit }: MatchFilter) => {
+    if (limit !== undefined && limit <= 0) {
+        throw new Error('Limit must be a positive number');
+    }
     try {
-        if (limit !== undefined && limit <= 0) {
-            throw new Error('Limit must be a positive number');
-        }
-
         const matches = await matchDb.getLatestMatches({
             teamId: teamId,
             limit: limit || 5,

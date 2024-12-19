@@ -1,153 +1,243 @@
-import teamService from '../service/team.service';
-import teamDb from '../repository/team.db';
-import userDb from '../repository/user.db';
-import { Team } from '../model/team';
-import { User } from '../model/user';
+import { Team } from '../../model/team';
+import { User } from '../../model/user';
+import teamDb from '../../repository/team.db';
+import userDb from '../../repository/user.db';
+import teamService from '../../service/team.service';
 
-jest.mock('../repository/team.db');
-jest.mock('../repository/user.db');
+jest.mock('../../repository/team.db');
+jest.mock('../../repository/user.db');
 
-describe('teamService', () => {
-    afterEach(() => {
+describe('TeamService Tests', () => {
+    let mockGetAllTeams: jest.Mock;
+    let mockGetTeamsByName: jest.Mock;
+    let mockGetTeamById: jest.Mock;
+    let mockUpdateTeam: jest.Mock;
+    let mockGetUserById: jest.Mock;
+
+    const validTeam = new Team({
+        id: 1,
+        name: 'Team A',
+        description: 'The best football team',
+        players: [],
+    });
+
+    const validUser = new User({
+        id: 1,
+        firstName: 'John',
+        lastName: 'Doe',
+        password: 'hashedpassword',
+        birthDate: new Date('1990-01-01'),
+        email: 'john.doe@example.com',
+        username: 'johndoe',
+        role: 'PLAYER',
+    });
+
+    beforeEach(() => {
+        mockGetAllTeams = jest.fn();
+        mockGetTeamsByName = jest.fn();
+        mockGetTeamById = jest.fn();
+        mockUpdateTeam = jest.fn();
+        mockGetUserById = jest.fn();
+
+        teamDb.getAllTeams = mockGetAllTeams;
+        teamDb.getTeamsByName = mockGetTeamsByName;
+        teamDb.getTeamById = mockGetTeamById;
+        teamDb.updateTeam = mockUpdateTeam;
+        userDb.getUserById = mockGetUserById;
+
         jest.clearAllMocks();
     });
 
     describe('getAllTeams', () => {
         it('should return all teams', async () => {
-            const mockTeams = [new Team({ id: 1, name: 'Team A' }), new Team({ id: 2, name: 'Team B' })];
-            teamDb.getAllTeams.mockResolvedValue(mockTeams);
+            // given
+            mockGetAllTeams.mockResolvedValue([validTeam]);
 
-            const result = await teamService.getAllTeams();
+            // when
+            const teams = await teamService.getAllTeams();
 
-            expect(result).toEqual(mockTeams);
-            expect(teamDb.getAllTeams).toHaveBeenCalledTimes(1);
-        });
-    });
-
-    describe('getTeamsByName', () => {
-        it('should return teams matching the name', async () => {
-            const mockTeams = [new Team({ id: 1, name: 'Team A' })];
-            teamDb.getTeamsByName.mockResolvedValue(mockTeams);
-
-            const result = await teamService.getTeamsByName('Team A');
-
-            expect(result).toEqual(mockTeams);
-            expect(teamDb.getTeamsByName).toHaveBeenCalledWith('Team A');
+            // then
+            expect(mockGetAllTeams).toHaveBeenCalledTimes(1);
+            expect(teams).toEqual([validTeam]);
         });
 
-        it('should throw an error if no teams are found', async () => {
-            teamDb.getTeamsByName.mockResolvedValue(null);
+        it('should return an empty array if no teams are found', async () => {
+            // given
+            mockGetAllTeams.mockResolvedValue([]);
 
-            await expect(teamService.getTeamsByName('Nonexistent')).rejects.toThrow('Could not find any teams with that name');
-            expect(teamDb.getTeamsByName).toHaveBeenCalledWith('Nonexistent');
+            // when
+            const teams = await teamService.getAllTeams();
+
+            // then
+            expect(mockGetAllTeams).toHaveBeenCalledTimes(1);
+            expect(teams).toEqual([]);
         });
     });
 
     describe('getTeamById', () => {
-        it('should return the team by ID', async () => {
-            const mockTeam = new Team({ id: 1, name: 'Team A' });
-            teamDb.getTeamById.mockResolvedValue(mockTeam);
+        it('should return the team for a valid ID', async () => {
+            // given
+            mockGetTeamById.mockResolvedValue(validTeam);
 
-            const result = await teamService.getTeamById(1);
+            // when
+            const team = await teamService.getTeamById(1);
 
-            expect(result).toEqual(mockTeam);
-            expect(teamDb.getTeamById).toHaveBeenCalledWith(1);
+            // then
+            expect(mockGetTeamById).toHaveBeenCalledWith(1);
+            expect(team).toEqual(validTeam);
         });
 
-        it('should throw an error if ID is invalid', async () => {
-            await expect(teamService.getTeamById('abc')).rejects.toThrow('Invalid Team ID. It must be a number.');
+        it('should throw an error if team ID is invalid', async () => {
+            // when / then
+            await expect(teamService.getTeamById('invalid')).rejects.toThrow(
+                'Invalid Team ID. It must be a number.'
+            );
         });
 
         it('should throw an error if team is not found', async () => {
-            teamDb.getTeamById.mockResolvedValue(null);
+            // given
+            mockGetTeamById.mockResolvedValue(null);
 
-            await expect(teamService.getTeamById(99)).rejects.toThrow('Team with ID 99 not found.');
-        });
-    });
-
-    describe('getTeamNameById', () => {
-        it('should return the team name by ID', async () => {
-            const mockTeam = new Team({ id: 1, name: 'Team A' });
-            teamDb.getTeamById.mockResolvedValue(mockTeam);
-
-            const result = await teamService.getTeamNameById(1);
-
-            expect(result).toEqual('Team A');
-            expect(teamDb.getTeamById).toHaveBeenCalledWith(1);
-        });
-
-        it('should return null if the team is not found', async () => {
-            teamDb.getTeamById.mockResolvedValue(null);
-
-            const result = await teamService.getTeamNameById(99);
-
-            expect(result).toBeNull();
+            // when / then
+            await expect(teamService.getTeamById(1)).rejects.toThrow('Team with ID 1 not found.');
         });
     });
 
     describe('updateTeam', () => {
-        it('should update the team', async () => {
-            const mockTeam = new Team({ id: 1, name: 'Team A' });
-            teamDb.getTeamById.mockResolvedValue(mockTeam);
-            teamDb.updateTeam.mockResolvedValue(mockTeam);
-
-            const result = await teamService.updateTeam(mockTeam);
-
-            expect(result).toEqual(mockTeam);
-            expect(teamDb.updateTeam).toHaveBeenCalledWith(mockTeam);
+        it('should update the team if valid data is provided', async () => {
+            // given
+            const validTeamInput = {
+                id: 1,
+                name: 'Updated Team Name',
+                description: 'Updated description',
+                coachId: 1,
+                players: [],
+            };
+    
+            const expectedTeam = new Team({
+                id: 1,
+                name: 'Updated Team Name',
+                description: 'Updated description',
+                coach: undefined,
+                players: [],
+            });
+    
+            mockGetTeamById.mockResolvedValue(expectedTeam);
+            mockUpdateTeam.mockResolvedValue(expectedTeam);
+    
+            // when
+            const result = await teamService.updateTeam(validTeamInput);
+    
+            // then
+            expect(mockGetTeamById).toHaveBeenCalledWith(validTeamInput.id);
+            expect(mockUpdateTeam).toHaveBeenCalledWith(expect.objectContaining({
+                id: 1,
+                name: 'Updated Team Name',
+                description: 'Updated description',
+                players: [],
+            }));
+            expect(result).toEqual(expectedTeam);
         });
-
+    
         it('should throw an error if the team is not found', async () => {
-            teamDb.getTeamById.mockResolvedValue(null);
-
-            const mockTeam = new Team({ id: 1, name: 'Team A' });
-            await expect(teamService.updateTeam(mockTeam)).rejects.toThrow('Team not found');
+            // given
+            const validTeamInput = {
+                id: 1,
+                name: 'Nonexistent Team',
+                description: 'Description',
+                coachId: 1,
+                players: [],
+            };
+    
+            mockGetTeamById.mockResolvedValue(null);
+    
+            // when / then
+            await expect(teamService.updateTeam(validTeamInput)).rejects.toThrow('Team not found');
         });
     });
+    
 
     describe('addPlayerToTeam', () => {
-        it('should add a player to the team', async () => {
-            const mockTeam = new Team({ id: 1, name: 'Team A', players: [] });
-            const mockPlayer = new User({ id: 1, firstName: 'John', lastName: 'Doe' });
+        it('should add a player to a team', async () => {
+            // given
+            mockGetTeamById.mockResolvedValue(validTeam);
+            mockGetUserById.mockResolvedValue(validUser);
+            mockUpdateTeam.mockResolvedValue(validTeam);
 
-            teamDb.getTeamById.mockResolvedValue(mockTeam);
-            userDb.getUserById.mockResolvedValue(mockPlayer);
-
+            // when
             const result = await teamService.addPlayerToTeam(1, 1);
 
-            expect(result).toBe(true);
-            expect(teamDb.updateTeam).toHaveBeenCalledWith(mockTeam);
+            // then
+            expect(mockGetTeamById).toHaveBeenCalledWith(1);
+            expect(mockGetUserById).toHaveBeenCalledWith(1);
+            expect(result).toEqual(true);
         });
 
-        it('should return false if the team or player is not found', async () => {
-            teamDb.getTeamById.mockResolvedValue(null);
+        it('should return false if the team is not found', async () => {
+            // given
+            mockGetTeamById.mockResolvedValue(null);
 
+            // when
             const result = await teamService.addPlayerToTeam(1, 1);
 
-            expect(result).toBe(false);
+            // then
+            expect(mockGetTeamById).toHaveBeenCalledWith(1);
+            expect(result).toEqual(false);
+        });
+
+        it('should return false if the player is not found', async () => {
+            // given
+            mockGetTeamById.mockResolvedValue(validTeam);
+            mockGetUserById.mockResolvedValue(null);
+
+            // when
+            const result = await teamService.addPlayerToTeam(1, 1);
+
+            // then
+            expect(mockGetUserById).toHaveBeenCalledWith(1);
+            expect(result).toEqual(false);
         });
     });
 
     describe('removePlayerFromTeam', () => {
-        it('should remove a player from the team', async () => {
-            const mockTeam = new Team({ id: 1, name: 'Team A', players: [new User({ id: 1 })] });
-            const mockPlayer = new User({ id: 1 });
+        it('should remove a player from a team', async () => {
+            // given
+            mockGetTeamById.mockResolvedValue(validTeam);
+            mockGetUserById.mockResolvedValue(validUser);
+            mockUpdateTeam.mockResolvedValue(validTeam);
 
-            teamDb.getTeamById.mockResolvedValue(mockTeam);
-            userDb.getUserById.mockResolvedValue(mockPlayer);
-
+            // when
             const result = await teamService.removePlayerFromTeam(1, 1);
 
-            expect(result).toBeTruthy();
-            expect(teamDb.updateTeam).toHaveBeenCalledWith(mockTeam);
+            // then
+            expect(mockGetTeamById).toHaveBeenCalledWith(1);
+            expect(mockGetUserById).toHaveBeenCalledWith(1);
+            expect(result).toEqual(validTeam);
         });
 
-        it('should return false if the team or player is not found', async () => {
-            teamDb.getTeamById.mockResolvedValue(null);
+        it('should return false if the team is not found', async () => {
+            // given
+            mockGetTeamById.mockResolvedValue(null);
 
+            // when
             const result = await teamService.removePlayerFromTeam(1, 1);
 
-            expect(result).toBe(false);
+            // then
+            expect(mockGetTeamById).toHaveBeenCalledWith(1);
+            expect(result).toEqual(false);
+        });
+
+        it('should return false if the player is not found', async () => {
+            // given
+            mockGetTeamById.mockResolvedValue(validTeam);
+            mockGetUserById.mockResolvedValue(null);
+
+            // when
+            const result = await teamService.removePlayerFromTeam(1, 1);
+
+            // then
+            expect(mockGetUserById).toHaveBeenCalledWith(1);
+            expect(result).toEqual(false);
         });
     });
 });

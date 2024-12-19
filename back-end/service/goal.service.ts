@@ -13,17 +13,17 @@ const getGoalsWithDetails = async (matchId: number) => {
     if (goals.length === 0) {
         throw new Error('No goals were found for given ID.');
     }
+    return goals;
 };
 
 const deleteGoal = async (goalId: number) => {
     if (!goalId || isNaN(goalId)) {
         throw new Error('Invalid goal ID');
     }
-    const goal = await goalDb.getGoalsByIds([goalId]);
-    if (!goal) {
+    const goals = await goalDb.getGoalsByIds([goalId]);
+    if (!goals.length) {
         throw new Error('Goal not found');
     }
-
     return await goalDb.deleteGoal(goalId);
 };
 
