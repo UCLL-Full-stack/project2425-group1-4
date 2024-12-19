@@ -1,9 +1,9 @@
 import UserService from '@services/UserService';
 import { StatusMessage } from '@types';
 import classNames from 'classnames';
+import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
-import { useTranslation } from 'next-i18next';
 
 interface FormErrors {
     username?: string;
@@ -96,24 +96,26 @@ const UserRegisterForm: React.FC = () => {
         try {
             const response = await UserService.registerUser(userData);
 
-            // Assuming UserService.registerUser returns a Response object
             if (response.ok) {
-                const userData = await response.json();
-
                 setStatusMessages([{ message: t('register.success'), type: 'success' }]);
-
                 setTimeout(() => {
                     router.push('/login');
                 }, 2000);
-            } else {
-                const errorData = await response.json();
-                const errorMessage = errorData.errorMessage || t('general.error');
+            } else if (response.status === 400) {
+                const responseData = await response.json();
+                const genericErrorMessage = responseData.message || t('general.error'); // Generic error message fallback
 
-                setStatusMessages([{ message: errorMessage, type: 'error' }]);
+                setStatusMessages([{ message: genericErrorMessage, type: 'error' }]);
+            } else {
+                setStatusMessages([
+                    {
+                        message: t('general.error'),
+                        type: 'error',
+                    },
+                ]);
             }
         } catch (error) {
-            setStatusMessages([{ message: t('general.error'), type: 'error' }]);
-            console.error('Register error:', error);
+            setStatusMessages([{ message: t('register.error.serverError'), type: 'error' }]);
         } finally {
             setIsLoading(false);
         }

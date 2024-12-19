@@ -1,18 +1,7 @@
 import { User } from '@types';
 
 const getAllPlayers = async () => {
-    const loggedInUserString = localStorage.getItem('loggedInUser');
-
-    if (!loggedInUserString) {
-        throw new Error('Log in first, please');
-    }
-
-    const loggedInUser = JSON.parse(loggedInUserString);
-    const token = loggedInUser.token;
-
-    if (!token) {
-        throw new Error('No authorization token found. Log in first, please');
-    }
+    const token = JSON.parse(localStorage.getItem('loggedInUser') || '{}')?.token;
 
     return fetch(process.env.NEXT_PUBLIC_API_URL + '/users/players', {
         method: 'GET',
@@ -24,18 +13,7 @@ const getAllPlayers = async () => {
 };
 
 const getAllUsers = async () => {
-    const loggedInUserString = localStorage.getItem('loggedInUser');
-
-    if (!loggedInUserString) {
-        throw new Error('Log in first, please');
-    }
-
-    const loggedInUser = JSON.parse(loggedInUserString);
-    const token = loggedInUser.token;
-
-    if (!token) {
-        throw new Error('No authorization token found. Log in first, please');
-    }
+    const token = JSON.parse(localStorage.getItem('loggedInUser') || '{}')?.token;
 
     return fetch(process.env.NEXT_PUBLIC_API_URL + '/users', {
         method: 'GET',
@@ -47,6 +25,8 @@ const getAllUsers = async () => {
 };
 
 const updateUser = async (user: User) => {
+    const token = JSON.parse(localStorage.getItem('loggedInUser') || '{}')?.token;
+
     return fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/${user.id}`, {
         method: 'PUT',
         headers: {
@@ -57,6 +37,8 @@ const updateUser = async (user: User) => {
 };
 
 const getUserByUsername = async (username: string) => {
+    const token = JSON.parse(localStorage.getItem('loggedInUser') || '{}')?.token;
+
     return await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/${username}`, {
         method: 'GET',
         headers: {

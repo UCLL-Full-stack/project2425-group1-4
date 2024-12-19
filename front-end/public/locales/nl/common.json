@@ -28,7 +28,10 @@
         "button": "Registreren",
         "success": "Registratie succesvol. U wordt naar de inlog pagina geleid...",
         "validate": {
-            "name": "Naam is vereist",
+            "username": "Naam is vereist",
+            "firstName": "Voornaam is vereist",
+            "lastName": "Achternaam is vereist",
+            "birthDate": "Geboortedatum is vereist",
             "password": "Wachtwoord is vereist",
             "email": "Email is vereist",
             "emailValid": "Email is niet geldig"

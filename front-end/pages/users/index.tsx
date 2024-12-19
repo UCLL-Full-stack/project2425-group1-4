@@ -1,5 +1,4 @@
 import Header from '@components/header/header';
-import UnauthorizedAccessModal from '@components/modals/UnauthorizedAccessModal';
 import UserGrid from '@components/users/userGrid';
 import UserService from '@services/UserService';
 import { User } from '@types';
@@ -7,49 +6,44 @@ import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import useSWR from 'swr';
+
+// Utility fetch with session handling
+const fetchWithAuth = async (url: string, options: RequestInit = {}) => {
+    const loggedInUserString = localStorage.getItem('loggedInUser');
+    const loggedInUser = loggedInUserString ? JSON.parse(loggedInUserString) : null;
+    const token = loggedInUser?.token;
+
+    const headers = {
+        ...options.headers,
+        Authorization: token ? `Bearer ${token}` : '',
+        'Content-Type': 'application/json',
+    };
+
+    const response = await fetch(url, {
+        ...options,
+        headers,
+    });
+
+    if (response.status === 401) {
+        // Clear token and redirect user to login
+        localStorage.removeItem('loggedInUser');
+        window.location.href = '/login';
+        return;
+    }
+
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to fetch');
+    }
+
+    return await response.json();
+};
 
 const UsersPage: React.FC = () => {
     const { t } = useTranslation();
     const router = useRouter();
-    const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
-    const [showModal, setShowModal] = useState(false);
-
-    // Validate user role
-    useEffect(() => {
-        const validateUserRole = () => {
-            if (typeof window !== 'undefined') {
-                try {
-                    const loggedInUserString = localStorage.getItem('loggedInUser');
-
-                    if (!loggedInUserString) {
-                        throw new Error('Log in first, please');
-                    }
-
-                    const loggedInUser = JSON.parse(loggedInUserString);
-                    const token = loggedInUser?.token;
-
-                    if (!token) {
-                        throw new Error('No authorization token found. Log in first, please');
-                    }
-
-                    if (loggedInUser?.role === 'ADMIN') {
-                        setIsAdmin(true);
-                    } else {
-                        setShowModal(true);
-                        setTimeout(() => router.push('/'), 3000);
-                    }
-                } catch (error) {
-                    console.error('Error validating user role:', error);
-                    setShowModal(true);
-                    setTimeout(() => router.push('/'), 3000);
-                }
-            }
-        };
-
-        validateUserRole();
-    }, [router]);
 
     // Fetch users using SWR
     const fetchUsers = async (): Promise<User[] | null> => {
@@ -81,7 +75,7 @@ const UsersPage: React.FC = () => {
             </Head>
             <Header />
             <div>
-                {showModal && <UnauthorizedAccessModal onClose={() => router.push('/')} />}
+
                 {isLoading ? (
                     <p>Loading users...</p>
                 ) : error ? (

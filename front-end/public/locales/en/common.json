@@ -28,7 +28,10 @@
         "button": "Register",
         "success": "Registration successful. Leading you to the login page...",
         "validate": {
-            "name": "Name is required",
+            "username": "Name is required",
+            "firstName": "First name is required",
+            "lastName": "Last name is required",
+            "birthDate": "Birth date is required",
             "password": "Password is required",
             "email": "Email is required",
             "emailValid": "Email is not valid"

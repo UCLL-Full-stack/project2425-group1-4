@@ -51,18 +51,7 @@ const addPlayerToTeam = async (teamId: number, playerId: number) => {
 };
 
 const removePlayerFromTeam = async (teamId: number, playerId: number): Promise<boolean> => {
-    const loggedInUserString = localStorage.getItem('loggedInUser');
-
-    if (!loggedInUserString) {
-        throw new Error('Log in first, please');
-    }
-
-    const loggedInUser = JSON.parse(loggedInUserString);
-    const token = loggedInUser.token;
-
-    if (!token) {
-        throw new Error('No authorization token found. Log in first, please');
-    }
+    const token = JSON.parse(localStorage.getItem('loggedInUser') || '{}')?.token;
 
     try {
         const response = await fetch(

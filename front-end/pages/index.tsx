@@ -49,9 +49,9 @@ const HomePage: React.FC = () => {
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td className="border px-4 py-2">admin@ucll.be</td>
-                                    <td className="border px-4 py-2">secure12345</td>
-                                    <td className="border px-4 py-2">Admin</td>
+                                    <td className="border px-4 py-2">user@example.com</td>
+                                    <td className="border px-4 py-2">abcdefghij</td>
+                                    <td className="border px-4 py-2">User</td>
                                 </tr>
                                 <tr>
                                     <td className="border px-4 py-2">
@@ -66,9 +66,9 @@ const HomePage: React.FC = () => {
                                     <td className="border px-4 py-2">Player</td>
                                 </tr>
                                 <tr>
-                                    <td className="border px-4 py-2">user@example.com</td>
-                                    <td className="border px-4 py-2">abcdefghij</td>
-                                    <td className="border px-4 py-2">User</td>
+                                    <td className="border px-4 py-2">admin@ucll.be</td>
+                                    <td className="border px-4 py-2">secure12345</td>
+                                    <td className="border px-4 py-2">Admin</td>
                                 </tr>
                             </tbody>
                         </table>

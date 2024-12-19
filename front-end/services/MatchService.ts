@@ -13,18 +13,7 @@ const getAllMatches = async () => {
 };
 
 const getMatchById = async (id: number) => {
-    // const loggedInUserString = localStorage.getItem('loggedInUser');
-
-    // if (!loggedInUserString) {
-    //     throw new Error('Log in first, please');
-    // }
-
-    // const loggedInUser = JSON.parse(loggedInUserString);
-    // const token = loggedInUser.token;
-
-    // if (!token) {
-    //     throw new Error('No authorization token found. Log in first, please');
-    // }
+    const token = JSON.parse(localStorage.getItem('loggedInUser') || '{}')?.token;
 
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matches/${id}`, {
         method: 'GET',
@@ -43,18 +32,7 @@ const getMatchById = async (id: number) => {
 };
 
 const createMatch = async (matchData: Match): Promise<Match> => {
-    const loggedInUserString = localStorage.getItem('loggedInUser');
-
-    if (!loggedInUserString) {
-        throw new Error('Log in first, please');
-    }
-
-    const loggedInUser = JSON.parse(loggedInUserString);
-    const token = loggedInUser.token;
-
-    if (!token) {
-        throw new Error('No authorization token found. Log in first, please');
-    }
+    const token = JSON.parse(localStorage.getItem('loggedInUser') || '{}')?.token;
 
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matches`, {
         method: 'POST',
@@ -74,18 +52,7 @@ const createMatch = async (matchData: Match): Promise<Match> => {
 };
 
 const updateMatch = async (id: string, matchData: Partial<Match>): Promise<Match> => {
-    const loggedInUserString = localStorage.getItem('loggedInUser');
-
-    if (!loggedInUserString) {
-        throw new Error('Log in first, please');
-    }
-
-    const loggedInUser = JSON.parse(loggedInUserString);
-    const token = loggedInUser.token;
-
-    if (!token) {
-        throw new Error('No authorization token found. Log in first, please');
-    }
+    const token = JSON.parse(localStorage.getItem('loggedInUser') || '{}')?.token;
 
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matches/${id}`, {
         method: 'PUT',
@@ -105,18 +72,7 @@ const updateMatch = async (id: string, matchData: Partial<Match>): Promise<Match
 };
 
 const getLatestMatches = async (limit?: number, teamId?: number) => {
-    const loggedInUserString = localStorage.getItem('loggedInUser');
-
-    if (!loggedInUserString) {
-        throw new Error('Log in first, please');
-    }
-
-    const loggedInUser = JSON.parse(loggedInUserString);
-    const token = loggedInUser.token;
-
-    if (!token) {
-        throw new Error('No authorization token found. Log in first, please');
-    }
+    const token = JSON.parse(localStorage.getItem('loggedInUser') || '{}')?.token;
 
     const queryParams = new URLSearchParams();
 

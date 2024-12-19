@@ -1,65 +1,33 @@
 import Header from '@components/header/header';
 import TeamGrid from '@components/teamGrid/teamGrid';
-import { Team } from '@types';
+import TeamService from '@services/TeamService';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Head from 'next/head';
-import React, { useEffect, useState } from 'react';
-
-// Utility fetch with session handling
-const fetchWithAuth = async (url: string, options: RequestInit = {}) => {
-    const loggedInUserString = localStorage.getItem('loggedInUser');
-    const loggedInUser = loggedInUserString ? JSON.parse(loggedInUserString) : null;
-    const token = loggedInUser?.token;
-
-    const headers = {
-        ...options.headers,
-        Authorization: token ? `Bearer ${token}` : '',
-        'Content-Type': 'application/json',
-    };
-
-    const response = await fetch(url, {
-        ...options,
-        headers,
-    });
-
-    if (response.status === 401) {
-        // Clear token and redirect user to login
-        localStorage.removeItem('loggedInUser');
-        window.location.href = '/login';
-        return;
-    }
-
-    if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Failed to fetch');
-    }
-
-    return await response.json();
-};
+import React from 'react';
+import useSWR from 'swr';
 
 const TeamsPage: React.FC = () => {
-    const [teams, setTeams] = useState<Team[]>([]);
-    const [sessionExpired, setSessionExpired] = useState<boolean>(false);
     const { t } = useTranslation();
 
     const fetchTeams = async () => {
         try {
-            const teamsData = await fetchWithAuth(`${process.env.NEXT_PUBLIC_API_URL}/teams`);
-            setTeams(teamsData);
-        } catch (error: any) {
-            if (error.message === 'Session expired') {
-                setSessionExpired(true);
-                localStorage.removeItem('jwt_token');
-            } else {
-                console.error(error.message);
-            }
+            const response = await TeamService.getAllTeams();
+            const teams = await response.json();
+            return teams;
+        } catch (error) {
+            console.error('Error fetching teams:', error);
+            return null;
         }
     };
 
-    useEffect(() => {
-        fetchTeams();
-    }, []);
+    const {
+        data: teams,
+        isLoading,
+        error,
+    } = useSWR('fetchTeams', fetchTeams, {
+        refreshInterval: 10000,
+    });
 
     return (
         <>
@@ -71,7 +39,13 @@ const TeamsPage: React.FC = () => {
             </Head>
             <Header />
             <div>
-                <TeamGrid teams={teams} />
+                {isLoading ? (
+                    <p>Loading users...</p>
+                ) : error ? (
+                    <p className="text-red-500">Error fetching users: {error.message}</p>
+                ) : (
+                    <TeamGrid teams={teams} />
+                )}
             </div>
         </>
     );

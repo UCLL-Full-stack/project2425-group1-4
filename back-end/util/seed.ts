@@ -6,10 +6,10 @@ const prisma = new PrismaClient();
 const main = async () => {
     // Clean up the database
     await prisma.goal.deleteMany();
-    await prisma.location.deleteMany();
     await prisma.matchTeam.deleteMany();
     await prisma.match.deleteMany();
     await prisma.team.deleteMany();
+    await prisma.location.deleteMany();
     await prisma.user.deleteMany();
 
     // Create users with different roles
@@ -24,6 +24,16 @@ const main = async () => {
         coachZidane,
         neymar,
         mbappe,
+        kevin,
+        robert,
+        virgil,
+        salah,
+        sadio,
+        hazard,
+        kane,
+        modric,
+        kroos,
+        neuer,
     ] = await Promise.all([
         prisma.user.create({
             data: {
@@ -157,86 +167,290 @@ const main = async () => {
                 role: 'PLAYER',
             },
         }),
+        prisma.user.create({
+            data: {
+                firstName: 'Kevin',
+                lastName: 'De Bruyne',
+                password: await bcrypt.hash('abcdefghij', 10),
+                birthDate: new Date('1991-06-28'),
+                email: 'kevin.debruyne@example.com',
+                username: 'kevdeb',
+                description: 'Midfield maestro',
+                role: 'PLAYER',
+            },
+        }),
+        prisma.user.create({
+            data: {
+                firstName: 'Robert',
+                lastName: 'Lewandowski',
+                password: await bcrypt.hash('abcdefghij', 10),
+                birthDate: new Date('1988-08-21'),
+                email: 'robert.lewandowski@example.com',
+                username: 'lewy',
+                description: 'Goal machine',
+                role: 'PLAYER',
+            },
+        }),
+        prisma.user.create({
+            data: {
+                firstName: 'Virgil',
+                lastName: 'van Dijk',
+                password: await bcrypt.hash('abcdefghij', 10),
+                birthDate: new Date('1991-07-08'),
+                email: 'virgil.vandijk@example.com',
+                username: 'virgilvd',
+                description: 'Defensive rock',
+                role: 'PLAYER',
+            },
+        }),
+        prisma.user.create({
+            data: {
+                firstName: 'Mohamed',
+                lastName: 'Salah',
+                password: await bcrypt.hash('abcdefghij', 10),
+                birthDate: new Date('1992-06-15'),
+                email: 'mohamed.salah@example.com',
+                username: 'mosalah',
+                description: 'Speedster',
+                role: 'PLAYER',
+            },
+        }),
+        prisma.user.create({
+            data: {
+                firstName: 'Sadio',
+                lastName: 'Mane',
+                password: await bcrypt.hash('abcdefghij', 10),
+                birthDate: new Date('1992-04-10'),
+                email: 'sadio.mane@example.com',
+                username: 'sadiom',
+                description: 'Winger',
+                role: 'PLAYER',
+            },
+        }),
+        prisma.user.create({
+            data: {
+                firstName: 'Eden',
+                lastName: 'Hazard',
+                password: await bcrypt.hash('abcdefghij', 10),
+                birthDate: new Date('1991-01-07'),
+                email: 'eden.hazard@example.com',
+                username: 'edenh',
+                description: 'Dribbler',
+                role: 'PLAYER',
+            },
+        }),
+        prisma.user.create({
+            data: {
+                firstName: 'Harry',
+                lastName: 'Kane',
+                password: await bcrypt.hash('abcdefghij', 10),
+                birthDate: new Date('1993-07-28'),
+                email: 'harry.kane@example.com',
+                username: 'harryk',
+                description: 'Striker',
+                role: 'PLAYER',
+            },
+        }),
+        prisma.user.create({
+            data: {
+                firstName: 'Luka',
+                lastName: 'Modric',
+                password: await bcrypt.hash('abcdefghij', 10),
+                birthDate: new Date('1985-09-09'),
+                email: 'luka.modric@example.com',
+                username: 'lukam',
+                description: 'Playmaker',
+                role: 'PLAYER',
+            },
+        }),
+        prisma.user.create({
+            data: {
+                firstName: 'Toni',
+                lastName: 'Kroos',
+                password: await bcrypt.hash('abcdefghij', 10),
+                birthDate: new Date('1990-01-04'),
+                email: 'toni.kroos@example.com',
+                username: 'tonik',
+                description: 'Midfield general',
+                role: 'PLAYER',
+            },
+        }),
+        prisma.user.create({
+            data: {
+                firstName: 'Manuel',
+                lastName: 'Neuer',
+                password: await bcrypt.hash('abcdefghij', 10),
+                birthDate: new Date('1986-03-27'),
+                email: 'manuel.neuer@example.com',
+                username: 'manueln',
+                description: 'Goalkeeper',
+                role: 'PLAYER',
+            },
+        }),
     ]);
 
     // Create Locations
-    const [campNou, bernabeu, parcDesPrinces, etihad] = await Promise.all([
-        prisma.location.create({
-            data: {
-                country: 'Spain',
-                city: 'Barcelona',
-                streetName: "Carrer d'Arístides Maillol",
-                zipCode: '08028',
-                number: '12',
-            },
-        }),
-        prisma.location.create({
-            data: {
-                country: 'Spain',
-                city: 'Madrid',
-                streetName: 'Avenida de Concha Espina',
-                zipCode: '28036',
-                number: '1',
-            },
-        }),
-        prisma.location.create({
-            data: {
-                country: 'France',
-                city: 'Paris',
-                streetName: 'Rue du Commandant Guilbaud',
-                zipCode: '75016',
-                number: '24',
-            },
-        }),
-        prisma.location.create({
-            data: {
-                country: 'England',
-                city: 'Manchester',
-                streetName: 'Ashton New Rd',
-                zipCode: 'M11 3FF',
-                number: '100',
-            },
-        }),
-    ]);
+    const [campNou, bernabeu, parcDesPrinces, etihad, munich, turin, liverpoolLoc] =
+        await Promise.all([
+            prisma.location.create({
+                data: {
+                    country: 'Spain',
+                    city: 'Barcelona',
+                    streetName: "Carrer d'Arístides Maillol",
+                    zipCode: '08028',
+                    number: '12',
+                },
+            }),
+            prisma.location.create({
+                data: {
+                    country: 'Spain',
+                    city: 'Madrid',
+                    streetName: 'Avenida de Concha Espina',
+                    zipCode: '28036',
+                    number: '1',
+                },
+            }),
+            prisma.location.create({
+                data: {
+                    country: 'France',
+                    city: 'Paris',
+                    streetName: 'Rue du Commandant Guilbaud',
+                    zipCode: '75016',
+                    number: '24',
+                },
+            }),
+            prisma.location.create({
+                data: {
+                    country: 'England',
+                    city: 'Manchester',
+                    streetName: 'Ashton New Rd',
+                    zipCode: 'M11 3FF',
+                    number: '100',
+                },
+            }),
+            prisma.location.create({
+                data: {
+                    country: 'Germany',
+                    city: 'Munich',
+                    streetName: 'Werner-Heisenberg-Allee',
+                    zipCode: '80939',
+                    number: '25',
+                },
+            }),
+            prisma.location.create({
+                data: {
+                    country: 'Italy',
+                    city: 'Turin',
+                    streetName: 'Corso Gaetano Scirea',
+                    zipCode: '10151',
+                    number: '50',
+                },
+            }),
+            prisma.location.create({
+                data: {
+                    country: 'England',
+                    city: 'Liverpool',
+                    streetName: 'Anfield Rd',
+                    zipCode: 'L4 0TH',
+                    number: '1',
+                },
+            }),
+        ]);
 
     // Create teams
-    const [barcelona, madrid, psg, mancity] = await Promise.all([
-        prisma.team.create({
-            data: {
-                name: 'FC Barcelona',
-                description: 'Best team in the world',
-                coach: { connect: { id: coachPep.id } },
-                players: { connect: [{ id: lionel.id }] },
-            },
-        }),
-        prisma.team.create({
-            data: {
-                name: 'Real Madrid',
-                description: 'Historic team with many titles',
-                coach: { connect: { id: coachZidane.id } },
-                players: { connect: [{ id: cristiano.id }, { id: sergio.id }] },
-            },
-        }),
-        prisma.team.create({
-            data: {
-                name: 'Paris Saint-Germain',
-                description: 'Top French club',
-                coach: { connect: { id: coachPep.id } },
-                players: { connect: [{ id: neymar.id }, { id: mbappe.id }] },
-            },
-        }),
-        prisma.team.create({
-            data: {
-                name: 'Manchester City',
-                description: 'Top team in the Premier League',
-                coach: { connect: { id: coachPep.id } },
-                players: { connect: [{ id: lionel.id }, { id: cristiano.id }] },
-            },
-        }),
-    ]);
+    const [barcelona, madrid, psg, mancity, bayern, juventus, liverpool, chelsea, tottenham] =
+        await Promise.all([
+            prisma.team.create({
+                data: {
+                    name: 'FC Barcelona',
+                    description: 'Best team in the world',
+                    coach: { connect: { id: coachPep.id } },
+                    players: { connect: [{ id: lionel.id }] },
+                },
+            }),
+            prisma.team.create({
+                data: {
+                    name: 'Real Madrid',
+                    description: 'Historic team with many titles',
+                    coach: { connect: { id: coachZidane.id } },
+                    players: { connect: [{ id: cristiano.id }, { id: sergio.id }] },
+                },
+            }),
+            prisma.team.create({
+                data: {
+                    name: 'Paris Saint-Germain',
+                    description: 'Top French club',
+                    coach: { connect: { id: coachPep.id } },
+                    players: { connect: [{ id: neymar.id }, { id: mbappe.id }] },
+                },
+            }),
+            prisma.team.create({
+                data: {
+                    name: 'Manchester City',
+                    description: 'Top team in the Premier League',
+                    coach: { connect: { id: coachPep.id } },
+                    players: { connect: [{ id: lionel.id }, { id: cristiano.id }] },
+                },
+            }),
+            prisma.team.create({
+                data: {
+                    name: 'Bayern Munich',
+                    description: 'Top team in the Bundesliga',
+                    coach: { connect: { id: coachPep.id } },
+                    players: { connect: [{ id: neuer.id }, { id: robert.id }] },
+                },
+            }),
+            prisma.team.create({
+                data: {
+                    name: 'Juventus',
+                    description: 'Top team in Serie A',
+                    coach: { connect: { id: coachZidane.id } },
+                    players: { connect: [{ id: cristiano.id }] },
+                },
+            }),
+            prisma.team.create({
+                data: {
+                    name: 'Liverpool',
+                    description: 'Top team in the Premier League',
+                    coach: { connect: { id: coachPep.id } },
+                    players: { connect: [{ id: salah.id }, { id: virgil.id }] },
+                },
+            }),
+            prisma.team.create({
+                data: {
+                    name: 'Chelsea',
+                    description: 'Top team in the Premier League',
+                    coach: { connect: { id: coachZidane.id } },
+                    players: { connect: [{ id: hazard.id }] },
+                },
+            }),
+            prisma.team.create({
+                data: {
+                    name: 'Tottenham Hotspur',
+                    description: 'Top team in the Premier League',
+                    coach: { connect: { id: coachPep.id } },
+                    players: { connect: [{ id: kane.id }] },
+                },
+            }),
+        ]);
 
     // Create Matches
-    const [match1, match2, match3, match4, match5] = await Promise.all([
+    const [
+        match1,
+        match2,
+        match3,
+        match4,
+        match5,
+        match6,
+        match7,
+        match8,
+        match9,
+        match10,
+        match11,
+        match12,
+        match13,
+        match14,
+    ] = await Promise.all([
         prisma.match.create({
             data: {
                 date: new Date(),
@@ -276,7 +490,7 @@ const main = async () => {
         prisma.match.create({
             data: {
                 date: new Date(),
-                location: { connect: { id: 1 } },
+                location: { connect: { id: campNou.id } },
                 teams: {
                     create: [
                         { team: { connect: { id: barcelona.id } } },
@@ -289,7 +503,7 @@ const main = async () => {
         prisma.match.create({
             data: {
                 date: new Date(),
-                location: { connect: { id: 2 } },
+                location: { connect: { id: campNou.id } },
                 teams: {
                     create: [
                         { team: { connect: { id: madrid.id } } },
@@ -298,9 +512,116 @@ const main = async () => {
                 },
             },
             include: { teams: true },
-        })
+        }),
+        prisma.match.create({
+            data: {
+                date: new Date(),
+                location: { connect: { id: munich.id } },
+                teams: {
+                    create: [
+                        { team: { connect: { id: bayern.id } } },
+                        { team: { connect: { id: juventus.id } } },
+                    ],
+                },
+            },
+        }),
+        prisma.match.create({
+            data: {
+                date: new Date(),
+                location: { connect: { id: turin.id } },
+                teams: {
+                    create: [
+                        { team: { connect: { id: juventus.id } } },
+                        { team: { connect: { id: liverpool.id } } },
+                    ],
+                },
+            },
+        }),
+        prisma.match.create({
+            data: {
+                date: new Date(),
+                location: { connect: { id: liverpoolLoc.id } },
+                teams: {
+                    create: [
+                        { team: { connect: { id: liverpool.id } } },
+                        { team: { connect: { id: chelsea.id } } },
+                    ],
+                },
+            },
+        }),
+        prisma.match.create({
+            data: {
+                date: new Date(),
+                location: { connect: { id: campNou.id } },
+                teams: {
+                    create: [
+                        { team: { connect: { id: barcelona.id } } },
+                        { team: { connect: { id: tottenham.id } } },
+                    ],
+                },
+            },
+        }),
+        prisma.match.create({
+            data: {
+                date: new Date(),
+                location: { connect: { id: etihad.id } },
+                teams: {
+                    create: [
+                        { team: { connect: { id: mancity.id } } },
+                        { team: { connect: { id: bayern.id } } },
+                    ],
+                },
+            },
+        }),
+        prisma.match.create({
+            data: {
+                date: new Date(),
+                location: { connect: { id: bernabeu.id } },
+                teams: {
+                    create: [
+                        { team: { connect: { id: madrid.id } } },
+                        { team: { connect: { id: liverpool.id } } },
+                    ],
+                },
+            },
+        }),
+        prisma.match.create({
+            data: {
+                date: new Date(),
+                location: { connect: { id: parcDesPrinces.id } },
+                teams: {
+                    create: [
+                        { team: { connect: { id: psg.id } } },
+                        { team: { connect: { id: chelsea.id } } },
+                    ],
+                },
+            },
+        }),
+        prisma.match.create({
+            data: {
+                date: new Date(),
+                location: { connect: { id: munich.id } },
+                teams: {
+                    create: [
+                        { team: { connect: { id: bayern.id } } },
+                        { team: { connect: { id: tottenham.id } } },
+                    ],
+                },
+            },
+        }),
+        prisma.match.create({
+            data: {
+                date: new Date(),
+                location: { connect: { id: turin.id } },
+                teams: {
+                    create: [
+                        { team: { connect: { id: juventus.id } } },
+                        { team: { connect: { id: mancity.id } } },
+                    ],
+                },
+            },
+        }),
     ]);
-
 
     // Create Goals
     await prisma.goal.createMany({
@@ -310,6 +631,56 @@ const main = async () => {
             { time: 30, matchId: match2.id, teamId: psg.id, playerId: mbappe.id },
             { time: 60, matchId: match2.id, teamId: mancity.id, playerId: lionel.id },
             { time: 25, matchId: match3.id, teamId: madrid.id, playerId: sergio.id },
+            { time: 75, matchId: match3.id, teamId: psg.id, playerId: neymar.id },
+            { time: 10, matchId: match4.id, teamId: barcelona.id, playerId: lionel.id },
+            { time: 55, matchId: match4.id, teamId: madrid.id, playerId: cristiano.id },
+            { time: 5, matchId: match5.id, teamId: madrid.id, playerId: sergio.id },
+            { time: 50, matchId: match5.id, teamId: barcelona.id, playerId: lionel.id },
+            { time: 20, matchId: match6.id, teamId: bayern.id, playerId: robert.id },
+            { time: 70, matchId: match6.id, teamId: juventus.id, playerId: cristiano.id },
+            { time: 35, matchId: match7.id, teamId: juventus.id, playerId: cristiano.id },
+            { time: 80, matchId: match7.id, teamId: liverpool.id, playerId: salah.id },
+            { time: 15, matchId: match8.id, teamId: liverpool.id, playerId: virgil.id },
+            { time: 65, matchId: match8.id, teamId: chelsea.id, playerId: hazard.id },
+            { time: 25, matchId: match9.id, teamId: barcelona.id, playerId: lionel.id },
+            { time: 75, matchId: match9.id, teamId: tottenham.id, playerId: kane.id },
+            { time: 30, matchId: match10.id, teamId: mancity.id, playerId: lionel.id },
+            { time: 60, matchId: match10.id, teamId: bayern.id, playerId: robert.id },
+            { time: 40, matchId: match11.id, teamId: madrid.id, playerId: cristiano.id },
+            { time: 70, matchId: match11.id, teamId: liverpool.id, playerId: salah.id },
+            { time: 50, matchId: match12.id, teamId: psg.id, playerId: neymar.id },
+            { time: 85, matchId: match12.id, teamId: chelsea.id, playerId: hazard.id },
+            { time: 10, matchId: match13.id, teamId: bayern.id, playerId: robert.id },
+            { time: 55, matchId: match13.id, teamId: tottenham.id, playerId: kane.id },
+            { time: 20, matchId: match14.id, teamId: juventus.id, playerId: cristiano.id },
+            { time: 65, matchId: match14.id, teamId: mancity.id, playerId: lionel.id },
+            { time: 75, matchId: match1.id, teamId: barcelona.id, playerId: lionel.id },
+            { time: 85, matchId: match1.id, teamId: madrid.id, playerId: cristiano.id },
+            { time: 90, matchId: match2.id, teamId: psg.id, playerId: neymar.id },
+            { time: 70, matchId: match3.id, teamId: madrid.id, playerId: sergio.id },
+            { time: 80, matchId: match3.id, teamId: psg.id, playerId: mbappe.id },
+            { time: 15, matchId: match4.id, teamId: barcelona.id, playerId: lionel.id },
+            { time: 65, matchId: match4.id, teamId: madrid.id, playerId: cristiano.id },
+            { time: 85, matchId: match5.id, teamId: barcelona.id, playerId: lionel.id },
+            { time: 90, matchId: match5.id, teamId: madrid.id, playerId: sergio.id },
+            { time: 40, matchId: match6.id, teamId: bayern.id, playerId: robert.id },
+            { time: 75, matchId: match6.id, teamId: juventus.id, playerId: cristiano.id },
+            { time: 50, matchId: match7.id, teamId: juventus.id, playerId: cristiano.id },
+            { time: 90, matchId: match7.id, teamId: liverpool.id, playerId: salah.id },
+            { time: 30, matchId: match8.id, teamId: liverpool.id, playerId: virgil.id },
+            { time: 75, matchId: match8.id, teamId: chelsea.id, playerId: hazard.id },
+            { time: 45, matchId: match9.id, teamId: barcelona.id, playerId: lionel.id },
+            { time: 85, matchId: match9.id, teamId: tottenham.id, playerId: kane.id },
+            { time: 50, matchId: match10.id, teamId: mancity.id, playerId: lionel.id },
+            { time: 75, matchId: match10.id, teamId: bayern.id, playerId: robert.id },
+            { time: 60, matchId: match11.id, teamId: madrid.id, playerId: cristiano.id },
+            { time: 85, matchId: match11.id, teamId: liverpool.id, playerId: salah.id },
+            { time: 70, matchId: match12.id, teamId: psg.id, playerId: neymar.id },
+            { time: 90, matchId: match12.id, teamId: chelsea.id, playerId: hazard.id },
+            { time: 30, matchId: match13.id, teamId: bayern.id, playerId: robert.id },
+            { time: 75, matchId: match13.id, teamId: tottenham.id, playerId: kane.id },
+            { time: 50, matchId: match14.id, teamId: juventus.id, playerId: cristiano.id },
+            { time: 85, matchId: match14.id, teamId: mancity.id, playerId: lionel.id },
         ],
     });
 
