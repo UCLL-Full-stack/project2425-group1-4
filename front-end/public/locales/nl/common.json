@@ -8,7 +8,7 @@
         "username": "Gebruikersnaam",
         "password": "Wachtwoord",
         "role": "Rol",
-        "noMatches": "Log in om de laatste matches te bekijken."
+        "needLogin": "Log in om de laatste matches te bekijken."
     },
     "login": {
         "title": "Inloggen",

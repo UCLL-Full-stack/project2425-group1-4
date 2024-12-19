@@ -1,9 +1,9 @@
 import { User } from '@types';
+import { TFunction } from 'i18next';
 import { ChevronDown } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
-import { TFunction } from 'i18next';
 import { useRouter } from 'next/router';
+import { useEffect, useRef, useState } from 'react';
 
 interface UserDropdownProps {
     t: TFunction;
@@ -61,7 +61,7 @@ export default function UserDropdown({ t, loggedInUser, setLoggedInUser }: UserD
                     <div className="py-1">
                         <Link
                             className="block px-2 py-1 text-black text-xl hover:bg-gray-200 "
-                            href={`/user/${loggedInUser.username}`}
+                            href={`/users/${loggedInUser.username}`}
                         >
                             {t('header.nav.edit')}
                         </Link>

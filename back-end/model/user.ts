@@ -1,5 +1,5 @@
+import { Goal as GoalPrisma, Role, Team as TeamPrisma, User as UserPrisma } from '@prisma/client';
 import { Goal } from './goal';
-import { Role, User as UserPrisma, Team as TeamPrisma, Goal as GoalPrisma } from '@prisma/client';
 import { Team } from './team';
 
 export class User {
@@ -71,7 +71,8 @@ export class User {
         if (user.description && user.description.trim().length === 0) {
             throw new Error('Description cannot be empty if provided.');
         }
-
+        if (user.birthDate.getTime() >= new Date().getTime())
+            throw new Error('Birth date must be in the past.');
         const validRoles = Object.values(Role);
         if (user.role) {
             if (!validRoles.includes(user.role))
@@ -130,7 +131,6 @@ export class User {
         return this.goals;
     }
 
-
     // Setters with validation as needed
     setFirstName(firstName: string): void {
         if (!firstName) throw new Error("First name can't be empty.");
@@ -165,7 +165,8 @@ export class User {
     }
 
     setDescription(description: string): void {
-        if (!description) throw new Error("Description can't be empty.");
+        if (!description || description.trim() === '')
+            throw new Error("Description can't be empty.");
         this.description = description;
     }
 

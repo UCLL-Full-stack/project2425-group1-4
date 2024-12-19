@@ -1,5 +1,5 @@
-import { Team } from '../../domain/model/team';
-import { User } from '../../domain/model/user';
+import { Team } from '../../model/team';
+import { User } from '../../model/user';
 
 const validUser = new User({
     id: 1,
@@ -10,7 +10,7 @@ const validUser = new User({
     email: 'coach@football.be',
     username: 'john_doe',
     description: 'description',
-    role: 'role',
+    role: 'USER',
 });
 
 const validId = 1;
@@ -32,7 +32,6 @@ test(`given: valid parameters, when: create a team, then: team should be created
     const team = new Team({
         id: validId,
         name: validName,
-        captain: validCaptain,
         coach: validCoach,
         players: validPlayers,
         description: validDescription,
@@ -42,7 +41,6 @@ test(`given: valid parameters, when: create a team, then: team should be created
     expect(team).toBeDefined();
     expect(team.getId()).toBe(1);
     expect(team.getName()).toBe('team1');
-    expect(team.getCaptain()).toBe(validUser);
     expect(team.getCoach()).toBe(validUser);
     expect(team.getPlayers()).toBe(validPlayers);
     expect(team.getDescription()).toBe('description');
@@ -54,7 +52,6 @@ test(`given: negative id, when: create team, then: error is thrown`, () => {
             new Team({
                 id: negativeId,
                 name: validName,
-                captain: validCaptain,
                 coach: validCoach,
                 players: validPlayers,
                 description: validDescription,
@@ -68,7 +65,6 @@ test(`given: empty name, when: create team, then: error is thrown`, () => {
             new Team({
                 id: validId,
                 name: emptyName,
-                captain: validCaptain,
                 coach: validCoach,
                 players: validPlayers,
                 description: validDescription,
@@ -76,27 +72,12 @@ test(`given: empty name, when: create team, then: error is thrown`, () => {
     ).toThrow('Invalid name');
 });
 
-// test(`given: no captain, when: create team, then: error is thrown`, () => {
-//     expect(
-//         () =>
-//             new Team({
-//                 id: validId,
-//                 name: validName,
-//                 captain: nullCaptain,
-//                 coach: validCoach,
-//                 players: validPlayers,
-//                 description: validDescription,
-//             })
-//     ).toThrow('Invalid name');
-// });
-
 test(`given: empty description, when: create team, then: error is thrown`, () => {
     expect(
         () =>
             new Team({
                 id: validId,
                 name: validName,
-                captain: validCaptain,
                 coach: validCoach,
                 players: validPlayers,
                 description: emptyDescription,

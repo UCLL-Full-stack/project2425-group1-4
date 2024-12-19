@@ -122,6 +122,12 @@ const getUserByUsername = async ({ username }: { username: string }): Promise<Us
             include: {
                 playerOfTeam: true,
                 coachOfTeam: true,
+                goals: {
+                    include: {
+                        team: true,
+                        player: true,
+                    },
+                },
             },
         });
 

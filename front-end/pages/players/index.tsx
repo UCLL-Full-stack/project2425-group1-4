@@ -5,21 +5,30 @@ import { User } from '@types';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Head from 'next/head';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import useSWR from 'swr';
 
 const PlayersPage: React.FC = () => {
-    const [players, setPlayers] = useState<User[]>([]);
     const { t } = useTranslation();
 
     const fetchPlayers = async () => {
-        const [playersResponse] = await Promise.all([UserService.getAllPlayers()]);
-        const [players] = await Promise.all([playersResponse.json()]);
-        setPlayers(players);
+        const response = await UserService.getAllPlayers();
+        if (!response.ok) {
+            const errorMessage =
+                response.status === 401 ? t('permissions.unauthorized') : response.statusText;
+            throw new Error(errorMessage);
+        }
+        const players = await response.json();
+        return players;
     };
 
-    useEffect(() => {
-        fetchPlayers();
-    }, []);
+    const {
+        data: players,
+        isLoading,
+        error,
+    } = useSWR<User[]>('fetchUsers', fetchPlayers, {
+        refreshInterval: 10000,
+    });
 
     return (
         <>
@@ -30,9 +39,15 @@ const PlayersPage: React.FC = () => {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <Header />
-            <div>
-                <PlayerGrid players={players} />
-            </div>
+            {isLoading ? (
+                <p>Loading players...</p>
+            ) : error ? (
+                <p className="text-red-700 font-semibold ">
+                    Error fetching players: {error.message}
+                </p>
+            ) : (
+                <>{players && <PlayerGrid players={players} />}</>
+            )}
         </>
     );
 };

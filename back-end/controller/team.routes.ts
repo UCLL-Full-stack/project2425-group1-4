@@ -23,51 +23,17 @@
  *         matches:
  *           type: array
  *           items:
- *             type: object
- *             properties:
- *               matchId:
- *                 type: integer
- *                 example: 1
- *               teamId:
- *                 type: integer
- *                 example: 2
+ *             $ref: '#/components/schemas/Match'
  *         goals:
  *           type: array
  *           items:
- *             type: object
- *             properties:
- *               id:
- *                 type: integer
- *                 example: 123
- *               time:
- *                 type: integer
- *                 example: 45
- *               matchId:
- *                 type: integer
- *                 example: 1
- *               teamId:
- *                 type: integer
- *                 example: 1
+ *             $ref: '#/components/schemas/Goal'
  *     User:
- *       type: object
- *       properties:
- *         id:
- *           type: integer
- *           example: 123
- *         firstName:
- *           type: string
- *           example: "Lionel"
- *         lastName:
- *           type: string
- *           example: "Messi"
- *         role:
- *           type: string
- *           example: "PLAYER"
+ *       $ref: '#/components/schemas/User'
  */
 
 import express, { NextFunction, Request, Response } from 'express';
 import teamService from '../service/team.service';
-import { Role } from '../types';
 
 const teamRouter = express.Router();
 

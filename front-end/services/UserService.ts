@@ -31,6 +31,8 @@ const updateUser = async (user: User) => {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+
         },
         body: JSON.stringify(user),
     });
@@ -43,6 +45,7 @@ const getUserByUsername = async (username: string) => {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
         },
     });
 };

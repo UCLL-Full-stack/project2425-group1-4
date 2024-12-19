@@ -19,12 +19,25 @@ const getGoalsWithDetails = async (matchId: number) => {
         });
         return goals;
     } catch (error) {
-        console.error('Database error:', error);
-        throw error;
+        console.error(error);
+        throw new Error('Database error, See server log for details.');
+    }
+};
+
+const deleteGoal = async (goalId: number) => {
+    try {
+        await database.goal.delete({
+            where: { id: goalId },
+        });
+        return { message: 'Goal deleted successfully' };
+    } catch (error) {
+        console.error(error);
+        throw new Error('Database error, See server log for details.');
     }
 };
 
 export default {
     getGoalsByIds,
     getGoalsWithDetails,
+    deleteGoal,
 };

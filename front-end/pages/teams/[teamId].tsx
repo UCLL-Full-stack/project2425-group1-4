@@ -4,63 +4,72 @@ import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import LatestMatches from '@components/team/latestMatches';
 import TeamService from '@services/TeamService';
 import UserService from '@services/UserService';
+import useSWR, { mutate } from 'swr';
 
 const TeamPage = () => {
     const router = useRouter();
     const { teamId } = router.query;
-    const [team, setTeam] = useState<Team | null>(null);
+
     const [editedTeam, setEditedTeam] = useState<Team | null>(null);
     const [isEditing, setIsEditing] = useState(false);
-    const [users, setUsers] = useState<User[]>([]);
     const [isAddingPlayer, setIsAddingPlayer] = useState(false);
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
     const { t } = useTranslation();
 
-    const fetchTeam = async (teamId: number) => {
-        const teamResponse = await TeamService.getTeamById(teamId);
-        const teamData = await teamResponse.json();
-        setTeam(teamData);
+    const fetchTeam = async (id: number) => {
+        const response = await TeamService.getTeamById(id);
+        if (!response.ok) {
+            const errorMessage =
+                response.status === 401 ? t('permissions.unauthorized') : response.statusText;
+            throw new Error(errorMessage);
+        }
+        return response.json();
     };
+
+    const {
+        data: team,
+        isLoading: isTeamLoading,
+        error: teamError,
+    } = useSWR<Team>(teamId ? `fetchTeam-${teamId}` : null, () => fetchTeam(Number(teamId)), {
+        refreshInterval: 10000,
+    });
 
     const fetchUsersByRole = async (currentCoach: User | null) => {
-        try {
-            const response = await UserService.getUsersByRole('USER'); // Fetch users with 'USER' role
-            const usersData = await response.json();
-
-            // Add current coach to the list if not already included
-            if (currentCoach && !usersData.some((user: User) => user.id === currentCoach.id)) {
-                usersData.push(currentCoach);
-            }
-
-            setUsers(usersData);
-        } catch (error) {
-            console.error('Error fetching users:', error);
-            setUsers([]); // Fallback to empty array
+        const response = await UserService.getUsersByRole('USER');
+        if (!response.ok) {
+            const errorMessage =
+                response.status === 401 ? t('permissions.unauthorized') : response.statusText;
+            throw new Error(errorMessage);
         }
+
+        const users = await response.json();
+        // Add current coach to the list if not already included
+        if (currentCoach && !users.some((user: User) => user.id === currentCoach.id)) {
+            users.push(currentCoach);
+        }
+        return users;
     };
 
-    useEffect(() => {
-        if (teamId) {
-            fetchTeam(Number(teamId));
-        }
-    }, [teamId]);
-
-    useEffect(() => {
-        if (team) {
-            fetchUsersByRole(team.coach);
-        }
-    }, [team]);
+    const {
+        data: users,
+        error: isUsersLoading,
+        isLoading: usersError,
+    } = useSWR<User[]>(isEditing ? `fetchUsers-editing` : null, fetchUsersByRole, {
+        refreshInterval: isEditing ? 5000 : 0,
+    });
 
     const handleEditToggle = () => {
         setIsEditing(!isEditing);
         if (!isEditing) {
-            setEditedTeam(team);
+            if (team) {
+                setEditedTeam(team);
+            }
         } else {
             setEditedTeam(null);
         }
@@ -83,7 +92,7 @@ const TeamPage = () => {
 
             if (response.ok) {
                 const updatedTeam = await response.json();
-                setTeam(updatedTeam); // Update the team state with the new player
+                mutate(`fetchTeam-${teamId}`, updatedTeam, false);
                 setIsAddingPlayer(false); // Close the add player UI
                 setSelectedUser(null); // Clear the selected user
             } else {
@@ -102,7 +111,7 @@ const TeamPage = () => {
                 const response = await TeamService.updateTeam(editedTeam);
                 if (response.ok) {
                     const updatedTeam = await response.json();
-                    setTeam(updatedTeam);
+                    mutate(`fetchTeam-${teamId}`, updatedTeam, false);
                     setIsEditing(false);
                     setEditedTeam(null);
                 } else {
@@ -182,7 +191,7 @@ const TeamPage = () => {
                                         className="w-full p-2 border rounded-lg"
                                         value={editedTeam?.coach?.id || ''}
                                         onChange={(e) => {
-                                            const selectedCoach = users.find(
+                                            const selectedCoach = users?.find(
                                                 (user) => user.id === parseInt(e.target.value)
                                             );
                                             setEditedTeam({
@@ -192,9 +201,9 @@ const TeamPage = () => {
                                         }}
                                     >
                                         <option value="">Select a coach</option>
-                                        {users.map((user) => (
+                                        {users?.map((user) => (
                                             <option key={user.id} value={user.id}>
-                                                {user.firstName} {user.lastName}
+                                                {user?.firstName} {user?.lastName}
                                             </option>
                                         ))}
                                     </select>
@@ -251,7 +260,7 @@ const TeamPage = () => {
                                                 <select
                                                     className="w-full p-2 border rounded-lg"
                                                     onChange={(e) => {
-                                                        const selected = users.find(
+                                                        const selected = users?.find(
                                                             (user) =>
                                                                 user.id === parseInt(e.target.value)
                                                         );
@@ -259,9 +268,9 @@ const TeamPage = () => {
                                                     }}
                                                 >
                                                     <option value="">Select a user</option>
-                                                    {users.map((user) => (
+                                                    {users?.map((user) => (
                                                         <option key={user.id} value={user.id}>
-                                                            {user.firstName} {user.lastName}
+                                                            {user?.firstName} {user?.lastName}
                                                         </option>
                                                     ))}
                                                 </select>

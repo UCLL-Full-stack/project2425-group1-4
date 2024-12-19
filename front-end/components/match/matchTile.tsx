@@ -12,18 +12,19 @@ const MatchTile: React.FC<MatchTileProps> = ({ match, teamId }) => {
     const team1Score = match?.teams[0]?.goals.length || 0;
     const team2Score = match?.teams[1]?.goals.length || 0;
 
-    // Determine which team is the current team
-    const isTeam1 = match?.teams[0]?.team.id === teamId;
-
-    // Set colors for the current team's score
-    const getScoreColor = (score: number, otherScore: number, isCurrentTeam: boolean) => {
-        if (score === otherScore) return ''; // Equal score: no color
-        if (isCurrentTeam) return score > otherScore ? 'text-green-500' : 'text-red-500';
-        return '';
-    };
-
-    const team1Color = getScoreColor(team1Score, team2Score, isTeam1);
-    const team2Color = getScoreColor(team2Score, team1Score, !isTeam1);
+    // Determine score colors
+    const team1Color =
+        team1Score > team2Score
+            ? 'text-green-500'
+            : team1Score < team2Score
+            ? 'text-red-500'
+            : 'text-red-500';
+    const team2Color =
+        team2Score > team1Score
+            ? 'text-green-500'
+            : team2Score < team1Score
+            ? 'text-red-500'
+            : 'text-red-500';
 
     return (
         <div

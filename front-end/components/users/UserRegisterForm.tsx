@@ -103,7 +103,7 @@ const UserRegisterForm: React.FC = () => {
                 }, 2000);
             } else if (response.status === 400) {
                 const responseData = await response.json();
-                const genericErrorMessage = responseData.message || t('general.error'); // Generic error message fallback
+                const genericErrorMessage = responseData.message || t('general.error'); 
 
                 setStatusMessages([{ message: genericErrorMessage, type: 'error' }]);
             } else {

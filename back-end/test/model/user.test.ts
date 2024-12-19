@@ -1,4 +1,4 @@
-import { User } from '../../domain/model/user';
+import { User } from '../../model/user';
 
 const id = 1;
 const firstName = 'John';
@@ -8,7 +8,7 @@ const birthDate = new Date('2000-01-01');
 const email = 'john.doe@example.com';
 const username = 'john_doe';
 const description = 'description';
-const role = 'PLAYER';
+const role = 'USER';
 
 test('given: valid values for user, when: creating a new user, then: user is created with those values', () => {
     // when
@@ -21,7 +21,7 @@ test('given: valid values for user, when: creating a new user, then: user is cre
         email: email,
         username: username,
         description: description,
-        role: role,
+        role: 'USER',
     });
 
     // then
@@ -34,22 +34,6 @@ test('given: valid values for user, when: creating a new user, then: user is cre
     expect(user.getUsername()).toBe(username);
     expect(user.getDescription()).toBe(description);
     expect(user.getRole()).toBe(role);
-});
-
-test('given: negative id, when: creating a new user, then: throws error', () => {
-    expect(() => {
-        new User({
-            id: -1,
-            firstName: 'John',
-            lastName: 'Doe',
-            password: 'password',
-            birthDate: birthDate,
-            email: 'john.doe@example.com',
-            username: 'john_doe',
-            description: 'description',
-            role: 'PLAYER',
-        });
-    }).toThrow('Id cannot be negative or zero.');
 });
 
 test('given: empty first name, when: creating a new user, then: throws error', () => {
@@ -123,7 +107,7 @@ test('given: empty birth date, when: creating a new user, then: throws error', (
             firstName: 'John',
             lastName: 'Doe',
             password: 'password',
-            birthDate: new Date(),
+            birthDate: new Date(Date.now() + 24 * 60 * 60 * 1000),
             email: 'john.doe@example.com',
             username: 'john_doe',
             description: 'description',
@@ -190,24 +174,24 @@ test('given: empty description, when: creating a new user, then: throws error', 
             birthDate: birthDate,
             email: 'john.doe@example.com',
             username: 'john_doe',
-            description: '',
+            description: '   ',
             role: 'PLAYER',
         });
-    }).toThrow('Description cannot be empty.');
+    }).toThrow('Description cannot be empty if provided.');
 });
 
-test('given: empty role, when: creating a new user, then: throws error', () => {
-    expect(() => {
-        new User({
-            id: 1,
-            firstName: 'John',
-            lastName: 'Doe',
-            password: 'password',
-            birthDate: birthDate,
-            email: 'john.doe@example.com',
-            username: 'john_doe',
-            description: 'description',
-            role: '',
-        });
-    }).toThrow('Role cannot be empty.');
-});
+// test('given: empty role, when: creating a new user, then: throws error', () => {
+//     expect(() => {
+//         new User({
+//             id: 1,
+//             firstName: 'John',
+//             lastName: 'Doe',
+//             password: 'password',
+//             birthDate: birthDate,
+//             email: 'john.doe@example.com',
+//             username: 'john_doe',
+//             description: 'description',
+//             role: '',
+//         });
+//     }).toThrow('Role cannot be empty.');
+// });

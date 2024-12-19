@@ -1,4 +1,3 @@
-import { getgid } from 'process';
 import goalDb from '../repository/goal.db';
 
 const validateGoalIds = async (goalIds: number[]): Promise<void> => {
@@ -10,10 +9,26 @@ const validateGoalIds = async (goalIds: number[]): Promise<void> => {
 };
 
 const getGoalsWithDetails = async (matchId: number) => {
-    return await goalDb.getGoalsWithDetails(matchId)
+    const goals = await goalDb.getGoalsWithDetails(matchId);
+    if (goals.length === 0) {
+        throw new Error('No goals were found for given ID.');
+    }
+};
+
+const deleteGoal = async (goalId: number) => {
+    if (!goalId || isNaN(goalId)) {
+        throw new Error('Invalid goal ID');
+    }
+    const goal = await goalDb.getGoalsByIds([goalId]);
+    if (!goal) {
+        throw new Error('Goal not found');
+    }
+
+    return await goalDb.deleteGoal(goalId);
 };
 
 export default {
     validateGoalIds,
     getGoalsWithDetails,
+    deleteGoal,
 };

@@ -7,23 +7,39 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Head from 'next/head';
 import React, { useEffect, useState } from 'react';
 
+import useSWR from 'swr';
+
 const HomePage: React.FC = () => {
+    const [loggedInUser, setLoggedInUser] = useState<UserStorage | null>(null);
     const { t } = useTranslation();
-    const [matches, setMatches] = useState<Match[]>([]);
 
     useEffect(() => {
-        const fetchLatestMatches = async () => {
-            try {
-                const response = await MatchService.getLatestMatches(10);
-                const matchesData = await response.json();
-                setMatches(matchesData);
-            } catch (error) {
-                console.error('Failed to fetch matches:', error);
-            }
-        };
-
-        fetchLatestMatches();
+        const storedUser = localStorage.getItem('loggedInUser');
+        if (storedUser) {
+            setLoggedInUser(JSON.parse(storedUser));
+        }
     }, []);
+
+    const fetchLatestMatches = async () => {
+        const response = await MatchService.getLatestMatches(10);
+
+        if (!response.ok) {
+            const errorMessage =
+                response.status === 401 ? t('permissions.unauthorized') : response.statusText;
+            throw new Error(errorMessage);
+        }
+
+        const matches = await response.json();
+        return matches;
+    };
+
+    const {
+        data: matches,
+        isLoading,
+        error,
+    } = useSWR('fetchLatestMatches', fetchLatestMatches, {
+        refreshInterval: 10000,
+    });
 
     return (
         <>
@@ -38,61 +54,36 @@ const HomePage: React.FC = () => {
             <main className="container mx-auto px-4 py-8">
                 <div className="flex space-x-8">
                     {/* Left Side - Placeholder Table */}
-                    <div className="flex-1 bg-gray-300">
-                        <table className="table-auto w-full">
-                            <thead>
-                                <tr>
-                                    <th className="px-4 py-2">{t('home.username')}</th>
-                                    <th className="px-4 py-2">{t('home.password')}</th>
-                                    <th className="px-4 py-2">{t('home.role')}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td className="border px-4 py-2">user@example.com</td>
-                                    <td className="border px-4 py-2">abcdefghij</td>
-                                    <td className="border px-4 py-2">User</td>
-                                </tr>
-                                <tr>
-                                    <td className="border px-4 py-2">
-                                        zinedine.zidane@example.com
-                                    </td>
-                                    <td className="border px-4 py-2">abcdefghij</td>
-                                    <td className="border px-4 py-2">Coach</td>
-                                </tr>
-                                <tr>
-                                    <td className="border px-4 py-2">lionel.messi@example.com</td>
-                                    <td className="border px-4 py-2">abcdefghij</td>
-                                    <td className="border px-4 py-2">Player</td>
-                                </tr>
-                                <tr>
-                                    <td className="border px-4 py-2">admin@ucll.be</td>
-                                    <td className="border px-4 py-2">secure12345</td>
-                                    <td className="border px-4 py-2">Admin</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    <div className="flex-1 bg-gray-300"></div>
 
-                    {/* Right Side - Placeholder Text */}
-                    <div className="flex-1 space-y-4">
-                        <div className="bg-gray-300 h-8 w-3/4"></div>
-                        <div className="bg-gray-300 h-4 w-full"></div>
-                        <div className="bg-gray-300 h-4 w-full"></div>
-                        <div className="bg-gray-300 h-4 w-5/6"></div>
-                        <div className="bg-gray-300 h-10 w-2/3"></div>
+                    {/* Right Side - Welcome Message */}
+                    <div className="flex-1 space-y-4 bg-gray-50 p-4 rounded shadow">
+                        <h2 className="text-lg font-bold">Welcome to GoalPro!</h2>
+                        <p className="text-gray-600">
+                            We're thrilled to have you here! GoalPro is your ultimate companion for
+                            all things football. Dive into the latest matches, track your favorite
+                            teams, and stay updated with real-time scores and highlights. Whether
+                            you're a casual fan or a die-hard enthusiast, GoalPro has something for
+                            everyone.
+                        </p>
+                        <p className="text-gray-600">
+                            Explore our platform to find detailed statistics, player profiles, and
+                            upcoming fixtures. Join our vibrant community and celebrate the
+                            beautiful game with fans from around the world. Your journey into the
+                            world of football excellence starts now!
+                        </p>
                     </div>
                 </div>
 
                 {/* Match Tiles Section */}
                 <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
-                    {matches.length > 0 ? (
-                        matches.map((match) => (
+                    {loggedInUser ? (
+                        matches?.map((match: Match) => (
                             <MatchTile key={match.id} match={match} teamId={0} />
                         ))
                     ) : (
                         <p className="text-center col-span-full text-gray-500">
-                            {t('home.noMatches')}
+                            {t('home.needLogin')}
                         </p>
                     )}
                 </div>

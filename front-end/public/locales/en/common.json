@@ -8,7 +8,7 @@
         "username": "Username",
         "password": "Password",
         "role": "Role",
-        "noMatches": "Log in to see the latest matches"
+        "needLogin": "Log in to see the latest matches"
     },
     "login": {
         "title": "Login",

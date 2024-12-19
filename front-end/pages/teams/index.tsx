@@ -11,21 +11,21 @@ const TeamsPage: React.FC = () => {
     const { t } = useTranslation();
 
     const fetchTeams = async () => {
-        try {
-            const response = await TeamService.getAllTeams();
-            const teams = await response.json();
-            return teams;
-        } catch (error) {
-            console.error('Error fetching teams:', error);
-            return null;
+        const response = await TeamService.getAllTeams();
+        if (!response.ok) {
+            const errorMessage =
+                response.status === 401 ? t('permissions.unauthorized') : response.statusText;
+            throw new Error(errorMessage);
         }
+        const teams = await response.json();
+        return teams;
     };
 
     const {
         data: teams,
         isLoading,
         error,
-    } = useSWR('fetchTeams', fetchTeams, {
+    } = useSWR<Team[]>('fetchTeams', fetchTeams, {
         refreshInterval: 10000,
     });
 
@@ -40,9 +40,11 @@ const TeamsPage: React.FC = () => {
             <Header />
             <div>
                 {isLoading ? (
-                    <p>Loading users...</p>
+                    <p>Loading teams...</p>
                 ) : error ? (
-                    <p className="text-red-500">Error fetching users: {error.message}</p>
+                    <p className="text-red-700 font-semibold ">
+                        Error fetching teams: {error.message}
+                    </p>
                 ) : (
                     <TeamGrid teams={teams} />
                 )}

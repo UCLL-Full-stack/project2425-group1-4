@@ -12,33 +12,35 @@
  *           type: string
  *           format: date-time
  *           example: "2024-12-01T15:00:00Z"
- *         locationId:
- *           type: integer
- *           example: 1
+ *         location:
+ *           type: object
+ *           properties:
+ *             id:
+ *               type: integer
+ *               example: 1
+ *             country:
+ *               type: string
+ *               example: "Belgium"
+ *             city:
+ *               type: string
+ *               example: "Brussels"
+ *             streetName:
+ *               type: string
+ *               example: "Rue de la Loi"
+ *             zipCode:
+ *               type: string
+ *               example: "1000"
+ *             number:
+ *               type: string
+ *               example: "16"
  *         teams:
  *           type: array
  *           items:
- *             type: object
- *             properties:
- *               teamId:
- *                 type: integer
- *                 example: 1
- *           example: [
- *             { "teamId": 1 },
- *             { "teamId": 2 }
- *           ]
+ *             $ref: '#/components/schemas/Team' # Ensure 'Team' schema exists
  *         goals:
  *           type: array
  *           items:
- *             type: integer
- *             example: 101
- *           example: [1, 2]
- *         teamAScore:
- *           type: integer
- *           example: 2
- *         teamBScore:
- *           type: integer
- *           example: 3
+ *             $ref: '#/components/schemas/Goal' # Ensure 'Goal' schema exists
  */
 
 import express, { NextFunction, Request, Response } from 'express';

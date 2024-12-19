@@ -122,7 +122,6 @@ userRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const request = req as Request & { auth: { role: Role } };
         const { role } = request.auth;
-        console.log('Decoded token:', request.auth);
         const users = await userService.getAllUsers({ role });
         res.status(200).json(users);
     } catch (error) {
@@ -171,17 +170,17 @@ userRouter.get('/players', async (req: Request, res: Response, next: NextFunctio
 
 /**
  * @swagger
- * /users/{id}:
+ * /users/{username}:
  *   get:
- *     summary: Retrieve a user by ID
+ *     summary: Retrieve a user by username
  *     tags: [Users]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: username
  *         required: true
  *         schema:
- *           type: integer
- *         description: The ID of the user
+ *           type: string
+ *         description: The unique username of the user
  *     responses:
  *       200:
  *         description: Successfully retrieved user details
@@ -202,6 +201,19 @@ userRouter.get('/players', async (req: Request, res: Response, next: NextFunctio
  *                 errorMessage:
  *                   type: string
  *                   example: "User not found."
+ *       400:
+ *         description: Bad request due to an error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: "error"
+ *                 errorMessage:
+ *                   type: string
+ *                   example: "An error occurred."
  */
 
 userRouter.get('/:username', async (req: Request, res: Response, next: NextFunction) => {
@@ -336,16 +348,6 @@ userRouter.post('/register', async (req: Request, res: Response, next: NextFunct
         const userInput = <UserInput>req.body;
         const user = await userService.createUser(userInput);
         res.status(200).json(user);
-    } catch (error) {
-        next(error);
-    }
-});
-
-userRouter.get('/role/:role', async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const role = req.params.role;
-        const users = await userService.getUsersByRole(role as Role);
-        res.json(users);
     } catch (error) {
         next(error);
     }

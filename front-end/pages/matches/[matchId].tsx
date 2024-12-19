@@ -1,29 +1,58 @@
 import Header from '@components/header/header';
+import GoalService from '@services/GoalService';
 import MatchService from '@services/MatchService';
-import { Match } from '@types';
+import { Match, UserStorage } from '@types';
+import { TrashIcon } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Head from 'next/head';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import useSWR from 'swr';
 
 const MatchPage = () => {
     const router = useRouter();
     const { matchId } = router.query;
-    const [match, setMatch] = useState<Match | null>(null);
     const { t } = useTranslation();
-
-    const fetchMatch = async (matchId: number) => {
-        const [matchResponse] = await Promise.all([MatchService.getMatchById(matchId)]);
-        const [match] = await Promise.all([matchResponse.json()]);
-        setMatch(match);
-    };
+    const [loggedInUser, setLoggedInUser] = useState<UserStorage | null>(null);
 
     useEffect(() => {
-        if (matchId) {
-            fetchMatch(Number(matchId));
+        const storedUser = localStorage.getItem('loggedInUser');
+        if (storedUser) {
+            setLoggedInUser(JSON.parse(storedUser));
         }
-    }, [matchId]);
+    }, []);
+
+
+    const fetchMatch = async (matchId: number) => {
+        const response = await MatchService.getMatchById(matchId);
+        if (!response.ok) {
+            const errorMessage =
+                response.status === 401 ? t('permissions.unauthorized') : response.statusText;
+            throw new Error(errorMessage);
+        }
+        return response.json();
+    };
+
+    const {
+        data: match,
+        isLoading,
+        error,
+        mutate,
+    } = useSWR<Match>(matchId ? `fetchMatch-${matchId}` : null, () => fetchMatch(Number(matchId)), {
+        refreshInterval: 10000,
+    });
+
+    const deleteGoal = async (goalId: number) => {
+        try {
+            await GoalService.deleteGoalById(goalId);
+            mutate(); // Refresh the match data after deletion
+        } catch (err) {
+            console.error('Failed to delete goal:', err);
+            alert(t('errors.deleteGoalFailed'));
+        }
+    };
 
     const getTeamColor = (teamIndex: number) => {
         if (!match) return 'bg-gray-100'; // Default color
@@ -98,16 +127,23 @@ const MatchPage = () => {
                         </div>
                         <ul className="p-5">
                             {match?.goals.map((goal) => (
-                                <li key={goal.id} className="hover:font-bold">
-                                    {goal.time}' -{' '}
-                                    <a
-                                        href={`/user/${goal.player.username}`}
-                                        className="text-blue-600 hover:underline"
+                                <li key={goal.id} className="flex items-center justify-between ">
+                                    <Link
+                                        href={`/users/${goal.player.username}`}
+                                        className="hover:font-bold text-blue-600 hover:underline"
                                     >
-                                        {goal.player?.firstName || 'Unknown'}{' '}
-                                        {goal.player?.lastName || ''}
-                                    </a>{' '}
-                                    ({goal.team?.name || 'Unknown Team'})
+                                        {goal.time}' - {goal.player?.firstName || 'Unknown'}{' '}
+                                        {goal.player?.lastName || ''}(
+                                        {goal.team?.name || 'Unknown Team'})
+                                    </Link>
+                                    {loggedInUser?.role === 'ADMIN' && (
+                                        <button
+                                            onClick={() => deleteGoal(goal.id)}
+                                            className="text-red-600 hover:underline flex items-center"
+                                        >
+                                            <TrashIcon className="w-5 h-5" />
+                                        </button>
+                                    )}
                                 </li>
                             ))}
                         </ul>

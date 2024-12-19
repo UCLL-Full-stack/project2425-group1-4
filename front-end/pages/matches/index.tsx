@@ -5,20 +5,30 @@ import { Match } from '@types';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Head from 'next/head';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import useSWR from 'swr';
 
 const MatchesPage: React.FC = () => {
-    const [matches, setMatches] = useState<Match[]>([]);
     const { t } = useTranslation();
 
     const fetchMatches = async () => {
-        const [matches] = await Promise.all([(await MatchService.getAllMatches()).json()]);
-        setMatches(matches);
+        const response = await MatchService.getAllMatches();
+        if (!response.ok) {
+            const errorMessage =
+                response.status === 401 ? t('permissions.unauthorized') : response.statusText;
+            throw new Error(errorMessage);
+        }
+        const matches = await response.json();
+        return matches;
     };
 
-    useEffect(() => {
-        fetchMatches();
-    }, []);
+    const {
+        data: matches,
+        isLoading,
+        error,
+    } = useSWR<Match[]>('fetchMatches', fetchMatches, {
+        refreshInterval: 10000,
+    });
 
     return (
         <>
@@ -30,7 +40,15 @@ const MatchesPage: React.FC = () => {
             </Head>
             <Header />
             <div>
-                <MatchGrid matches={matches} />
+                {isLoading ? (
+                    <p>Loading matches...</p>
+                ) : error ? (
+                    <p className="text-red-700 font-semibold ">
+                        Error fetching matches: {error.message}
+                    </p>
+                ) : (
+                    <MatchGrid matches={matches} />
+                )}
             </div>
         </>
     );

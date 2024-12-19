@@ -7,9 +7,9 @@ const BackButton: React.FC = () => {
 
     const handleBack = () => {
         if (router.pathname !== '/') {
-            router.back(); // Navigate to the previous page
+            router.back();
         } else {
-            router.push('/'); // If on the home page, ensure it redirects to home
+            router.push('/');
         }
     };
 

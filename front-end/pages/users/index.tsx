@@ -6,63 +6,30 @@ import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import React from 'react';
 import useSWR from 'swr';
-
-// Utility fetch with session handling
-const fetchWithAuth = async (url: string, options: RequestInit = {}) => {
-    const loggedInUserString = localStorage.getItem('loggedInUser');
-    const loggedInUser = loggedInUserString ? JSON.parse(loggedInUserString) : null;
-    const token = loggedInUser?.token;
-
-    const headers = {
-        ...options.headers,
-        Authorization: token ? `Bearer ${token}` : '',
-        'Content-Type': 'application/json',
-    };
-
-    const response = await fetch(url, {
-        ...options,
-        headers,
-    });
-
-    if (response.status === 401) {
-        // Clear token and redirect user to login
-        localStorage.removeItem('loggedInUser');
-        window.location.href = '/login';
-        return;
-    }
-
-    if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Failed to fetch');
-    }
-
-    return await response.json();
-};
 
 const UsersPage: React.FC = () => {
     const { t } = useTranslation();
     const router = useRouter();
 
-    // Fetch users using SWR
-    const fetchUsers = async (): Promise<User[] | null> => {
-        try {
-            const response = await UserService.getAllUsers();
-            const users = await response.json();
-            return users;
-        } catch (error) {
-            console.error('Error fetching users:', error);
-            return null;
+    const fetchUsers = async (): Promise<User[]> => {
+        const response = await UserService.getAllUsers();
+        if (!response.ok) {
+            const errorMessage =
+                response.status === 401 ? t('permissions.unauthorized') : response.statusText;
+            throw new Error(errorMessage);
         }
+
+        const users = await response.json();
+        return users;
     };
 
     const {
         data: users,
         isLoading,
         error,
-    } = useSWR('fetchUsers', fetchUsers, {
-        refreshInterval: 10000,
+    } = useSWR<User[]>('fetchUsers', fetchUsers, {
+        refreshInterval: 500,
     });
 
     return (
@@ -74,12 +41,14 @@ const UsersPage: React.FC = () => {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <Header />
-            <div>
 
+            <div>
                 {isLoading ? (
                     <p>Loading users...</p>
                 ) : error ? (
-                    <p className="text-red-500">Error fetching users: {error.message}</p>
+                    <p className="text-red-700 font-semibold ">
+                        Error fetching users: {error.message}
+                    </p>
                 ) : (
                     <UserGrid Users={users || []} />
                 )}

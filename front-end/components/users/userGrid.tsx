@@ -38,7 +38,7 @@ const UserGrid: React.FC<Props> = ({ Users }: Props) => {
                     {filteredUsers.length > 0 ? (
                         filteredUsers.map((user) => (
                             <Link
-                                href={`/user/${user.username}`}
+                                href={`/users/${user.username}`}
                                 key={user.id}
                                 className="bg-white p-4 rounded-lg shadow-md text-center hover:shadow-lg transition-shadow"
                             >

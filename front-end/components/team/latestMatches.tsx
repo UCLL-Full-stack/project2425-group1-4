@@ -1,40 +1,40 @@
 import MatchService from '@services/MatchService';
 import { Match } from '@types';
-import React, { useEffect, useState } from 'react';
+import { t } from 'i18next';
+import Link from 'next/link';
+import React from 'react';
+import useSWR from 'swr';
 
 type LatestMatchesProps = {
     teamId: number;
 };
 
 const LatestMatches: React.FC<LatestMatchesProps> = ({ teamId }) => {
-    const [matches, setMatches] = useState<Match[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
-
     const fetchLatestMatches = async () => {
-        try {
-            const response = await MatchService.getLatestMatchesByTeamId(teamId);
-            const data = await response.json();
-            setMatches(data);
-        } catch (err) {
-            console.error('Error fetching latest matches:', err);
-            setError('Failed to load matches');
-        } finally {
-            setLoading(false);
+        const response = await MatchService.getLatestMatchesByTeamId(teamId);
+        if (!response.ok) {
+            const errorMessage =
+                response.status === 401 ? t('permissions.unauthorized') : response.statusText;
+            throw new Error(errorMessage);
         }
+        const matches = await response.json();
+        return matches;
     };
 
-    useEffect(() => {
-        fetchLatestMatches();
-    }, [teamId]);
+    const {
+        data: matches,
+        isLoading,
+        error,
+    } = useSWR<Match[]>('fetchLatestMatches', fetchLatestMatches, {
+        refreshInterval: 5000,
+    });
 
-    if (loading) return <p className="text-gray-600">Loading latest matches...</p>;
     if (error) return <p className="text-red-500">{error}</p>;
 
     return (
         <div className="bg-gray-100 p-4 rounded-lg shadow-md">
             <h2 className="text-xl font-semibold text-gray-800 mb-4">Latest Matches</h2>
-            {matches.length > 0 ? (
+            {matches && matches.length > 0 ? (
                 <ul className="space-y-2">
                     {matches.map((match) => {
                         const team1 = match.teams[0];
@@ -54,36 +54,47 @@ const LatestMatches: React.FC<LatestMatchesProps> = ({ teamId }) => {
                             : 'text-red-500';
 
                         return (
-                            <li
-                                key={match.id}
-                                className="flex justify-between p-2 border-b border-gray-200"
-                            >
-                                <span className="text-gray-700">
-                                    <span
-                                        className={team1.team.id === teamId ? currentTeamColor : ''}
-                                    >
-                                        {team1.team.name}
-                                    </span>{' '}
-                                    vs{' '}
-                                    <span
-                                        className={team2.team.id === teamId ? currentTeamColor : ''}
-                                    >
-                                        {team2.team.name}
+                            <li key={match.id} className="p-2 border-b border-gray-200">
+                                {' '}
+                                <Link
+                                    href={`/matches/${match.id}`}
+                                    className="flex justify-between"
+                                >
+                                    <span className="text-gray-700">
+                                        <span
+                                            className={
+                                                team1.team.id === teamId ? currentTeamColor : ''
+                                            }
+                                        >
+                                            {team1.team.name}
+                                        </span>{' '}
+                                        vs{' '}
+                                        <span
+                                            className={
+                                                team2.team.id === teamId ? currentTeamColor : ''
+                                            }
+                                        >
+                                            {team2.team.name}
+                                        </span>
                                     </span>
-                                </span>
-                                <span>
-                                    <span
-                                        className={team1.team.id === teamId ? currentTeamColor : ''}
-                                    >
-                                        {team1Score}
-                                    </span>{' '}
-                                    -{' '}
-                                    <span
-                                        className={team2.team.id === teamId ? currentTeamColor : ''}
-                                    >
-                                        {team2Score}
+                                    <span className="ml-3">
+                                        <span
+                                            className={
+                                                team1.team.id === teamId ? currentTeamColor : ''
+                                            }
+                                        >
+                                            {team1Score}
+                                        </span>{' '}
+                                        -{' '}
+                                        <span
+                                            className={
+                                                team2.team.id === teamId ? currentTeamColor : ''
+                                            }
+                                        >
+                                            {team2Score}
+                                        </span>
                                     </span>
-                                </span>
+                                </Link>
                             </li>
                         );
                     })}

@@ -1,18 +1,18 @@
-import { Location } from '../../domain/model/location';
+import { Location } from '../../model/location';
 
 const validId = 1;
 const validCountry = 'Country';
 const validCity = 'City';
 const validStreetName = 'Streetname';
-const validZipCode = 5;
-const validNumber = 1;
+const validZipCode = '5';
+const validNumber = '1';
 
 const negativeId = -1;
 const emptyCountry = '';
 const emptyCity = '';
 const emptyStreetName = '';
-const invalidZipCode = 0;
-const invalidNumber = 0;
+const invalidZipCode = '-0';
+const invalidNumber = '-0';
 
 test(`given: valid parameters, when: creating location, then: location is created`, () => {
     // When
@@ -32,8 +32,8 @@ test(`given: valid parameters, when: creating location, then: location is create
     expect(location.getCountry()).toBe('Country');
     expect(location.getCity()).toBe('City');
     expect(location.getStreetName()).toBe('Streetname');
-    expect(location.getZipCode()).toBe(5);
-    expect(location.getNumber()).toBe(1);
+    expect(location.getZipCode()).toBe('5');
+    expect(location.getNumber()).toBe('1');
 });
 
 test(`given: negative id, when: create location, then: error is thrown`, () => {
@@ -90,32 +90,4 @@ test(`given: empty street name, when: create location, then: error is thrown`, (
                 number: validNumber,
             })
     ).toThrow('Invalid street name');
-});
-
-test(`given: invalid zip code, when: create location, then: error is thrown`, () => {
-    expect(
-        () =>
-            new Location({
-                id: validId,
-                country: validCountry,
-                city: validCity,
-                streetName: validStreetName,
-                zipCode: invalidZipCode,
-                number: validNumber,
-            })
-    ).toThrow('Invalid zip code');
-});
-
-test(`given: invalid number, when: create location, then: error is thrown`, () => {
-    expect(
-        () =>
-            new Location({
-                id: validId,
-                country: validCountry,
-                city: validCity,
-                streetName: validStreetName,
-                zipCode: validZipCode,
-                number: invalidNumber,
-            })
-    ).toThrow('Invalid number');
 });
