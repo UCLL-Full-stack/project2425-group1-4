@@ -30,7 +30,7 @@ const UserPage = () => {
         const response = await UserService.getUserByUsername(username);
         if (!response.ok) {
             const errorMessage =
-                response.status === 401 ? t('permissions.unauthorized') : response.statusText;
+                response.status === 401 ? t('permissions.unauthorized') : '';
             throw new Error(errorMessage);
         }
         return response.json();
@@ -40,7 +40,7 @@ const UserPage = () => {
         const response = await TeamService.getAllTeams();
         if (!response.ok) {
             const errorMessage =
-                response.status === 401 ? t('permissions.unauthorized') : response.statusText;
+                response.status === 401 ? t('permissions.unauthorized') : '';
             throw new Error(errorMessage);
         }
         return response.json();
@@ -121,10 +121,13 @@ const UserPage = () => {
                     <link rel="icon" href="/favicon.ico" />
                 </Head>
                 <Header />
-                <p className="text-red-500">
-                    {userError ? `Error fetching user: ${userError.message}` : ''}
-                    {teamsError ? `Error fetching teams: ${teamsError.message}` : ''}
-                </p>
+
+                <div className="flex items-center justify-center h-96">
+                    <p className="text-red-500">
+                        {userError ? `Error fetching user: ${userError.message}` : ''}
+                        {teamsError ? `Error fetching teams: ${teamsError.message}` : ''}
+                    </p>
+                </div>
             </>
         );
     }

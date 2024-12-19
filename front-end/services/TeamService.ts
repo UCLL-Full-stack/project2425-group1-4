@@ -27,7 +27,7 @@ const getTeamById = async (teamId: number) => {
 const updateTeam = async (team: Team) => {
     const token = JSON.parse(localStorage.getItem('loggedInUser') || '{}')?.token;
 
-    return fetch(`${process.env.NEXT_PUBLIC_API_URL}/teams/${team.id}`, {
+    return fetch(`${process.env.NEXT_PUBLIC_API_URL}/teams/update`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -40,13 +40,12 @@ const updateTeam = async (team: Team) => {
 const addPlayerToTeam = async (teamId: number, playerId: number) => {
     const token = JSON.parse(localStorage.getItem('loggedInUser') || '{}')?.token;
 
-    return fetch(`${process.env.NEXT_PUBLIC_API_URL}/teams/${teamId}/addPlayer`, {
+    return fetch(`${process.env.NEXT_PUBLIC_API_URL}/teams/${teamId}/addPlayer/${playerId}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ playerId }),
     });
 };
 
@@ -55,14 +54,13 @@ const removePlayerFromTeam = async (teamId: number, playerId: number): Promise<b
 
     try {
         const response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/teams/${teamId}/removePlayer`,
+            `${process.env.NEXT_PUBLIC_API_URL}/teams/${teamId}/removePlayer/${playerId}`,
             {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify({ playerId }),
             }
         );
 

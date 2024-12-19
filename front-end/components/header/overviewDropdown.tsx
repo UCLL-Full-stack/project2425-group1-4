@@ -14,7 +14,7 @@ export default function OverviewDropdown({ t, loggedInUser }: LoggedInUser) {
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        function handleClickOutside(event: { target: any; }) {
+        function handleClickOutside(event: { target: any }) {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
                 setIsOpen(false);
             }

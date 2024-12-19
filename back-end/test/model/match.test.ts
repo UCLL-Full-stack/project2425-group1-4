@@ -81,3 +81,39 @@ test('given: valid values for match, when: creating a new match, then: match is 
     expect(match.getId()).toBe(1);
     expect(match.getDate()).toBe(validDate);
 });
+
+test('given: no match id, when: creating a new match, then: error is thrown'), () => {
+    consts match = () => {
+        new Match({
+            date: validDate,
+            location: validLocation,
+            goals: [validGoal],
+            teams: [validMatchTeam],
+        })
+    }
+    expect(match).toThrowError()
+}
+
+test('given: no match date, when: creating a new match, then: error is thrown'), () => {
+    consts match = () => {
+        new Match({
+            id: validId,
+            location: validLocation,
+            goals: [validGoal],
+            teams: [validMatchTeam],
+        })
+    }
+    expect(match).toThrowError()
+}
+
+test('given: no match location, when: creating a new match, then: error is thrown'), () => {
+    consts match = () => {
+        new Match({
+            id: validId,
+            date: validDate,
+            goals: [validGoal],
+            teams: [validMatchTeam],
+        })
+    }
+    expect(match).toThrowError()
+}

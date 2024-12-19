@@ -34,6 +34,7 @@
 
 import express, { NextFunction, Request, Response } from 'express';
 import teamService from '../service/team.service';
+import { TeamInput } from '../types';
 
 const teamRouter = express.Router();
 
@@ -68,8 +69,8 @@ const teamRouter = express.Router();
  */
 teamRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const teams = await teamService.getAllTeams();
-        res.status(200).json(teams);
+        const result = await teamService.getAllTeams();
+        res.status(200).json(result);
     } catch (error) {
         next(error);
     }
@@ -126,11 +127,8 @@ teamRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
 teamRouter.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     try {
-        const team = await teamService.getTeamById(Number(id));
-        if (!team) {
-            return res.status(404).json({ status: 'error', errorMessage: 'Team not found' });
-        }
-        res.status(200).json(team);
+        const result = await teamService.getTeamById(Number(id));
+        res.status(200).json(result);
     } catch (error) {
         next(error);
     }
@@ -194,22 +192,12 @@ teamRouter.get('/:id', async (req: Request, res: Response, next: NextFunction) =
  *                   example: "An error occurred."
  */
 
-teamRouter.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
-    const updatedTeamData = req.body;
+teamRouter.put('/update', async (req: Request, res: Response, next: NextFunction) => {
+    const updatedTeamData = <TeamInput>req.body;
 
     try {
-        const team = await teamService.getTeamById(Number(id));
-        if (!team) {
-            return res.status(404).json({ status: 'error', errorMessage: 'Team not found' });
-        }
-
-        const updateResult = await teamService.updateTeam(updatedTeamData);
-        if (!updateResult) {
-            throw new Error('Failed to update team');
-        }
-
-        res.status(200).json({ message: 'Team updated successfully' });
+        const result = await teamService.updateTeam(updatedTeamData);
+        res.status(200).json(result);
     } catch (error) {
         next(error);
     }
@@ -228,6 +216,12 @@ teamRouter.put('/:id', async (req: Request, res: Response, next: NextFunction) =
  *         schema:
  *           type: integer
  *         description: The unique identifier of the team
+ *       - in: path
+ *         name: playerId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The unique identifier of the player
  *     requestBody:
  *       required: true
  *       content:
@@ -278,45 +272,40 @@ teamRouter.put('/:id', async (req: Request, res: Response, next: NextFunction) =
  *                   example: "An error occurred."
  */
 
-teamRouter.put('/:id/addPlayer', async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
-    const { playerId } = req.body;
+teamRouter.put(
+    '/:teamId/addPlayer/:playerId',
+    async (req: Request, res: Response, next: NextFunction) => {
+        const { teamId, playerId } = req.params;
 
-    try {
-        const result = await teamService.addPlayerToTeam(Number(id), playerId);
-        if (!result) {
-            return res.status(404).json({ message: 'Team or player not found' });
+        try {
+            const result = await teamService.addPlayerToTeam(Number(teamId), Number(playerId));
+
+            res.status(200).json(result);
+        } catch (error) {
+            next(error);
         }
-        res.status(200).json({ message: 'Player added to team successfully' });
-    } catch (error) {
-        next(error);
     }
-});
+);
 
 /**
  * @swagger
- * /teams/{id}/removePlayer:
+ * /teams/{teamId}/removePlayer{playerId}:
  *   put:
  *     summary: Remove a player from a team
  *     tags: [Teams]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: teamId
  *         required: true
  *         schema:
  *           type: integer
  *         description: The unique identifier of the team
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               playerId:
- *                 type: integer
- *                 description: The unique identifier of the player to remove
- *                 example: 123
+ *       - in: path
+ *         name: playerId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The unique identifier of the player
  *     responses:
  *       200:
  *         description: Player removed from team successfully
@@ -349,19 +338,19 @@ teamRouter.put('/:id/addPlayer', async (req: Request, res: Response, next: NextF
  *                   type: string
  *                   example: Error removing player from team
  */
-teamRouter.put('/:id/removePlayer', async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
-    const { playerId } = req.body;
+teamRouter.put(
+    '/:teamId/removePlayer/:playerId',
+    async (req: Request, res: Response, next: NextFunction) => {
+        const { id, playerId } = req.params;
 
-    try {
-        const result = await teamService.removePlayerFromTeam(Number(id), playerId);
-        if (!result) {
-            return res.status(404).json({ message: 'Team or player not found' });
+        try {
+            const result = await teamService.removePlayerFromTeam(Number(id), Number(playerId));
+
+            res.status(200).json(result);
+        } catch (error) {
+            next(error);
         }
-        res.status(200).json({ message: 'Player removed from team successfully' });
-    } catch (error) {
-        next(error);
     }
-});
+);
 
 export default teamRouter;

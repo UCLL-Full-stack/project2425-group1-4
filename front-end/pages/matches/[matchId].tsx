@@ -24,12 +24,10 @@ const MatchPage = () => {
         }
     }, []);
 
-
     const fetchMatch = async (matchId: number) => {
         const response = await MatchService.getMatchById(matchId);
         if (!response.ok) {
-            const errorMessage =
-                response.status === 401 ? t('permissions.unauthorized') : response.statusText;
+            const errorMessage = response.status === 401 ? t('permissions.unauthorized') : '';
             throw new Error(errorMessage);
         }
         return response.json();
@@ -66,6 +64,41 @@ const MatchPage = () => {
         return 'bg-gray-100'; // Default color
     };
 
+    if (isLoading) {
+        return (
+            <>
+                <Head>
+                    <title>{t('app.title')}</title>
+                    <meta name="description" content={t('app.title')} />
+                    <meta name="viewport" content="width=device-width, initial-scale=1" />
+                    <link rel="icon" href="/favicon.ico" />
+                </Head>
+                <Header />
+                <p>Loading...</p>
+            </>
+        );
+    }
+
+    if (error) {
+        return (
+            <>
+                <Head>
+                    <title>{t('app.title')}</title>
+                    <meta name="description" content={t('app.title')} />
+                    <meta name="viewport" content="width=device-width, initial-scale=1" />
+                    <link rel="icon" href="/favicon.ico" />
+                </Head>
+                <Header />
+
+                <div className="flex items-center justify-center h-96">
+                    <p className="text-red-700 font-semibold">
+                        {error ? `Error fetching match: ${error.message}` : ''}
+                    </p>
+                </div>
+            </>
+        );
+    }
+
     return (
         <>
             <Head>
@@ -75,6 +108,7 @@ const MatchPage = () => {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <Header />
+
             <div className="flex flex-col items-center p-8 bg-gray-50 min-h-screen">
                 <h1 className="text-2xl font-bold text-gray-800">Match Details</h1>
 

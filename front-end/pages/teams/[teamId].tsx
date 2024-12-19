@@ -26,7 +26,7 @@ const TeamPage = () => {
         const response = await TeamService.getTeamById(id);
         if (!response.ok) {
             const errorMessage =
-                response.status === 401 ? t('permissions.unauthorized') : response.statusText;
+                response.status === 401 ? t('permissions.unauthorized') : '';
             throw new Error(errorMessage);
         }
         return response.json();
@@ -44,7 +44,7 @@ const TeamPage = () => {
         const response = await UserService.getUsersByRole('USER');
         if (!response.ok) {
             const errorMessage =
-                response.status === 401 ? t('permissions.unauthorized') : response.statusText;
+                response.status === 401 ? t('permissions.unauthorized') : '';
             throw new Error(errorMessage);
         }
 
@@ -58,8 +58,8 @@ const TeamPage = () => {
 
     const {
         data: users,
-        error: isUsersLoading,
-        isLoading: usersError,
+        error: usersError,
+        isLoading: isUsersLoading,
     } = useSWR<User[]>(isEditing ? `fetchUsers-editing` : null, fetchUsersByRole, {
         refreshInterval: isEditing ? 5000 : 0,
     });
@@ -127,6 +127,41 @@ const TeamPage = () => {
             alert('An error occurred while updating the team. Please try again later.');
         }
     };
+
+    if (isTeamLoading) {
+        return (
+            <>
+                <Head>
+                    <title>{t('app.title')}</title>
+                    <meta name="description" content={t('app.title')} />
+                    <meta name="viewport" content="width=device-width, initial-scale=1" />
+                    <link rel="icon" href="/favicon.ico" />
+                </Head>
+                <Header />
+                <p>Loading...</p>
+            </>
+        );
+    }
+
+    if (teamError) {
+        return (
+            <>
+                <Head>
+                    <title>{t('app.title')}</title>
+                    <meta name="description" content={t('app.title')} />
+                    <meta name="viewport" content="width=device-width, initial-scale=1" />
+                    <link rel="icon" href="/favicon.ico" />
+                </Head>
+                <Header />
+
+                <div className="flex items-center justify-center h-96">
+                    <p className="text-red-700 font-semibold">
+                        {teamError ? `Error fetching user: ${teamError.message}` : ''}
+                    </p>
+                </div>
+            </>
+        );
+    }
 
     return (
         <>

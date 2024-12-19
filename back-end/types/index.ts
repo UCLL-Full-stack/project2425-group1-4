@@ -1,3 +1,5 @@
+import { User } from '../model/user';
+
 type Role = 'USER' | 'PLAYER' | 'COACH' | 'ADMIN';
 
 type UserInput = {
@@ -20,8 +22,7 @@ type TeamInput = {
     name: string;
     description: string;
     coachId: number;
-    players: number[];
-    matches: number[];
+    players: User[];
 };
 
 type GoalInput = {

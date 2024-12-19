@@ -47,7 +47,7 @@ const main = async () => {
             data: {
                 firstName: 'Maxim',
                 lastName: 'Delloye',
-                password: await bcrypt.hash('abcdefghij', 10),
+                password: await bcrypt.hash('123', 10),
                 birthDate: new Date('2003-10-01'),
                 email: 'r0898568@ucll.be',
                 username: 'maximdel',
@@ -59,7 +59,7 @@ const main = async () => {
             data: {
                 firstName: 'Mathieu',
                 lastName: 'Sibret',
-                password: await bcrypt.hash('abcdefghij', 10),
+                password: await bcrypt.hash('123', 10),
                 birthDate: new Date('2001-06-09'),
                 email: 'r0833900@ucll.be',
                 username: 'msibret',
@@ -83,7 +83,7 @@ const main = async () => {
             data: {
                 firstName: 'User',
                 lastName: '1',
-                password: await bcrypt.hash('abcdefghij', 10),
+                password: await bcrypt.hash('123', 10),
                 birthDate: new Date('1972-06-23'),
                 email: 'user@example.com',
                 username: 'user1',
@@ -95,7 +95,7 @@ const main = async () => {
             data: {
                 firstName: 'Lionel',
                 lastName: 'Messi',
-                password: await bcrypt.hash('abcdefghij', 10),
+                password: await bcrypt.hash('123', 10),
                 birthDate: new Date('1987-06-24'),
                 email: 'lionel.messi@example.com',
                 username: 'lionelm',
@@ -107,7 +107,7 @@ const main = async () => {
             data: {
                 firstName: 'Cristiano',
                 lastName: 'Ronaldo',
-                password: await bcrypt.hash('abcdefghij', 10),
+                password: await bcrypt.hash('123', 10),
                 birthDate: new Date('1985-02-05'),
                 email: 'cristiano.ronaldo@example.com',
                 username: 'cristianor',
@@ -119,7 +119,7 @@ const main = async () => {
             data: {
                 firstName: 'Sergio',
                 lastName: 'Ramos',
-                password: await bcrypt.hash('abcdefghij', 10),
+                password: await bcrypt.hash('123', 10),
                 birthDate: new Date('1986-03-30'),
                 email: 'sergio.ramos@example.com',
                 username: 'sergior',
@@ -131,7 +131,7 @@ const main = async () => {
             data: {
                 firstName: 'Pep',
                 lastName: 'Guardiola',
-                password: await bcrypt.hash('abcdefghij', 10),
+                password: await bcrypt.hash('123', 10),
                 birthDate: new Date('1971-01-18'),
                 email: 'pep.guardiola@example.com',
                 username: 'pepg',
@@ -143,7 +143,7 @@ const main = async () => {
             data: {
                 firstName: 'Neymar',
                 lastName: 'Jr',
-                password: await bcrypt.hash('abcdefghij', 10),
+                password: await bcrypt.hash('123', 10),
                 birthDate: new Date('1971-01-18'),
                 email: 'neymar@ucll.be',
                 username: 'neymar',
@@ -155,7 +155,7 @@ const main = async () => {
             data: {
                 firstName: 'Kylian',
                 lastName: 'Mbappe',
-                password: await bcrypt.hash('abcdefghij', 10),
+                password: await bcrypt.hash('123', 10),
                 birthDate: new Date('1971-01-18'),
                 email: 'mbappe@ucll.be',
                 username: 'mbappe',
@@ -167,7 +167,7 @@ const main = async () => {
             data: {
                 firstName: 'Kevin',
                 lastName: 'De Bruyne',
-                password: await bcrypt.hash('abcdefghij', 10),
+                password: await bcrypt.hash('123', 10),
                 birthDate: new Date('1991-06-28'),
                 email: 'kevin.debruyne@example.com',
                 username: 'kevdeb',
@@ -179,7 +179,7 @@ const main = async () => {
             data: {
                 firstName: 'Robert',
                 lastName: 'Lewandowski',
-                password: await bcrypt.hash('abcdefghij', 10),
+                password: await bcrypt.hash('123', 10),
                 birthDate: new Date('1988-08-21'),
                 email: 'robert.lewandowski@example.com',
                 username: 'lewy',
@@ -191,7 +191,7 @@ const main = async () => {
             data: {
                 firstName: 'Virgil',
                 lastName: 'van Dijk',
-                password: await bcrypt.hash('abcdefghij', 10),
+                password: await bcrypt.hash('123', 10),
                 birthDate: new Date('1991-07-08'),
                 email: 'virgil.vandijk@example.com',
                 username: 'virgilvd',
@@ -203,7 +203,7 @@ const main = async () => {
             data: {
                 firstName: 'Mohamed',
                 lastName: 'Salah',
-                password: await bcrypt.hash('abcdefghij', 10),
+                password: await bcrypt.hash('123', 10),
                 birthDate: new Date('1992-06-15'),
                 email: 'mohamed.salah@example.com',
                 username: 'mosalah',
@@ -215,7 +215,7 @@ const main = async () => {
             data: {
                 firstName: 'Sadio',
                 lastName: 'Mane',
-                password: await bcrypt.hash('abcdefghij', 10),
+                password: await bcrypt.hash('123', 10),
                 birthDate: new Date('1992-04-10'),
                 email: 'sadio.mane@example.com',
                 username: 'sadiom',
@@ -227,7 +227,7 @@ const main = async () => {
             data: {
                 firstName: 'Eden',
                 lastName: 'Hazard',
-                password: await bcrypt.hash('abcdefghij', 10),
+                password: await bcrypt.hash('123', 10),
                 birthDate: new Date('1991-01-07'),
                 email: 'eden.hazard@example.com',
                 username: 'edenh',
@@ -239,7 +239,7 @@ const main = async () => {
             data: {
                 firstName: 'Harry',
                 lastName: 'Kane',
-                password: await bcrypt.hash('abcdefghij', 10),
+                password: await bcrypt.hash('123', 10),
                 birthDate: new Date('1993-07-28'),
                 email: 'harry.kane@example.com',
                 username: 'harryk',
@@ -251,7 +251,7 @@ const main = async () => {
             data: {
                 firstName: 'Luka',
                 lastName: 'Modric',
-                password: await bcrypt.hash('abcdefghij', 10),
+                password: await bcrypt.hash('123', 10),
                 birthDate: new Date('1985-09-09'),
                 email: 'luka.modric@example.com',
                 username: 'lukam',
@@ -263,7 +263,7 @@ const main = async () => {
             data: {
                 firstName: 'Toni',
                 lastName: 'Kroos',
-                password: await bcrypt.hash('abcdefghij', 10),
+                password: await bcrypt.hash('123', 10),
                 birthDate: new Date('1990-01-04'),
                 email: 'toni.kroos@example.com',
                 username: 'tonik',
@@ -275,7 +275,7 @@ const main = async () => {
             data: {
                 firstName: 'Manuel',
                 lastName: 'Neuer',
-                password: await bcrypt.hash('abcdefghij', 10),
+                password: await bcrypt.hash('123', 10),
                 birthDate: new Date('1986-03-27'),
                 email: 'manuel.neuer@example.com',
                 username: 'manueln',
@@ -287,7 +287,7 @@ const main = async () => {
             data: {
                 firstName: 'Jurgen',
                 lastName: 'Klopp',
-                password: await bcrypt.hash('abcdefghij', 10),
+                password: await bcrypt.hash('123', 10),
                 birthDate: new Date('1967-06-16'),
                 email: 'jurgen.klopp@example.com',
                 username: 'jurgenk',
@@ -299,7 +299,7 @@ const main = async () => {
             data: {
                 firstName: 'Jose',
                 lastName: 'Mourinho',
-                password: await bcrypt.hash('abcdefghij', 10),
+                password: await bcrypt.hash('123', 10),
                 birthDate: new Date('1963-01-26'),
                 email: 'jose.mourinho@example.com',
                 username: 'josem',
@@ -311,7 +311,7 @@ const main = async () => {
             data: {
                 firstName: 'Carlo',
                 lastName: 'Ancelotti',
-                password: await bcrypt.hash('abcdefghij', 10),
+                password: await bcrypt.hash('123', 10),
                 birthDate: new Date('1959-06-10'),
                 email: 'carlo.ancelotti@example.com',
                 username: 'carloa',
@@ -323,7 +323,7 @@ const main = async () => {
             data: {
                 firstName: 'Diego',
                 lastName: 'Simeone',
-                password: await bcrypt.hash('abcdefghij', 10),
+                password: await bcrypt.hash('123', 10),
                 birthDate: new Date('1970-04-28'),
                 email: 'diego.simeone@example.com',
                 username: 'diegos',
@@ -335,7 +335,7 @@ const main = async () => {
             data: {
                 firstName: 'Antonio',
                 lastName: 'Conte',
-                password: await bcrypt.hash('abcdefghij', 10),
+                password: await bcrypt.hash('123', 10),
                 birthDate: new Date('1969-07-31'),
                 email: 'antonio.conte@example.com',
                 username: 'antonioc',
@@ -347,7 +347,7 @@ const main = async () => {
             data: {
                 firstName: 'Mauricio',
                 lastName: 'Pochettino',
-                password: await bcrypt.hash('abcdefghij', 10),
+                password: await bcrypt.hash('123', 10),
                 birthDate: new Date('1972-03-02'),
                 email: 'mauricio.pochettino@example.com',
                 username: 'mauriciop',
@@ -359,7 +359,7 @@ const main = async () => {
             data: {
                 firstName: 'Thomas',
                 lastName: 'Tuchel',
-                password: await bcrypt.hash('abcdefghij', 10),
+                password: await bcrypt.hash('123', 10),
                 birthDate: new Date('1973-08-29'),
                 email: 'thomas.tuchel@example.com',
                 username: 'thomast',
@@ -371,7 +371,7 @@ const main = async () => {
             data: {
                 firstName: 'Massimiliano',
                 lastName: 'Allegri',
-                password: await bcrypt.hash('abcdefghij', 10),
+                password: await bcrypt.hash('123', 10),
                 birthDate: new Date('1967-08-11'),
                 email: 'massimiliano.allegri@example.com',
                 username: 'massimilianoa',

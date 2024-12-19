@@ -1,6 +1,7 @@
 import Header from '@components/header/header';
 import TeamGrid from '@components/teamGrid/teamGrid';
 import TeamService from '@services/TeamService';
+import { Team } from '@types';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Head from 'next/head';
@@ -14,7 +15,7 @@ const TeamsPage: React.FC = () => {
         const response = await TeamService.getAllTeams();
         if (!response.ok) {
             const errorMessage =
-                response.status === 401 ? t('permissions.unauthorized') : response.statusText;
+                response.status === 401 ? t('permissions.unauthorized') : '';
             throw new Error(errorMessage);
         }
         const teams = await response.json();
@@ -46,7 +47,7 @@ const TeamsPage: React.FC = () => {
                         Error fetching teams: {error.message}
                     </p>
                 ) : (
-                    <TeamGrid teams={teams} />
+                    <TeamGrid teams={teams || []} />
                 )}
             </div>
         </>

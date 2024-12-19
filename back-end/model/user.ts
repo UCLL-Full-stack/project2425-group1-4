@@ -57,16 +57,18 @@ export class User {
         description?: string;
         role?: Role;
     }) {
-        if (!user.firstName) throw new Error('First name cannot be empty.');
-        if (!user.lastName) throw new Error('Last name cannot be empty.');
+        if (!user.firstName || user.firstName.trim() === '')
+            throw new Error('First name cannot be empty.');
+        if (!user.lastName || user.lastName.trim() === '')
+            throw new Error('Last name cannot be empty.');
         if (!user.password || user.password.length < 8)
             throw new Error('Password needs to be at least 8 characters long.');
-        if (!user.email) throw new Error('Email cannot be empty.');
+        if (!user.email || user.email.trim() === '') throw new Error('Email cannot be empty.');
 
         const emailRegex = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
         if (!emailRegex.test(user.email)) throw new Error('Email does not have a correct format.');
 
-        if (!user.username) throw new Error('Username cannot be empty.');
+        if (!user.username || user.username.trim() === '') throw new Error('Username cannot be empty.');
 
         if (user.description && user.description.trim().length === 0) {
             throw new Error('Description cannot be empty if provided.');
@@ -131,7 +133,6 @@ export class User {
         return this.goals;
     }
 
-    // Setters with validation as needed
     setFirstName(firstName: string): void {
         if (!firstName) throw new Error("First name can't be empty.");
         this.firstName = firstName;

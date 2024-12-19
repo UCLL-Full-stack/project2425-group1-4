@@ -16,7 +16,7 @@ const UsersPage: React.FC = () => {
         const response = await UserService.getAllUsers();
         if (!response.ok) {
             const errorMessage =
-                response.status === 401 ? t('permissions.unauthorized') : response.statusText;
+                response.status === 401 ? t('permissions.unauthorized') : '';
             throw new Error(errorMessage);
         }
 
@@ -44,11 +44,17 @@ const UsersPage: React.FC = () => {
 
             <div>
                 {isLoading ? (
-                    <p>Loading users...</p>
+                    <>
+                        <p>Loading users...</p>
+                    </>
                 ) : error ? (
-                    <p className="text-red-700 font-semibold ">
-                        Error fetching users: {error.message}
-                    </p>
+                    <>
+                        <div className="flex items-center justify-center h-96">
+                            <p className="text-red-700 font-semibold">
+                                Error fetching users: {error.message}
+                            </p>
+                        </div>
+                    </>
                 ) : (
                     <UserGrid Users={users || []} />
                 )}

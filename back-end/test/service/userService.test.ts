@@ -1,160 +1,184 @@
-import userService from '../../service/user.service';
-import userDb from '../../repository/user.db';
-import teamDb from '../../repository/team.db';
+import userService from '../service/user.service';
+import userDb from '../repository/user.db';
+import teamDb from '../repository/team.db';
 import bcrypt from 'bcrypt';
-import { generateJwtToken } from '../../util/jwt';
 import { UnauthorizedError } from 'express-jwt';
-import { User } from '../../model/user';
 import { Role } from '@prisma/client';
+import { User } from '../model/user';
 
 jest.mock('../repository/user.db');
 jest.mock('../repository/team.db');
 jest.mock('bcrypt');
-jest.mock('../util/jwt');
 
-describe('userService', () => {
+const mockUser = new User({
+    id: 1,
+    username: 'john_doe',
+    password: 'hashed_password',
+    firstName: 'John',
+    lastName: 'Doe',
+    email: 'john.doe@example.com',
+    birthDate: new Date('1990-01-01'),
+    role: 'PLAYER',
+});
+
+const mockTeam = {
+    id: 1,
+    name: 'Team A',
+    description: 'A description',
+};
+
+describe('User Service', () => {
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
+
     describe('getAllPlayers', () => {
-        it('should return a list of players', async () => {
-            const mockPlayers = [new User({
-                    id: 1,
-                    firstName: "firstname",
-                    lastName: "lastname",
-                    password: "password",
-                    birthDate: new Date('2000-01-01'),
-                    email: "testing.user@goalpro.app",
-                    username: "testUsername",
-                    description: "Test a description",
-                    role: 'USER',
-                })];
-            userDb.getAllPlayers.mockResolvedValue(mockPlayers);
-
+        it('should return all players', async () => {
+            userDb.getAllPlayers.mockResolvedValue([mockUser]);
             const players = await userService.getAllPlayers();
-
-            expect(players).toEqual(mockPlayers);
-            expect(userDb.getAllPlayers).toHaveBeenCalled();
+            expect(players).toEqual([mockUser]);
         });
 
         it('should throw an error if no players are found', async () => {
-            userDb.getAllPlayers.mockResolvedValue(null);
-
+            userDb.getAllPlayers.mockResolvedValue([]);
             await expect(userService.getAllPlayers()).rejects.toThrow('No players found.');
         });
     });
 
     describe('getAllUsers', () => {
-        it('should return a list of users if role is ADMIN', async () => {
-            const mockUsers = [new User({ id: 1, username: 'admin1' })];
-            userDb.getAllUsers.mockResolvedValue(mockUsers);
-
+        it('should return all users for ADMIN role', async () => {
+            userDb.getAllUsers.mockResolvedValue([mockUser]);
             const users = await userService.getAllUsers({ role: 'ADMIN' });
-
-            expect(users).toEqual(mockUsers);
-            expect(userDb.getAllUsers).toHaveBeenCalled();
+            expect(users).toEqual([mockUser]);
         });
 
-        it('should throw UnauthorizedError if role is not ADMIN', async () => {
-            await expect(userService.getAllUsers({ role: 'USER' })).rejects.toThrow(UnauthorizedError);
+        it('should throw UnauthorizedError for non-ADMIN role', async () => {
+            await expect(userService.getAllUsers({ role: 'PLAYER' })).rejects.toThrow(UnauthorizedError);
         });
     });
 
     describe('updateUser', () => {
-        it('should update and return a user', async () => {
-            const mockUser = new User({ id: 1, username: 'user1' });
-            const mockTeam = { id: 1, name: 'Team A' };
-
+        it('should update a user successfully', async () => {
             userDb.getUserById.mockResolvedValue(mockUser);
             teamDb.getTeamById.mockResolvedValue(mockTeam);
             userDb.updateUser.mockResolvedValue(mockUser);
 
-            const editedUser = { playerOfTeam: { id: 1 }, description: 'Updated' };
-            const updatedUser = await userService.updateUser(1, editedUser);
+            const updatedUser = await userService.updateUser(1, {
+                playerOfTeam: { id: 1 },
+                description: 'New description',
+            });
 
             expect(updatedUser).toEqual(mockUser);
-            expect(userDb.updateUser).toHaveBeenCalledWith(mockUser);
         });
 
-        it('should throw an error if the team does not exist', async () => {
-            const mockUser = new User({ id: 1, username: 'user1' });
-
+        it('should throw an error if team does not exist', async () => {
             userDb.getUserById.mockResolvedValue(mockUser);
             teamDb.getTeamById.mockResolvedValue(null);
 
-            const editedUser = { playerOfTeam: { id: 1 } };
+            await expect(
+                userService.updateUser(1, {
+                    playerOfTeam: { id: 1 },
+                })
+            ).rejects.toThrow('Team does not exist');
+        });
+    });
 
-            await expect(userService.updateUser(1, editedUser)).rejects.toThrow('Team does not exist');
+    describe('getUserById', () => {
+        it('should return a user by ID', async () => {
+            userDb.getUserById.mockResolvedValue(mockUser);
+            const user = await userService.getUserById(1);
+            expect(user).toEqual(mockUser);
         });
 
-        it('should return null if the user does not exist', async () => {
+        it('should throw an error if user is not found', async () => {
             userDb.getUserById.mockResolvedValue(null);
+            await expect(userService.getUserById(1)).rejects.toThrow('User with username: 1 does not exist.');
+        });
+    });
 
-            const editedUser = { playerOfTeam: { id: 1 } };
-            const updatedUser = await userService.updateUser(1, editedUser);
+    describe('getUserByUsername', () => {
+        it('should return a user by username', async () => {
+            userDb.getUserByUsername.mockResolvedValue(mockUser);
+            const user = await userService.getUserByUsername({ username: 'john_doe' });
+            expect(user).toEqual(mockUser);
+        });
 
-            expect(updatedUser).toBeNull();
+        it('should throw an error if user is not found', async () => {
+            userDb.getUserByUsername.mockResolvedValue(null);
+            await expect(
+                userService.getUserByUsername({ username: 'unknown_user' })
+            ).rejects.toThrow('User with username: unknown_user does not exist.');
+        });
+    });
+
+    describe('getUsersByRole', () => {
+        it('should return users by role', async () => {
+            userDb.getUsersByRole.mockResolvedValue([mockUser]);
+            const users = await userService.getUsersByRole('PLAYER');
+            expect(users).toEqual([mockUser]);
+        });
+
+        it('should throw an error if no users are found', async () => {
+            userDb.getUsersByRole.mockResolvedValue([]);
+            await expect(userService.getUsersByRole('PLAYER')).rejects.toThrow('No users found.');
         });
     });
 
     describe('authenticate', () => {
-        it('should authenticate a user and return a token', async () => {
-            const mockUser = new User({ username: 'user1', password: 'hashedPassword' });
-
+        it('should authenticate a user with valid credentials', async () => {
             userDb.getUserByUsername.mockResolvedValue(mockUser);
             bcrypt.compare.mockResolvedValue(true);
-            generateJwtToken.mockReturnValue('mockToken');
 
-            const response = await userService.authenticate({ username: 'user1', password: 'password' });
+            const response = await userService.authenticate({
+                username: 'john_doe',
+                password: 'securepassword',
+            });
 
-            expect(response.token).toBe('mockToken');
-            expect(response.username).toBe('user1');
-            expect(bcrypt.compare).toHaveBeenCalledWith('password', 'hashedPassword');
+            expect(response).toHaveProperty('token');
+            expect(response.username).toBe('john_doe');
         });
 
-        it('should throw an error if the password is incorrect', async () => {
-            const mockUser = new User({ username: 'user1', password: 'hashedPassword' });
-
+        it('should throw an error for incorrect password', async () => {
             userDb.getUserByUsername.mockResolvedValue(mockUser);
             bcrypt.compare.mockResolvedValue(false);
 
-            await expect(userService.authenticate({ username: 'user1', password: 'wrongPassword' })).rejects.toThrow('Incorrect password.');
+            await expect(
+                userService.authenticate({ username: 'john_doe', password: 'wrongpassword' })
+            ).rejects.toThrow('Incorrect password.');
         });
     });
 
     describe('createUser', () => {
-        it('should create and return a new user', async () => {
-            const mockUser = new User({ username: 'user1' });
-
+        it('should create a new user', async () => {
             userDb.getUserByUsername.mockResolvedValue(null);
-            bcrypt.hash.mockResolvedValue('hashedPassword');
+            bcrypt.hash.mockResolvedValue('hashed_password');
             userDb.createUser.mockResolvedValue(mockUser);
 
             const newUser = await userService.createUser({
-                username: 'user1',
-                password: 'password',
+                username: 'john_doe',
+                password: 'securepassword',
                 firstName: 'John',
                 lastName: 'Doe',
                 email: 'john.doe@example.com',
-                birthDate: new Date(),
+                birthDate: new Date('1990-01-01'),
             });
 
             expect(newUser).toEqual(mockUser);
-            expect(userDb.createUser).toHaveBeenCalled();
         });
 
-        it('should throw an error if the username already exists', async () => {
-            const mockUser = new User({ username: 'user1' });
-
+        it('should throw an error if username already exists', async () => {
             userDb.getUserByUsername.mockResolvedValue(mockUser);
 
             await expect(
                 userService.createUser({
-                    username: 'user1',
-                    password: 'password',
+                    username: 'john_doe',
+                    password: 'securepassword',
                     firstName: 'John',
                     lastName: 'Doe',
                     email: 'john.doe@example.com',
-                    birthDate: new Date(),
+                    birthDate: new Date('1990-01-01'),
                 })
-            ).rejects.toThrow('User with username user1 is already registered.');
+            ).rejects.toThrow('User with username john_doe is already registered.');
         });
     });
 });

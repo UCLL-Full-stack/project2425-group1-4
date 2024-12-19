@@ -2,14 +2,14 @@ import { Team as TeamPrisma, User as UserPrisma } from '@prisma/client';
 import { User } from './user';
 
 export class Team {
-    private id: number;
+    private id?: number;
     private name: string;
     private coach?: User;
     private players: User[];
     private description: string;
 
     constructor(team: {
-        id: number;
+        id?: number;
         name: string;
         coach?: User;
         players: User[];
@@ -25,16 +25,7 @@ export class Team {
     }
 
     // Needs to be properly implemented
-    validate(team: {
-        id: number;
-        name: string;
-        coach?: User;
-        players: User[];
-        description: string;
-    }) {
-        if (team.id < 0) {
-            throw new Error('Id cannot be negative');
-        }
+    validate(team: { name: string; coach?: User; players: User[]; description: string }) {
         if (team.name === '' || team.name === null) {
             throw new Error('Invalid name');
         }
@@ -51,7 +42,7 @@ export class Team {
     }
 
     // Getters
-    getId(): number {
+    getId(): number | undefined {
         return this.id;
     }
 
@@ -91,7 +82,6 @@ export class Team {
     setDescription(description: string): void {
         this.description = description;
     }
-    
 
     static from(team: TeamPrisma & { coach?: UserPrisma | null; players?: UserPrisma[] }): Team {
         return new Team({
@@ -102,8 +92,6 @@ export class Team {
             description: team.description,
         });
     }
-    
-
 
     // static from({
     //     id,

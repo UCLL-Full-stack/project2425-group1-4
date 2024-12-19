@@ -14,8 +14,7 @@ const PlayersPage: React.FC = () => {
     const fetchPlayers = async () => {
         const response = await UserService.getAllPlayers();
         if (!response.ok) {
-            const errorMessage =
-                response.status === 401 ? t('permissions.unauthorized') : response.statusText;
+            const errorMessage = response.status === 401 ? t('permissions.unauthorized') : '';
             throw new Error(errorMessage);
         }
         const players = await response.json();
@@ -42,9 +41,11 @@ const PlayersPage: React.FC = () => {
             {isLoading ? (
                 <p>Loading players...</p>
             ) : error ? (
-                <p className="text-red-700 font-semibold ">
-                    Error fetching players: {error.message}
-                </p>
+                <div className="flex items-center justify-center h-96">
+                    <p className="text-red-700 font-semibold">
+                        Error fetching players: {error.message}
+                    </p>
+                </div>
             ) : (
                 <>{players && <PlayerGrid players={players} />}</>
             )}

@@ -79,3 +79,12 @@ test(`given: time over 90, when: create goal, then: error is thrown`, () => {
         'Goal time must be under 90'
     );
 });
+
+test('given: no time, when: creating a new goal, then: error is thrown'), () => {
+    consts goal = () => {
+        new Goal({
+            id: validId, team: validTeam, player: validUser
+        })
+    }
+    expect(goal).toThrowError('Goal time is required')
+};

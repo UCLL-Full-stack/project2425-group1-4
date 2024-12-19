@@ -1,7 +1,7 @@
 import teamDb from '../repository/team.db';
 import userDb from '../repository/user.db';
 import { Team } from '../model/team';
-import { Role } from '../types';
+import { Role, TeamInput } from '../types';
 
 const getAllTeams = async (): Promise<Team[]> => {
     return await teamDb.getAllTeams();
@@ -42,15 +42,17 @@ const getTeamNameById = async (id: number): Promise<string | null> => {
     return team ? team.getName() : null;
 };
 
-const updateTeam = async (updateTeam: Team): Promise<Team> => {
-    const numericId = Number(updateTeam.getId());
+const updateTeam = async (updateTeam: TeamInput): Promise<Team> => {
+    const validNewData = new Team(updateTeam);
+
+    const numericId = Number(validNewData.getId());
     const team = await teamDb.getTeamById(numericId);
 
     if (!team) {
         throw new Error('Team not found');
     }
 
-    const updatedTeam = await teamDb.updateTeam(updateTeam);
+    const updatedTeam = await teamDb.updateTeam(validNewData);
     return updatedTeam;
 };
 

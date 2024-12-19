@@ -47,7 +47,7 @@ const MatchesPage: React.FC = () => {
                         Error fetching matches: {error.message}
                     </p>
                 ) : (
-                    <MatchGrid matches={matches} />
+                    <MatchGrid matches={matches || []} />
                 )}
             </div>
         </>
