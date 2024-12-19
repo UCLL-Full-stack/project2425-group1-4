@@ -1,109 +1,165 @@
-import matchService from '../service/match.service';
-import matchDb from '../repository/match.db';
+import { Location } from '../../model/location';
+import { Match } from '../../model/match';
+import matchDb from '../../repository/match.db';
+import matchService from '../../service/match.service';
 
-jest.mock('../repository/match.db');
+jest.mock('../../repository/match.db');
+const validLocation1 = new Location({
+    id: 1,
+    country: 'Belgium',
+    city: 'Brussels',
+    streetName: 'Rue de la Loi',
+    zipCode: '1000',
+    number: '16',
+});
 
-describe('matchService', () => {
-    afterEach(() => {
+const validLocation2 = new Location({
+    id: 2,
+    country: 'France',
+    city: 'Paris',
+    streetName: 'Champs-Élysées',
+    zipCode: '75008',
+    number: '101',
+});
+
+const validMatch = new Match({
+    id: 1,
+    date: new Date('2024-12-01T15:00:00.000Z'),
+    location: validLocation1,
+    teams: [],
+    goals: [],
+});
+
+const validMatch2 = new Match({
+    id: 2,
+    date: new Date('2024-12-02T18:00:00.000Z'),
+    location: validLocation2,
+    teams: [],
+    goals: [],
+});
+describe('MatchService Tests', () => {
+    let mockGetAllMatches: jest.Mock;
+    let mockGetMatchById: jest.Mock;
+    let mockGetLatestMatches: jest.Mock;
+
+    beforeEach(() => {
+        mockGetAllMatches = jest.fn();
+        mockGetMatchById = jest.fn();
+        mockGetLatestMatches = jest.fn();
+
+        matchDb.getAllMatches = mockGetAllMatches;
+        matchDb.getMatchById = mockGetMatchById;
+        matchDb.getLatestMatches = mockGetLatestMatches;
+
         jest.clearAllMocks();
     });
 
     describe('getAllMatches', () => {
         it('should return all matches', async () => {
-            const mockMatches = [
-                { id: 1, date: new Date(), teams: [], location: {}, goals: [] },
-                { id: 2, date: new Date(), teams: [], location: {}, goals: [] },
-            ];
+            // given
+            mockGetAllMatches.mockResolvedValue([validMatch, validMatch2]);
 
-            (matchDb.getAllMatches as jest.Mock).mockResolvedValue(mockMatches);
+            // when
+            const matches = await matchService.getAllMatches();
 
-            const result = await matchService.getAllMatches();
+            // then
+            expect(mockGetAllMatches).toHaveBeenCalledTimes(1);
+            expect(matches).toEqual([validMatch, validMatch2]);
+        });
 
-            expect(matchDb.getAllMatches).toHaveBeenCalledTimes(1);
-            expect(result).toEqual(mockMatches);
+        it('should return an empty array if no matches are found', async () => {
+            // given
+            mockGetAllMatches.mockResolvedValue([]);
+
+            // when
+            const matches = await matchService.getAllMatches();
+
+            // then
+            expect(mockGetAllMatches).toHaveBeenCalledTimes(1);
+            expect(matches).toEqual([]);
         });
     });
 
     describe('getMatchById', () => {
-        it('should return a match by id', async () => {
-            const mockMatch = {
-                id: 1,
-                date: new Date(),
-                teams: [],
-                location: {},
-                goals: [],
-            };
+        it('should return the match for a valid ID', async () => {
+            // given
+            mockGetMatchById.mockResolvedValue(validMatch);
 
-            (matchDb.getMatchById as jest.Mock).mockResolvedValue(mockMatch);
+            // when
+            const match = await matchService.getMatchById('1');
 
-            const result = await matchService.getMatchById('1');
-
-            expect(matchDb.getMatchById).toHaveBeenCalledWith(1);
-            expect(result).toEqual(mockMatch);
+            // then
+            expect(mockGetMatchById).toHaveBeenCalledWith(1);
+            expect(match).toEqual(validMatch);
         });
 
-        it('should throw an error if the match does not exist', async () => {
-            (matchDb.getMatchById as jest.Mock).mockResolvedValue(null);
+        it('should throw an error if match ID is invalid', async () => {
+            // when / then
+            await expect(matchService.getMatchById('invalid')).rejects.toThrow(
+                'Match with id: invalid does not exist.'
+            );
+        });
 
+        it('should throw an error if match is not found', async () => {
+            // given
+            mockGetMatchById.mockResolvedValue(null);
+
+            // when / then
             await expect(matchService.getMatchById('1')).rejects.toThrow(
                 'Match with id: 1 does not exist.'
             );
-            expect(matchDb.getMatchById).toHaveBeenCalledWith(1);
         });
     });
-
     describe('getLatestMatches', () => {
-        it('should return the latest matches with default limit', async () => {
-            const mockMatches = [
-                { id: 1, date: new Date(), teams: [], location: {}, goals: [] },
-            ];
+        let mockGetLatestMatches: jest.Mock;
 
-            (matchDb.getLatestMatches as jest.Mock).mockResolvedValue(mockMatches);
-
-            const result = await matchService.getLatestMatches({});
-
-            expect(matchDb.getLatestMatches).toHaveBeenCalledWith({ teamId: undefined, limit: 5 });
-            expect(result).toEqual(mockMatches);
+        beforeEach(() => {
+            mockGetLatestMatches = jest.fn();
+            matchDb.getLatestMatches = mockGetLatestMatches;
+            jest.clearAllMocks();
         });
 
-        it('should return the latest matches with specified limit', async () => {
-            const mockMatches = [
-                { id: 1, date: new Date(), teams: [], location: {}, goals: [] },
-            ];
-
-            (matchDb.getLatestMatches as jest.Mock).mockResolvedValue(mockMatches);
-
-            const result = await matchService.getLatestMatches({ limit: 10 });
-
-            expect(matchDb.getLatestMatches).toHaveBeenCalledWith({ teamId: undefined, limit: 10 });
-            expect(result).toEqual(mockMatches);
-        });
-
-        it('should throw an error if limit is non-positive', async () => {
-            await expect(matchService.getLatestMatches({ limit: 0 })).rejects.toThrow(
+        it('should throw an error if limit is not a positive number', async () => {
+            await expect(matchService.getLatestMatches({ teamId: 1, limit: 0 })).rejects.toThrow(
                 'Limit must be a positive number'
             );
-
-            expect(matchDb.getLatestMatches).not.toHaveBeenCalled();
         });
 
-        it('should return latest matches filtered by teamId', async () => {
-            const mockMatches = [
-                { id: 1, date: new Date(), teams: [], location: {}, goals: [] },
-            ];
+        it('should fetch matches with default limit if limit is not provided', async () => {
+            // given
+            const mockMatches = [{ id: 1, date: new Date(), location: {}, teams: [], goals: [] }];
+            mockGetLatestMatches.mockResolvedValue(mockMatches);
 
-            (matchDb.getLatestMatches as jest.Mock).mockResolvedValue(mockMatches);
+            // when
+            const matches = await matchService.getLatestMatches({ teamId: 1 });
 
-            const result = await matchService.getLatestMatches({ teamId: 1 });
-
-            expect(matchDb.getLatestMatches).toHaveBeenCalledWith({ teamId: 1, limit: 5 });
-            expect(result).toEqual(mockMatches);
+            // then
+            expect(mockGetLatestMatches).toHaveBeenCalledWith({ teamId: 1, limit: 5 });
+            expect(matches).toEqual(mockMatches);
         });
 
-        it('should throw a generic error if matchDb.getLatestMatches fails', async () => {
-            (matchDb.getLatestMatches as jest.Mock).mockRejectedValue(new Error('DB error'));
+        it('should fetch matches with specified limit', async () => {
+            // given
+            const mockMatches = [{ id: 1, date: new Date(), location: {}, teams: [], goals: [] }];
+            mockGetLatestMatches.mockResolvedValue(mockMatches);
 
-            await expect(matchService.getLatestMatches({})).rejects.toThrow('Failed to fetch latest matches.');
+            // when
+            const matches = await matchService.getLatestMatches({ teamId: 1, limit: 10 });
+
+            // then
+            expect(mockGetLatestMatches).toHaveBeenCalledWith({ teamId: 1, limit: 10 });
+            expect(matches).toEqual(mockMatches);
+        });
+
+        it('should throw a generic error if the database query fails', async () => {
+            // given
+            mockGetLatestMatches.mockRejectedValue(new Error('Database connection failed'));
+
+            // when / then
+            await expect(matchService.getLatestMatches({ teamId: 1, limit: 5 })).rejects.toThrow(
+                'Failed to fetch latest matches.'
+            );
+            expect(mockGetLatestMatches).toHaveBeenCalledTimes(1);
         });
     });
 });
