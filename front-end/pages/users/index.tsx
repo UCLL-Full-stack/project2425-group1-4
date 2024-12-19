@@ -1,12 +1,15 @@
-import Header from '@components/header/header';
-import UserGrid from '@components/users/userGrid';
-import UserService from '@services/UserService';
-import { User } from '@types';
+// pages/users/index.tsx
+import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import Head from 'next/head';
-import { useRouter } from 'next/router';
 import useSWR from 'swr';
+import UserService from '@services/UserService';
+import { User } from '@types';
+import LoadingScreen from '@components/loadingScreen';
+import ErrorScreen from '@components/errorScreen';
+import UserGrid from '@components/users/userGrid';
+import Header from '@components/header/header';
+import Head from 'next/head';
 
 const UsersPage: React.FC = () => {
     const { t } = useTranslation();
@@ -15,11 +18,9 @@ const UsersPage: React.FC = () => {
     const fetchUsers = async (): Promise<User[]> => {
         const response = await UserService.getAllUsers();
         if (!response.ok) {
-            const errorMessage =
-                response.status === 401 ? t('permissions.unauthorized') : '';
+            const errorMessage = response.status === 401 ? t('permissions.unauthorized') : '';
             throw new Error(errorMessage);
         }
-
         const users = await response.json();
         return users;
     };
@@ -32,6 +33,14 @@ const UsersPage: React.FC = () => {
         refreshInterval: 500,
     });
 
+    if (isLoading) {
+        return <LoadingScreen />;
+    }
+
+    if (error) {
+        return <ErrorScreen userError={error} teamsError={null} />;
+    }
+
     return (
         <>
             <Head>
@@ -41,27 +50,12 @@ const UsersPage: React.FC = () => {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <Header />
-
-            <div>
-                {isLoading ? (
-                    <>
-                        <p>Loading users...</p>
-                    </>
-                ) : error ? (
-                    <>
-                        <div className="flex items-center justify-center h-96">
-                            <p className="text-red-700 font-semibold">
-                                Error fetching users: {error.message}
-                            </p>
-                        </div>
-                    </>
-                ) : (
-                    <UserGrid Users={users || []} />
-                )}
-            </div>
+            <UserGrid Users={users || []} />
         </>
     );
 };
+
+export default UsersPage;
 
 export const getServerSideProps = async (context: { locale: any }) => {
     const { locale } = context;
@@ -72,5 +66,3 @@ export const getServerSideProps = async (context: { locale: any }) => {
         },
     };
 };
-
-export default UsersPage;

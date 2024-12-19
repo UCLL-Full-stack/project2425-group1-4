@@ -353,4 +353,14 @@ userRouter.post('/register', async (req: Request, res: Response, next: NextFunct
     }
 });
 
+userRouter.get('/role/:role', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const role = req.params.role;
+        const users = await userService.getUsersByRole(role as Role);
+        res.json(users);
+    } catch (error) {
+        next(error);
+    }
+});
+
 export default userRouter;

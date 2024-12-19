@@ -1,19 +1,20 @@
 import { User } from '@types';
 import Link from 'next/link';
 import React, { useState } from 'react';
+import { useTranslation } from 'next-i18next';
 
 type Props = {
     Users: Array<User>;
 };
 
 const UserGrid: React.FC<Props> = ({ Users }: Props) => {
+    const { t } = useTranslation();
+
     const [searchTerm, setSearchTerm] = useState('');
 
-    // Filter Users
     const filteredUsers = Array.isArray(Users)
         ? Users.filter(
               (User) =>
-                  // Return all users if searchTerm is empty
                   searchTerm === '' ||
                   `${User.firstName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
                   `${User.lastName}`.toLowerCase().includes(searchTerm.toLowerCase())
@@ -26,8 +27,8 @@ const UserGrid: React.FC<Props> = ({ Users }: Props) => {
                 <div className="mb-6 flex items-center">
                     <input
                         type="text"
-                        placeholder="Search for Users..."
-                        aria-label="Search"
+                        placeholder={t('users.searchPlaceholder')}
+                        aria-label={t('users.search')}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="w-full px-4 py-2 border rounded-lg text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-300"
@@ -48,7 +49,9 @@ const UserGrid: React.FC<Props> = ({ Users }: Props) => {
                             </Link>
                         ))
                     ) : (
-                        <p className="text-center col-span-full text-gray-500">No Users found.</p>
+                        <p className="text-center col-span-full text-gray-500">
+                            {t('users.noFound')}
+                        </p>
                     )}
                 </div>
             </section>

@@ -14,8 +14,7 @@ const TeamsPage: React.FC = () => {
     const fetchTeams = async () => {
         const response = await TeamService.getAllTeams();
         if (!response.ok) {
-            const errorMessage =
-                response.status === 401 ? t('permissions.unauthorized') : '';
+            const errorMessage = response.status === 401 ? t('permissions.unauthorized') : '';
             throw new Error(errorMessage);
         }
         const teams = await response.json();
@@ -41,10 +40,10 @@ const TeamsPage: React.FC = () => {
             <Header />
             <div>
                 {isLoading ? (
-                    <p>Loading teams...</p>
+                    <p>{t('teams.loading')}</p>
                 ) : error ? (
                     <p className="text-red-700 font-semibold ">
-                        Error fetching teams: {error.message}
+                        {t('teams.errorFetchingTeams', { message: error.message })}
                     </p>
                 ) : (
                     <TeamGrid teams={teams || []} />

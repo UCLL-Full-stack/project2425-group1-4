@@ -1,15 +1,17 @@
 import MatchService from '@services/MatchService';
 import { Match } from '@types';
-import { t } from 'i18next';
 import Link from 'next/link';
 import React from 'react';
 import useSWR from 'swr';
+import { useTranslation } from 'next-i18next';
 
 type LatestMatchesProps = {
     teamId: number;
 };
 
 const LatestMatches: React.FC<LatestMatchesProps> = ({ teamId }) => {
+    const { t } = useTranslation();
+
     const fetchLatestMatches = async () => {
         const response = await MatchService.getLatestMatchesByTeamId(teamId);
         if (!response.ok) {
@@ -25,15 +27,15 @@ const LatestMatches: React.FC<LatestMatchesProps> = ({ teamId }) => {
         data: matches,
         isLoading,
         error,
-    } = useSWR<Match[]>('fetchLatestMatches', fetchLatestMatches, {
+    } = useSWR<Match[]>(`fetchLatestMatches-team-${teamId}`, fetchLatestMatches, {
         refreshInterval: 5000,
     });
 
-    if (error) return <p className="text-red-500">{error}</p>;
+    if (error) return <p className="text-red-500">{error.message}</p>;
 
     return (
         <div className="bg-gray-100 p-4 rounded-lg shadow-md">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">Latest Matches</h2>
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">{t('matches.latest')}</h2>
             {matches && matches.length > 0 ? (
                 <ul className="space-y-2">
                     {matches.map((match) => {
@@ -41,21 +43,17 @@ const LatestMatches: React.FC<LatestMatchesProps> = ({ teamId }) => {
                         const team2 = match.teams[1];
                         const team1Score = team1?.goals.length || 0;
                         const team2Score = team2?.goals.length || 0;
-
-                        // Determine color for the current team
                         const currentTeam = team1.team.id === teamId ? team1 : team2;
                         const isCurrentTeamWinning =
                             team1.team.id === teamId
                                 ? team1Score >= team2Score
                                 : team2Score >= team1Score;
-
                         const currentTeamColor = isCurrentTeamWinning
                             ? 'text-green-500'
                             : 'text-red-500';
 
                         return (
                             <li key={match.id} className="p-2 border-b border-gray-200">
-                                {' '}
                                 <Link
                                     href={`/matches/${match.id}`}
                                     className="flex justify-between"
@@ -100,7 +98,7 @@ const LatestMatches: React.FC<LatestMatchesProps> = ({ teamId }) => {
                     })}
                 </ul>
             ) : (
-                <p className="text-gray-500">No recent matches available.</p>
+                <p className="text-gray-500">{t('matches.noRecent')}</p>
             )}
         </div>
     );

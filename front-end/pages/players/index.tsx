@@ -25,7 +25,7 @@ const PlayersPage: React.FC = () => {
         data: players,
         isLoading,
         error,
-    } = useSWR<User[]>('fetchUsers', fetchPlayers, {
+    } = useSWR<User[]>('fetchPlayers', fetchPlayers, {
         refreshInterval: 10000,
     });
 
@@ -39,11 +39,11 @@ const PlayersPage: React.FC = () => {
             </Head>
             <Header />
             {isLoading ? (
-                <p>Loading players...</p>
+                <p>{t('players.loading')}</p>
             ) : error ? (
                 <div className="flex items-center justify-center h-96">
                     <p className="text-red-700 font-semibold">
-                        Error fetching players: {error.message}
+                        {t('players.error', { message: error.message })}
                     </p>
                 </div>
             ) : (

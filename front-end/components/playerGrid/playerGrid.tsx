@@ -1,15 +1,16 @@
 import { User } from '@types';
 import Link from 'next/link';
 import React, { useState } from 'react';
+import { useTranslation } from 'next-i18next';
 
 type Props = {
     players: Array<User>;
 };
 
 const PlayerGrid: React.FC<Props> = ({ players }: Props) => {
+    const { t } = useTranslation();
     const [searchTerm, setSearchTerm] = useState('');
 
-    // Filter players
     const filteredPlayers = (Array.isArray(players) ? players : []).filter((player) =>
         `${player.firstName} ${player.lastName}`.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -21,8 +22,8 @@ const PlayerGrid: React.FC<Props> = ({ players }: Props) => {
                     <div className="mb-6 flex items-center">
                         <input
                             type="text"
-                            placeholder="Search for players..."
-                            aria-label="Search"
+                            placeholder={t('players.searchPlaceholder')}
+                            aria-label={t('players.search')}
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="w-full px-4 py-2 border rounded-lg text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-300"
@@ -44,7 +45,7 @@ const PlayerGrid: React.FC<Props> = ({ players }: Props) => {
                             ))
                         ) : (
                             <p className="text-center col-span-full text-gray-500">
-                                No players found.
+                                {t('players.noFound')}
                             </p>
                         )}
                     </div>

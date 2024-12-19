@@ -1,6 +1,7 @@
 import { Team } from '@types';
 import Link from 'next/link';
 import React, { useState } from 'react';
+import { useTranslation } from 'next-i18next';
 
 type Props = {
     teams: Array<Team>;
@@ -8,8 +9,8 @@ type Props = {
 
 const TeamGrid: React.FC<Props> = ({ teams }: Props) => {
     const [searchTerm, setSearchTerm] = useState('');
+    const { t } = useTranslation();
 
-    // Filter teams
     const filteredTeams = (Array.isArray(teams) ? teams : []).filter((team) =>
         `${team.name}`.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -21,8 +22,8 @@ const TeamGrid: React.FC<Props> = ({ teams }: Props) => {
                     <div className="mb-6 flex items-center">
                         <input
                             type="text"
-                            placeholder="Search for teams..."
-                            aria-label="Search"
+                            placeholder={t('teams.searchPlaceholder')}
+                            aria-label={t('teams.search')}
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="w-full px-4 py-2 border rounded-lg text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-300"
@@ -44,7 +45,7 @@ const TeamGrid: React.FC<Props> = ({ teams }: Props) => {
                             ))
                         ) : (
                             <p className="text-center col-span-full text-gray-500">
-                                No teams found.
+                                {t('teams.noFound')}
                             </p>
                         )}
                     </div>

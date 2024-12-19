@@ -1,10 +1,18 @@
 {
     "app.title": "GoalPro App",
+    "app.loading": "Loading...",
+    "app.errorFetchingUser": "Error fetching user",
+    "errorFetchingTeams": "Error fetching teams: {{message}}",
     "general.error": "An error has occurred. Please try again later.",
     "permissions": {
         "unauthorized": "You are not authorized to access this page."
     },
     "home": {
+        "welcome": {
+            "text-1": "Welcome to the GoalPro App!",
+            "text-2": "This app is designed to help you keep track of your favorite football teams and players.",
+            "text-3": "You can view the latest matches, players and teams"
+        },
         "username": "Username",
         "password": "Password",
         "role": "Role",
@@ -12,8 +20,7 @@
     },
     "login": {
         "title": "Login",
-        "button": "Login",
-        "success": "Login succesful. Redirecting to homepage...",
+        "success": "Login successful. Redirecting to homepage...",
         "validate": {
             "name": "Name is required",
             "password": "Password is required"
@@ -23,9 +30,79 @@
             "password": "Password:"
         }
     },
+
+    "teams": {
+        "searchPlaceholder": "Search for teams...",
+        "noFound": "No teams found.",
+        "loading": "Loading teams...",
+        "errorFetchingTeams": "Error fetching teams"
+    },
+    "team": {
+        "title": "Team",
+        "details": "Team Details",
+        "teamDetails": "Team Details",
+        "name": "Team Name",
+        "description": "Description",
+        "enterDescription": "Enter team description",
+        "coach": "Coach",
+        "selectCoach": "Select a coach",
+        "players": "Players",
+        "noPlayers": "No players available.",
+        "selectUser": "Select a user",
+        "selectUserToAdd": "Please select a user to add.",
+        "notLoaded": "Team data is not loaded. Please try again.",
+        "failedToAddPlayer": "Failed to add player. Please try again.",
+        "addPlayerError": "An error occurred while adding the player. Please try again later.",
+        "failedToUpdate": "Failed to update team. Please try again.",
+        "updateError": "An error occurred while updating the team. Please try again later.",
+        "loadingDetails": "Loading team details..."
+    },
+    "stats": {
+        "totalGoals": "Total Goals"
+    },
+    "users": {
+        "noFound": "No users found",
+        "searchPlaceholder": "Search for users..."
+    },
+    "user": {
+        "noFound": "User not found",
+        "team": "Team",
+        "coach": "Coach of team",
+        "email": "Email",
+        "description": "Description",
+        "edit": {
+            "title": "Edit Profile",
+            "success": "Profile updated successfully",
+            "validate": {
+                "firstName": "First name is required",
+                "lastName": "Last name is required",
+                "email": "Email is required",
+                "emailValid": "Email is not valid"
+            }
+        }
+    },
+    "matches": {
+        "searchPlaceholder": "Search for matches...",
+        "latest": "Latest Matches",
+        "noRecent": "No recent matches available.",
+        "loading": "Loading matches...",
+        "error": "Error fetching matches: {{message}}",
+        "noFound": "No matches found."
+    },
+    "match": {
+        "loading": "Loading...",
+        "deleteGoalFailed": "Failed to delete goal.",
+        "errorFetching": "Error fetching match: {{message}}",
+        "details": "Match Details",
+        "matchId": "Match ID",
+        "score": "Score",
+        "location": "Location",
+        "dateTime": "Date & Time",
+        "unknown": "Unknown",
+        "unknownTeam": "Unknown Team"
+    },
     "register": {
         "title": "Register",
-        "button": "Register",
         "success": "Registration successful. Leading you to the login page...",
         "validate": {
             "username": "Name is required",
@@ -61,8 +138,24 @@
             "logout": "Logout"
         }
     },
+    "players": {
+        "searchPlaceholder": "Search for players...",
+        "loading": "Loading players...",
+        "error": "Error fetching players: {{message}}",
+        "noFound": "No players found."
+    },
+
     "modal": {
         "sessionExpiredTitle": "Session Expired",
         "sessionExpired": "Your session has expired. Please log in again."
+    },
+
+    "buttons": {
+        "login": "Login",
+        "register": "Register",
+        "addPlayer": "Add Player",
+        "cancel": "Cancel",
+        "addToTeam": "Add to Team",
+        "save": "Save"
     }
 }
