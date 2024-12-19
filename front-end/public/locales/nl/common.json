@@ -26,7 +26,7 @@
     "register": {
         "title": "Registreren",
         "button": "Registreren",
-        "success": "Registratie succesvol. U wordt naar de homepage geleid...",
+        "success": "Registratie succesvol. U wordt naar de inlog pagina geleid...",
         "validate": {
             "name": "Naam is vereist",
             "password": "Wachtwoord is vereist",

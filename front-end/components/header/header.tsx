@@ -33,7 +33,13 @@ const Header: React.FC = () => {
                         {t('header.nav.home')}
                     </Link>
 
-                    {!['COACH', 'PLAYER', 'ADMIN'].includes(loggedInUser?.role ?? '') ? (
+                    {['COACH', 'PLAYER', 'ADMIN'].includes(loggedInUser?.role ?? '') && (
+                        <>
+                            {loggedInUser && <OverviewDropdown t={t} loggedInUser={loggedInUser} />}
+                        </>
+                    )}
+
+                    {loggedInUser && ['USER'].includes(loggedInUser.role ?? '') && (
                         <>
                             <Link
                                 className="px-2 text-white text-xl hover:bg-slate-600 rounded-lg"
@@ -47,15 +53,6 @@ const Header: React.FC = () => {
                             >
                                 {t('header.nav.teams')}
                             </Link>
-                        </>
-                    ) : (
-                        <>
-                            {loggedInUser && <OverviewDropdown t={t} loggedInUser={loggedInUser} />}
-                        </>
-                    )}
-
-                    {loggedInUser && ['USER'].includes(loggedInUser.role ?? '') && (
-                        <>
                             <Link
                                 className="px-2 text-white text-xl hover:bg-slate-600 rounded-lg"
                                 href="/matches"

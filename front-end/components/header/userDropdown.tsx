@@ -3,6 +3,7 @@ import { ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { TFunction } from 'i18next';
+import { useRouter } from 'next/router';
 
 interface UserDropdownProps {
     t: TFunction;
@@ -13,6 +14,7 @@ interface UserDropdownProps {
 export default function UserDropdown({ t, loggedInUser, setLoggedInUser }: UserDropdownProps) {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const router = useRouter();
 
     useEffect(() => {
         function handleClickOutside(event: { target: any }) {
@@ -30,6 +32,14 @@ export default function UserDropdown({ t, loggedInUser, setLoggedInUser }: UserD
     const handleClick = () => {
         localStorage.removeItem('loggedInUser');
         setLoggedInUser(null);
+
+        if (router.pathname === '/') {
+            // Reload if you're on the homepage
+            window.location.reload();
+        } else {
+            // Navigate to homepage if not
+            router.push('/');
+        }
     };
 
     return (

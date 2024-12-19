@@ -101,7 +101,7 @@ const getUsersByRole = async (role: Role): Promise<User[]> => {
         throw new Error('No users found.');
     }
     return users;
-}
+};
 
 const authenticate = async ({ username, password }: UserInput): Promise<AuthenticationResponse> => {
     const user = await getUserByUsername({ username });

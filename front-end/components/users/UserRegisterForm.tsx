@@ -102,20 +102,8 @@ const UserRegisterForm: React.FC = () => {
 
                 setStatusMessages([{ message: t('register.success'), type: 'success' }]);
 
-                if (typeof window !== 'undefined') {
-                    localStorage.setItem(
-                        'loggedInUser',
-                        JSON.stringify({
-                            token: userData.token,
-                            fullname: userData.fullname,
-                            username: userData.username,
-                            role: userData.role,
-                        })
-                    );
-                }
-
                 setTimeout(() => {
-                    router.push('/');
+                    router.push('/login');
                 }, 2000);
             } else {
                 const errorData = await response.json();
