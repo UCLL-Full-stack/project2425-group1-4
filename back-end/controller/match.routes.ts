@@ -207,39 +207,39 @@ matchRouter.get('/:id', async (req: Request, res: Response, next: NextFunction) 
     }
 });
 
-/**
- * @swagger
- * /matches:
- *   post:
- *     summary: Create a new match
- *     tags: [Matches]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/Match'
- *     responses:
- *       201:
- *         description: Match created successfully
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Match'
- *       400:
- *         description: Error creating match
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: "error"
- *                 errorMessage:
- *                   type: string
- *                   example: "Invalid request data"
- */
+// /**
+//  * @swagger
+//  * /matches:
+//  *   post:
+//  *     summary: Create a new match
+//  *     tags: [Matches]
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema:
+//  *             $ref: '#/components/schemas/Match'
+//  *     responses:
+//  *       201:
+//  *         description: Match created successfully
+//  *         content:
+//  *           application/json:
+//  *             schema:
+//  *               $ref: '#/components/schemas/Match'
+//  *       400:
+//  *         description: Error creating match
+//  *         content:
+//  *           application/json:
+//  *             schema:
+//  *               type: object
+//  *               properties:
+//  *                 status:
+//  *                   type: string
+//  *                   example: "error"
+//  *                 errorMessage:
+//  *                   type: string
+//  *                   example: "Invalid request data"
+//  */
 // matchRouter.post('/', async (req: Request, res: Response, next: NextFunction) => {
 //     const newMatch = req.body;
 
@@ -254,60 +254,60 @@ matchRouter.get('/:id', async (req: Request, res: Response, next: NextFunction) 
 //     }
 // });
 
-/**
- * @swagger
- * /matches/{id}:
- *   put:
- *     summary: Update match information
- *     tags: [Matches]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         description: Match ID
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               date:
- *                 type: string
- *                 format: date-time
- *                 example: "2024-12-01T15:00:00Z"
- *               location:
- *                 type: integer
- *                 description: Location ID
- *                 example: 1
- *               homeTeam:
- *                 type: integer
- *                 description: Home team ID
- *                 example: 2
- *               awayTeam:
- *                 type: integer
- *                 description: Away team ID
- *                 example: 3
- *               goals:
- *                 type: array
- *                 description: List of goal IDs
- *                 items:
- *                   type: integer
- *                   example: 101
- *     responses:
- *       200:
- *         description: Match updated successfully
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Match'
- *       404:
- *         description: Match not found
- *       400:
- *         description: Error updating match
- */
+// /**
+//  * @swagger
+//  * /matches/{id}:
+//  *   put:
+//  *     summary: Update match information
+//  *     tags: [Matches]
+//  *     parameters:
+//  *       - in: path
+//  *         name: id
+//  *         required: true
+//  *         schema:
+//  *           type: integer
+//  *         description: Match ID
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema:
+//  *             type: object
+//  *             properties:
+//  *               date:
+//  *                 type: string
+//  *                 format: date-time
+//  *                 example: "2024-12-01T15:00:00Z"
+//  *               location:
+//  *                 type: integer
+//  *                 description: Location ID
+//  *                 example: 1
+//  *               homeTeam:
+//  *                 type: integer
+//  *                 description: Home team ID
+//  *                 example: 2
+//  *               awayTeam:
+//  *                 type: integer
+//  *                 description: Away team ID
+//  *                 example: 3
+//  *               goals:
+//  *                 type: array
+//  *                 description: List of goal IDs
+//  *                 items:
+//  *                   type: integer
+//  *                   example: 101
+//  *     responses:
+//  *       200:
+//  *         description: Match updated successfully
+//  *         content:
+//  *           application/json:
+//  *             schema:
+//  *               $ref: '#/components/schemas/Match'
+//  *       404:
+//  *         description: Match not found
+//  *       400:
+//  *         description: Error updating match
+//  */
 // matchRouter.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
 //     try {
 //         const { id } = req.params;

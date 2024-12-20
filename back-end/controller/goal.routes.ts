@@ -13,7 +13,7 @@ const goalRouter = express.Router();
  *       properties:
  *         id:
  *           type: integer
- *           example: 1
+ *           example: 260
  *         time:
  *           type: integer
  *           description: The minute the goal was scored
