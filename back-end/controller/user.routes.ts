@@ -188,7 +188,7 @@ userRouter.get('/players', async (req: Request, res: Response, next: NextFunctio
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
- *       400:
+ *       404:
  *         description: User not found
  *         content:
  *           application/json:
