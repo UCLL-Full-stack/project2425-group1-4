@@ -14,9 +14,9 @@ const ErrorScreen = ({ userError, teamsError }: { userError: any; teamsError: an
             </Head>
             <Header />
             <div className="flex items-center justify-center h-96">
-                <p className="text-red-500">
-                    {userError ? `${t('app.errorFetchingUser')}: ${userError.message}` : ''}
-                    {teamsError ? `${t('app.errorFetchingTeams')}: ${teamsError.message}` : ''}
+                <p className="text-red-700 font-semibold">
+                    {userError ? `${t('users.errorFetchingUser')}: ${userError.message}` : ''}
+                    {teamsError ? `${t('teams.errorFetchingTeams')}: ${teamsError.message}` : ''}
                 </p>
             </div>
         </>

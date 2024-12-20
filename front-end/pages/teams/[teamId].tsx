@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import useSWR, { mutate } from 'swr';
 import TeamService from '@services/TeamService';
 import UserService from '@services/UserService';
-import { Team, User } from '@types';
+import { Team, User, UserStorage } from '@types';
 import LoadingScreen from '@components/loadingScreen';
 import ErrorScreen from '@components/errorScreen';
 import TeamContent from '@components/team/teamContent';
@@ -19,6 +19,14 @@ const TeamPage = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [isAddingPlayer, setIsAddingPlayer] = useState(false);
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
+    const [loggedInUser, setLoggedInUser] = useState<UserStorage | null>(null);
+
+    useEffect(() => {
+        const storedUser = localStorage.getItem('loggedInUser');
+        if (storedUser) {
+            setLoggedInUser(JSON.parse(storedUser));
+        }
+    }, []);
 
     const fetchTeam = async (id: number) => {
         const response = await TeamService.getTeamById(id);
@@ -84,7 +92,7 @@ const TeamPage = () => {
             const response = await TeamService.addPlayerToTeam(team.id, selectedUser.id);
             if (response.ok) {
                 const updatedTeam = await response.json();
-                mutate(`fetchTeam-${teamId}`, updatedTeam, false);
+                mutate(`fetchTeam-${teamId}`);
                 setIsAddingPlayer(false);
                 setSelectedUser(null);
             } else {
@@ -93,6 +101,48 @@ const TeamPage = () => {
             }
         } catch {
             alert(t('team.addPlayerError'));
+        }
+    };
+
+    const handleRemovePlayer = async (userId: number) => {
+        if (!team || !team.id) {
+            alert(t('team.notLoaded'));
+            return;
+        }
+        try {
+            const response = await TeamService.removePlayerFromTeam(team.id, userId);
+            if (response) {
+                mutate(`fetchTeam-${teamId}`);
+            } else {
+                alert(t('team.failedToRemovePlayer'));
+            }
+        } catch {
+            alert(t('team.removePlayerError'));
+        }
+    };
+
+    const handleSwitchCoach = async () => {
+        if (!editedTeam || !editedTeam.coach || !team || !team.id) {
+            alert(t('team.selectCoachToSwitch'));
+            return;
+        }
+
+        try {
+            if (editedTeam.coach.id !== undefined) {
+                const response = await TeamService.switchCoach(team.id, editedTeam.coach.id);
+                if (response.ok) {
+                    const updatedTeam = await response.json();
+                    mutate(`fetchTeam-${teamId}`, updatedTeam);
+                } else {
+                    const { message } = await response.json();
+                    alert(message || t('team.failedToSwitchCoach'));
+                }
+            } else {
+                alert(t('team.selectCoachToSwitch'));
+                return;
+            }
+        } catch (error) {
+            alert(t('team.switchCoachError'));
         }
     };
 
@@ -137,9 +187,13 @@ const TeamPage = () => {
             selectedUser={selectedUser}
             setSelectedUser={setSelectedUser}
             users={users}
+            loggedInUser={loggedInUser}
+            username={loggedInUser?.username || ''}
             handleEditToggle={handleEditToggle}
             handleAddPlayer={handleAddPlayer}
+            handleRemovePlayer={handleRemovePlayer}
             handleSave={handleSave}
+            handleSwitchCoach={handleSwitchCoach}
         />
     );
 };

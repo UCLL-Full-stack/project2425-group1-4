@@ -1,3 +1,4 @@
+import ErrorScreen from '@components/errorScreen';
 import Header from '@components/header/header';
 import TeamGrid from '@components/teamGrid/teamGrid';
 import TeamService from '@services/TeamService';
@@ -31,22 +32,22 @@ const TeamsPage: React.FC = () => {
 
     return (
         <>
-            <Head>
-                <title>{t('app.title')}</title>
-                <meta name="description" content={t('app.title')} />
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
-                <link rel="icon" href="/favicon.ico" />
-            </Head>
-            <Header />
             <div>
                 {isLoading ? (
                     <p>{t('teams.loading')}</p>
                 ) : error ? (
-                    <p className="text-red-700 font-semibold ">
-                        {t('teams.errorFetchingTeams', { message: error.message })}
-                    </p>
+                    <ErrorScreen userError={null} teamsError={error} />
                 ) : (
-                    <TeamGrid teams={teams || []} />
+                    <>
+                        <Head>
+                            <title>{t('app.title')}</title>
+                            <meta name="description" content={t('app.title')} />
+                            <meta name="viewport" content="width=device-width, initial-scale=1" />
+                            <link rel="icon" href="/favicon.ico" />
+                        </Head>
+                        <Header />
+                        <TeamGrid teams={teams || []} />
+                    </>
                 )}
             </div>
         </>

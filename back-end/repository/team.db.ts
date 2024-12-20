@@ -39,7 +39,6 @@ const getTeamById = async (id: number): Promise<Team | null> => {
     }
 };
 
-
 const addTeam = async (team: Team): Promise<Team> => {
     try {
         const teamPrisma = await database.team.create({
@@ -67,24 +66,83 @@ const updateTeam = async (updateTeam: Team): Promise<Team> => {
     try {
         const updateData: any = {
             name: updateTeam.getName(),
-            players: {
-                set: updateTeam.getPlayers().map((player) => ({ id: player.getId() })),
-            },
             description: updateTeam.getDescription(),
         };
 
         const teamPrisma = await database.team.update({
             where: {
-                id: updateData.getId(),
+                id: updateTeam.getId(), 
             },
-            data: updateData,
+            data: updateData, 
             include: {
                 coach: true,
-                players: true,
+                players: true, 
             },
         });
 
         return Team.from(teamPrisma);
+    } catch (error) {
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
+    }
+};
+
+
+const addPlayerToTeam = async (teamId: number, playerId: number): Promise<boolean> => {
+    try {
+        await database.team.update({
+            where: {
+                id: teamId,
+            },
+            data: {
+                players: {
+                    connect: {
+                        id: playerId,
+                    },
+                },
+            },
+        });
+
+        await database.user.update({
+            where: {
+                id: playerId,
+            },
+            data: {
+                role: 'PLAYER',
+            },
+        });
+        return true;
+    } catch (error) {
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
+    }
+};
+
+const removePlayerFromTeam = async (teamId: number, playerId: number): Promise<boolean> => {
+    try {
+        await database.team.update({
+            where: {
+                id: teamId,
+            },
+            data: {
+                players: {
+                    disconnect: {
+                        id: playerId,
+                    },
+                },
+            },
+        });
+
+        await database.user.update({
+            where: {
+                id: playerId,
+            },
+            data: {
+                role: 'USER',
+            },
+        });
+
+        return true;
     } catch (error) {
         console.error(error);
         throw new Error('Database error. See server log for details.');
@@ -122,4 +180,55 @@ const removeTeam = async (id: number): Promise<void> => {
     }
 };
 
-export default { getAllTeams, getTeamById, addTeam, updateTeam, getTeamsByName, removeTeam };
+const switchCoach = async (teamId: number, coachId: number) => {
+    try {
+        const team = await database.team.findUnique({
+            where: { id: teamId },
+            include: { coach: true },
+        });
+
+        if (!team) {
+            throw new Error('Team not found.');
+        }
+
+        const currentCoachId = team.coach?.id;
+
+        if (currentCoachId) {
+            await database.user.update({
+                where: { id: currentCoachId },
+                data: { role: 'USER' },
+            });
+        }
+
+        await database.team.update({
+            where: { id: teamId },
+            data: {
+                coach: {
+                    connect: { id: coachId },
+                },
+            },
+        });
+
+        await database.user.update({
+            where: { id: coachId },
+            data: { role: 'COACH' },
+        });
+
+        return true;
+    } catch (error) {
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
+    }
+};
+
+export default {
+    getAllTeams,
+    getTeamById,
+    addTeam,
+    updateTeam,
+    getTeamsByName,
+    removeTeam,
+    addPlayerToTeam,
+    removePlayerFromTeam,
+    switchCoach,
+};

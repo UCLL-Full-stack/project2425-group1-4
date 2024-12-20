@@ -206,7 +206,7 @@ teamRouter.put('/update', async (req: Request, res: Response, next: NextFunction
 // /**
 //  * @swagger
 //  * /teams/{id}/addPlayer:
-//  *   post:
+//  *   put:
 //  *     summary: Add a player to a team
 //  *     tags: [Teams]
 //  *     parameters:
@@ -272,7 +272,7 @@ teamRouter.put('/update', async (req: Request, res: Response, next: NextFunction
 //  *                   example: "An error occurred."
 //  */
 
-teamRouter.post(
+teamRouter.put(
     '/:teamId/addPlayer/:playerId',
     async (req: Request, res: Response, next: NextFunction) => {
         const { teamId, playerId } = req.params;
@@ -341,12 +341,84 @@ teamRouter.post(
 teamRouter.delete(
     '/:teamId/removePlayer/:playerId',
     async (req: Request, res: Response, next: NextFunction) => {
-        const { id, playerId } = req.params;
+        const { teamId, playerId } = req.params;
 
         try {
-            const result = await teamService.removePlayerFromTeam(Number(id), Number(playerId));
+            const result = await teamService.removePlayerFromTeam(Number(teamId), Number(playerId));
 
             res.status(200).json(result);
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
+/**
+ * @swagger
+ * /teams/{teamId}/switchCoach/{coachId}:
+ *   put:
+ *     summary: Switch the coach of a team
+ *     tags: [Teams]
+ *     parameters:
+ *       - in: path
+ *         name: teamId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The unique identifier of the team
+ *       - in: path
+ *         name: coachId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The unique identifier of the new coach
+ *     responses:
+ *       200:
+ *         description: Coach switched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Coach switched successfully."
+ *       404:
+ *         description: Team or coach not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: "error"
+ *                 errorMessage:
+ *                   type: string
+ *                   example: "Team or coach not found."
+ *       400:
+ *         description: Bad request due to an error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: "error"
+ *                 errorMessage:
+ *                   type: string
+ *                   example: "An error occurred."
+ */
+teamRouter.put(
+    '/:teamId/switchCoach/:coachId',
+    async (req: Request, res: Response, next: NextFunction) => {
+        const { teamId, coachId } = req.params;
+
+        try {
+            const result = await teamService.switchCoach(Number(teamId), Number(coachId));
+
+            res.status(200).json({ message: 'Coach switched successfully.', data: result });
         } catch (error) {
             next(error);
         }

@@ -1,8 +1,6 @@
 {
     "app.title": "GoalPro App",
     "app.loading": "Loading...",
-    "app.errorFetchingUser": "Error fetching user",
-    "errorFetchingTeams": "Error fetching teams: {{message}}",
     "general.error": "An error has occurred. Please try again later.",
     "permissions": {
         "unauthorized": "You are not authorized to access this page."
@@ -61,6 +59,7 @@
         "totalGoals": "Total Goals"
     },
     "users": {
+        "errorFetchingUser": "Error fetching user",
         "noFound": "No users found",
         "searchPlaceholder": "Search for users..."
     },
@@ -151,6 +150,7 @@
     },
 
     "buttons": {
+        "validate": "Validate",
         "login": "Login",
         "register": "Register",
         "addPlayer": "Add Player",

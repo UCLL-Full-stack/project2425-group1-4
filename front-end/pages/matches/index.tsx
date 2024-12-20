@@ -22,7 +22,11 @@ const MatchesPage: React.FC = () => {
         return matches;
     };
 
-    const { data: matches, isLoading, error } = useSWR<Match[]>('fetchMatches', fetchMatches, {
+    const {
+        data: matches,
+        isLoading,
+        error,
+    } = useSWR<Match[]>('fetchMatches', fetchMatches, {
         refreshInterval: 10000,
     });
 
@@ -39,9 +43,11 @@ const MatchesPage: React.FC = () => {
                 {isLoading ? (
                     <p>{t('matches.loading')}</p>
                 ) : error ? (
-                    <p className="text-red-700 font-semibold">
-                        {t('matches.error', { message: error.message })}
-                    </p>
+                    <div className="flex items-center justify-center h-96">
+                        <p className="text-red-700 font-semibold">
+                            {t('matches.error', { message: error.message })}
+                        </p>
+                    </div>
                 ) : (
                     <MatchGrid matches={matches || []} />
                 )}

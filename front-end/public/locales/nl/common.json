@@ -151,6 +151,7 @@
     },
 
     "buttons": {
+        "validate": "Valideren",
         "login": "Inloggen",
         "register": "Registreren",
         "addPlayer": "Speler toevoegen",

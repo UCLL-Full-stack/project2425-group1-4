@@ -49,14 +49,14 @@ const addPlayerToTeam = async (teamId: number, playerId: number) => {
     });
 };
 
-const removePlayerFromTeam = async (teamId: number, playerId: number): Promise<boolean> => {
+const removePlayerFromTeam = async (teamId: number, playerId: number) => {
     const token = JSON.parse(localStorage.getItem('loggedInUser') || '{}')?.token;
 
     try {
         const response = await fetch(
             `${process.env.NEXT_PUBLIC_API_URL}/teams/${teamId}/removePlayer/${playerId}`,
             {
-                method: 'PUT',
+                method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`,
@@ -71,10 +71,23 @@ const removePlayerFromTeam = async (teamId: number, playerId: number): Promise<b
     }
 };
 
+const switchCoach = async (teamId: number, coachId: number) => {
+    const token = JSON.parse(localStorage.getItem('loggedInUser') || '{}')?.token;
+
+    return fetch(`${process.env.NEXT_PUBLIC_API_URL}/teams/${teamId}/switchCoach/${coachId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
 export default {
     getAllTeams,
     getTeamById,
     updateTeam,
     addPlayerToTeam,
     removePlayerFromTeam,
+    switchCoach,
 };

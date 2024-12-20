@@ -2,6 +2,7 @@ import EditButtons from '@components/EditButtons';
 import Header from '@components/header/header';
 import LatestMatches from '@components/team/latestMatches';
 import { Team, User, UserStorage } from '@types';
+import { TrashIcon } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 import Head from 'next/head';
 
@@ -19,7 +20,9 @@ const TeamContent = ({
     users,
     handleEditToggle,
     handleAddPlayer,
+    handleRemovePlayer,
     handleSave,
+    handleSwitchCoach,
 }: {
     team: Team | undefined;
     editedTeam: Team | null;
@@ -35,7 +38,9 @@ const TeamContent = ({
     users: User[] | undefined;
     handleEditToggle: () => void;
     handleAddPlayer: () => void;
+    handleRemovePlayer: (userId: number) => void;
     handleSave: () => void;
+    handleSwitchCoach: () => Promise<void>;
 }) => {
     const { t } = useTranslation();
 
@@ -98,26 +103,34 @@ const TeamContent = ({
                                     {t('team.coach')}
                                 </h2>
                                 {isEditing ? (
-                                    <select
-                                        className="w-full p-2 border rounded-lg"
-                                        value={editedTeam?.coach?.id || ''}
-                                        onChange={(e) => {
-                                            const selectedCoach = users?.find(
-                                                (user) => user.id === parseInt(e.target.value)
-                                            );
-                                            setEditedTeam({
-                                                ...editedTeam,
-                                                coach: selectedCoach || null,
-                                            } as Team);
-                                        }}
-                                    >
-                                        <option value="">{t('team.selectCoach')}</option>
-                                        {users?.map((user) => (
-                                            <option key={user.id} value={user.id}>
-                                                {user.firstName} {user.lastName}
-                                            </option>
-                                        ))}
-                                    </select>
+                                    <div className="flex items-center gap-4">
+                                        <select
+                                            className="w-full p-2 border rounded-lg"
+                                            value={editedTeam?.coach?.id || ''}
+                                            onChange={(e) => {
+                                                const selectedCoach = users?.find(
+                                                    (user) => user.id === parseInt(e.target.value)
+                                                );
+                                                setEditedTeam({
+                                                    ...editedTeam,
+                                                    coach: selectedCoach || null,
+                                                } as Team);
+                                            }}
+                                        >
+                                            <option value="">{t('team.selectCoach')}</option>
+                                            {users?.map((user) => (
+                                                <option key={user.id} value={user.id}>
+                                                    {user.firstName} {user.lastName}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        <button
+                                            onClick={handleSwitchCoach}
+                                            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                                        >
+                                            {t('buttons.validate')}
+                                        </button>
+                                    </div>
                                 ) : (
                                     <>
                                         <p className="text-gray-600">
@@ -142,9 +155,22 @@ const TeamContent = ({
                                         {team.players.map((player) => (
                                             <li
                                                 key={player.id}
-                                                className="text-gray-700 hover:text-gray-900"
+                                                className="flex items-center justify-between text-gray-700 hover:text-gray-900"
                                             >
-                                                {player.firstName} {player.lastName}
+                                                <span>
+                                                    {player.firstName} {player.lastName}
+                                                </span>
+                                                {isEditing && (
+                                                    <button
+                                                        onClick={() =>
+                                                            player.id !== undefined &&
+                                                            handleRemovePlayer(player.id)
+                                                        }
+                                                        className="text-red-500 hover:text-red-700"
+                                                    >
+                                                        <TrashIcon className="h-5 w-5" />
+                                                    </button>
+                                                )}
                                             </li>
                                         ))}
                                     </ul>

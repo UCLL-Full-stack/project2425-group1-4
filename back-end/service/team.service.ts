@@ -1,7 +1,8 @@
 import teamDb from '../repository/team.db';
 import userDb from '../repository/user.db';
 import { Team } from '../model/team';
-import { Role, TeamInput } from '../types';
+import { TeamInput } from '../types';
+import { Role } from '@prisma/client';
 
 const getAllTeams = async (): Promise<Team[]> => {
     return await teamDb.getAllTeams();
@@ -45,8 +46,13 @@ const getTeamNameById = async (id: number): Promise<string | null> => {
 const updateTeam = async (updateTeam: TeamInput): Promise<Team> => {
     const validNewData = new Team(updateTeam);
 
-    const numericId = Number(validNewData.getId());
-    const team = await teamDb.getTeamById(numericId);
+    const teamId = validNewData.getId();
+
+    if (teamId === undefined) {
+        throw new Error('Team ID is required.');
+    }
+
+    const team = await teamDb.getTeamById(teamId);
 
     if (!team) {
         throw new Error('Team not found');
@@ -60,16 +66,21 @@ const addPlayerToTeam = async (teamId: number, playerId: number): Promise<boolea
     const team = await teamDb.getTeamById(teamId);
     const player = await userDb.getUserById(playerId);
 
-    if (!team || !player) {
-        return false;
+    if (!team) {
+        throw new Error('Team not found.');
+    }
+    if (!player) {
+        throw new Error('Player not found.');
     }
 
     // Check if the player is already part of the team
     const isPlayerInTeam = team.getPlayers().some((p) => p.getId() === playerId);
-    if (!isPlayerInTeam) {
-        // team.addPlayer(player);
-        await teamDb.updateTeam(team);
+    if (isPlayerInTeam) {
+        throw new Error('Player is already in the team.');
     }
+
+    await teamDb.addPlayerToTeam(teamId, playerId);
+
     return true;
 };
 
@@ -77,15 +88,32 @@ const removePlayerFromTeam = async (teamId: number, playerId: number) => {
     const team = await teamDb.getTeamById(teamId);
 
     if (!team) {
-        return false; // Team not found
+        throw new Error('Team not found');
     }
 
     const player = await userDb.getUserById(playerId);
+
     if (!player) {
-        return false; // Player not found
+        throw new Error('Player not found');
     }
-    // team.removePlayer(player); // Assuming `removePlayer` is a method that removes a player by User object
-    return teamDb.updateTeam(team);
+
+    return teamDb.removePlayerFromTeam(teamId, playerId);
+};
+
+const switchCoach = async (teamId: number, coachId: number): Promise<Team> => {
+    const team = await getTeamById(teamId);
+    if (!team) {
+        throw new Error('Team not found.');
+    }
+
+    const user = await userDb.getUserById(coachId);
+    if (!user) {
+        throw new Error('User not found.');
+    }
+
+    await teamDb.switchCoach(teamId, coachId);
+
+    return team;
 };
 
 export default {
@@ -95,4 +123,5 @@ export default {
     updateTeam,
     addPlayerToTeam,
     removePlayerFromTeam,
+    switchCoach,
 };
