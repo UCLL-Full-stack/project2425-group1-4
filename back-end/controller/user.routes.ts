@@ -353,6 +353,36 @@ userRouter.post('/register', async (req: Request, res: Response, next: NextFunct
     }
 });
 
+/**
+ * @swagger
+ * /users/role/{role}:
+ *   get:
+ *     summary: Retrieve a list of users by role
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: role
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum: [ADMIN, COACH, PLAYER, USER]
+ *         description: The role of the users to retrieve
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved a list of users with the specified role
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Bad request due to an invalid role parameter
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 userRouter.get('/role/:role', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const role = req.params.role;

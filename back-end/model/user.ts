@@ -1,6 +1,7 @@
 import { Goal as GoalPrisma, Role, Team as TeamPrisma, User as UserPrisma } from '@prisma/client';
 import { Goal } from './goal';
 import { Team } from './team';
+import * as bcrypt from 'bcrypt';
 
 export class User {
     private id?: number;
@@ -51,7 +52,7 @@ export class User {
         firstName: string;
         lastName: string;
         password: string;
-        birthDate: Date;
+        birthDate: Date | string; // Allowing for the possibility of it being a string
         email: string;
         username: string;
         description?: string;
@@ -68,13 +69,24 @@ export class User {
         const emailRegex = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
         if (!emailRegex.test(user.email)) throw new Error('Email does not have a correct format.');
 
-        if (!user.username || user.username.trim() === '') throw new Error('Username cannot be empty.');
+        if (!user.username || user.username.trim() === '')
+            throw new Error('Username cannot be empty.');
 
         if (user.description && user.description.trim().length === 0) {
             throw new Error('Description cannot be empty if provided.');
         }
-        if (user.birthDate.getTime() >= new Date().getTime())
+
+        // Ensure birthDate is a Date object
+        const birthDate =
+            user.birthDate instanceof Date ? user.birthDate : new Date(user.birthDate);
+
+        if (isNaN(birthDate.getTime())) {
+            throw new Error('Invalid birth date.');
+        }
+
+        if (birthDate.getTime() >= new Date().getTime())
             throw new Error('Birth date must be in the past.');
+
         const validRoles = Object.values(Role);
         if (user.role) {
             if (!validRoles.includes(user.role))
@@ -143,9 +155,10 @@ export class User {
         this.lastName = lastName;
     }
 
-    setPassword(password: string): void {
+    async setPassword(password: string): Promise<void> {
         if (password.length < 8) throw new Error('Password must be at least 8 characters.');
-        this.password = password;
+        const hashedPassword = await bcrypt.hash(password, 12);
+        this.password = hashedPassword;
     }
 
     setBirthDate(birthDate: Date): void {

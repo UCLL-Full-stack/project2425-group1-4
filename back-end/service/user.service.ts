@@ -28,15 +28,14 @@ const getAllUsers = async ({ role }: { role: string }): Promise<User[]> => {
 const updateUser = async (userId: number, editedUser: UserInput): Promise<User | null> => {
     const user = await userDb.getUserById(userId);
 
-    console.log('user', editedUser);
-
     // Return null if the user is not found
     if (!user) {
         return null;
     }
 
     // Destructure properties from editedUser
-    const { playerOfTeam, description, email, password } = editedUser;
+    const { playerOfTeam, description, email, password, firstName, lastName, birthDate } =
+        editedUser;
 
     // Update team if provided and different
     if (
@@ -74,6 +73,19 @@ const updateUser = async (userId: number, editedUser: UserInput): Promise<User |
     if (password !== undefined && password !== null && user.getPassword() !== password) {
         user.setPassword(password);
     }
+
+    const updatedUser = new User({
+        id: userId,
+        username: user.getUsername(),
+        password: user.getPassword(),
+        firstName: firstName ?? user.getFirstName(),
+        lastName: lastName ?? user.getLastName(),
+        email: email ?? user.getEmail(),
+        birthDate: birthDate ?? user.getBirthDate(),
+        role: user.getRole(),
+        playerOfTeam: user.getPlayerOfTeam(),
+        description: description ?? user.getDescription(),
+    });
 
     // Save the updated user in the database
     return userDb.updateUser(user);

@@ -206,7 +206,7 @@ teamRouter.put('/update', async (req: Request, res: Response, next: NextFunction
 /**
  * @swagger
  * /teams/{id}/addPlayer:
- *   put:
+ *   post:
  *     summary: Add a player to a team
  *     tags: [Teams]
  *     parameters:
@@ -272,7 +272,7 @@ teamRouter.put('/update', async (req: Request, res: Response, next: NextFunction
  *                   example: "An error occurred."
  */
 
-teamRouter.put(
+teamRouter.post(
     '/:teamId/addPlayer/:playerId',
     async (req: Request, res: Response, next: NextFunction) => {
         const { teamId, playerId } = req.params;
@@ -290,7 +290,7 @@ teamRouter.put(
 /**
  * @swagger
  * /teams/{teamId}/removePlayer{playerId}:
- *   put:
+ *   delete:
  *     summary: Remove a player from a team
  *     tags: [Teams]
  *     parameters:
@@ -338,7 +338,7 @@ teamRouter.put(
  *                   type: string
  *                   example: Error removing player from team
  */
-teamRouter.put(
+teamRouter.delete(
     '/:teamId/removePlayer/:playerId',
     async (req: Request, res: Response, next: NextFunction) => {
         const { id, playerId } = req.params;
