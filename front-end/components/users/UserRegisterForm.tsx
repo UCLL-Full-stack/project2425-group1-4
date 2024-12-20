@@ -103,7 +103,7 @@ const UserRegisterForm: React.FC = () => {
                 }, 2000);
             } else if (response.status === 400) {
                 const responseData = await response.json();
-                const genericErrorMessage = responseData.message || t('general.error'); 
+                const genericErrorMessage = responseData.message || t('general.error');
 
                 setStatusMessages([{ message: genericErrorMessage, type: 'error' }]);
             } else {
@@ -251,7 +251,7 @@ const UserRegisterForm: React.FC = () => {
                     type="submit"
                     disabled={isLoading}
                 >
-                    {isLoading ? t('register.loading') : t('register.button')}
+                    {isLoading ? t('register.loading') : t('buttons.register')}
                 </button>
             </form>
         </>
