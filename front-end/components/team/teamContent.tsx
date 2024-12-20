@@ -1,9 +1,9 @@
-import { useTranslation } from 'next-i18next';
-import Head from 'next/head';
+import EditButtons from '@components/EditButtons';
 import Header from '@components/header/header';
 import LatestMatches from '@components/team/latestMatches';
-import EditButtons from '@components/EditButtons';
-import { Team, User } from '@types';
+import { Team, User, UserStorage } from '@types';
+import { useTranslation } from 'next-i18next';
+import Head from 'next/head';
 
 const TeamContent = ({
     team,
@@ -14,6 +14,8 @@ const TeamContent = ({
     setIsAddingPlayer,
     selectedUser,
     setSelectedUser,
+    loggedInUser,
+    username,
     users,
     handleEditToggle,
     handleAddPlayer,
@@ -26,6 +28,9 @@ const TeamContent = ({
     isAddingPlayer: boolean;
     setIsAddingPlayer: (val: boolean) => void;
     selectedUser: User | null;
+    loggedInUser: UserStorage | null;
+    username: string | string[] | undefined;
+
     setSelectedUser: (user: User | null) => void;
     users: User[] | undefined;
     handleEditToggle: () => void;
@@ -191,12 +196,14 @@ const TeamContent = ({
                 ) : (
                     <p className="text-gray-600 mt-8">{t('team.loadingDetails')}</p>
                 )}
-
-                <EditButtons
-                    isEditing={isEditing}
-                    handleEditToggle={handleEditToggle}
-                    handleSave={handleSave}
-                />
+                {loggedInUser &&
+                    (loggedInUser.username === username || loggedInUser.role === 'ADMIN') && (
+                        <EditButtons
+                            isEditing={isEditing}
+                            handleEditToggle={handleEditToggle}
+                            handleSave={handleSave}
+                        />
+                    )}
             </div>
         </>
     );
