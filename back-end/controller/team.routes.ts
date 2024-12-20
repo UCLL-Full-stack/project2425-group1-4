@@ -134,63 +134,63 @@ teamRouter.get('/:id', async (req: Request, res: Response, next: NextFunction) =
     }
 });
 
-// /**
-//  * @swagger
-//  * /teams/{id}:
-//  *   put:
-//  *     summary: Update a team's information
-//  *     tags: [Teams]
-//  *     parameters:
-//  *       - in: path
-//  *         name: id
-//  *         required: true
-//  *         schema:
-//  *           type: integer
-//  *         description: The unique identifier of the team
-//  *     requestBody:
-//  *       required: true
-//  *       content:
-//  *         application/json:
-//  *           schema:
-//  *             $ref: '#/components/schemas/Team'
-//  *     responses:
-//  *       200:
-//  *         description: Successfully updated the team
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               type: object
-//  *               properties:
-//  *                 message:
-//  *                   type: string
-//  *                   example: "Team updated successfully."
-//  *       404:
-//  *         description: Team not found
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               type: object
-//  *               properties:
-//  *                 status:
-//  *                   type: string
-//  *                   example: "error"
-//  *                 errorMessage:
-//  *                   type: string
-//  *                   example: "Team not found."
-//  *       400:
-//  *         description: Bad request due to an error
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               type: object
-//  *               properties:
-//  *                 status:
-//  *                   type: string
-//  *                   example: "error"
-//  *                 errorMessage:
-//  *                   type: string
-//  *                   example: "An error occurred."
-//  */
+/**
+ * @swagger
+ * /teams/{id}:
+ *   put:
+ *     summary: Update a team's information
+ *     tags: [Teams]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The unique identifier of the team
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Team'
+ *     responses:
+ *       200:
+ *         description: Successfully updated the team
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Team updated successfully."
+ *       404:
+ *         description: Team not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: "error"
+ *                 errorMessage:
+ *                   type: string
+ *                   example: "Team not found."
+ *       400:
+ *         description: Bad request due to an error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: "error"
+ *                 errorMessage:
+ *                   type: string
+ *                   example: "An error occurred."
+ */
 
 teamRouter.put('/update', async (req: Request, res: Response, next: NextFunction) => {
     const updatedTeamData = <TeamInput>req.body;
@@ -203,74 +203,74 @@ teamRouter.put('/update', async (req: Request, res: Response, next: NextFunction
     }
 });
 
-// /**
-//  * @swagger
-//  * /teams/{id}/addPlayer:
-//  *   put:
-//  *     summary: Add a player to a team
-//  *     tags: [Teams]
-//  *     parameters:
-//  *       - in: path
-//  *         name: id
-//  *         required: true
-//  *         schema:
-//  *           type: integer
-//  *         description: The unique identifier of the team
-//  *       - in: path
-//  *         name: playerId
-//  *         required: true
-//  *         schema:
-//  *           type: integer
-//  *         description: The unique identifier of the player
-//  *     requestBody:
-//  *       required: true
-//  *       content:
-//  *         application/json:
-//  *           schema:
-//  *             type: object
-//  *             properties:
-//  *               playerId:
-//  *                 type: integer
-//  *                 description: The unique identifier of the player
-//  *                 example: 123
-//  *     responses:
-//  *       200:
-//  *         description: Player successfully added to the team
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               type: object
-//  *               properties:
-//  *                 message:
-//  *                   type: string
-//  *                   example: "Player added to team successfully."
-//  *       404:
-//  *         description: Team or player not found
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               type: object
-//  *               properties:
-//  *                 status:
-//  *                   type: string
-//  *                   example: "error"
-//  *                 errorMessage:
-//  *                   type: string
-//  *                   example: "Team or player not found."
-//  *       400:
-//  *         description: Bad request due to an error
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               type: object
-//  *               properties:
-//  *                 status:
-//  *                   type: string
-//  *                   example: "error"
-//  *                 errorMessage:
-//  *                   type: string
-//  *                   example: "An error occurred."
-//  */
+/**
+ * @swagger
+ * /teams/{id}/addPlayer:
+ *   put:
+ *     summary: Add a player to a team
+ *     tags: [Teams]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The unique identifier of the team
+ *       - in: path
+ *         name: playerId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The unique identifier of the player
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               playerId:
+ *                 type: integer
+ *                 description: The unique identifier of the player
+ *                 example: 123
+ *     responses:
+ *       200:
+ *         description: Player successfully added to the team
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Player added to team successfully."
+ *       404:
+ *         description: Team or player not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: "error"
+ *                 errorMessage:
+ *                   type: string
+ *                   example: "Team or player not found."
+ *       400:
+ *         description: Bad request due to an error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: "error"
+ *                 errorMessage:
+ *                   type: string
+ *                   example: "An error occurred."
+ */
 
 teamRouter.put(
     '/:teamId/addPlayer/:playerId',
@@ -287,57 +287,57 @@ teamRouter.put(
     }
 );
 
-// /**
-//  * @swagger
-//  * /teams/{teamId}/removePlayer{playerId}:
-//  *   delete:
-//  *     summary: Remove a player from a team
-//  *     tags: [Teams]
-//  *     parameters:
-//  *       - in: path
-//  *         name: teamId
-//  *         required: true
-//  *         schema:
-//  *           type: integer
-//  *         description: The unique identifier of the team
-//  *       - in: path
-//  *         name: playerId
-//  *         required: true
-//  *         schema:
-//  *           type: integer
-//  *         description: The unique identifier of the player
-//  *     responses:
-//  *       200:
-//  *         description: Player removed from team successfully
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               type: object
-//  *               properties:
-//  *                 message:
-//  *                   type: string
-//  *                   example: Player removed from team successfully
-//  *       404:
-//  *         description: Team or player not found
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               type: object
-//  *               properties:
-//  *                 message:
-//  *                   type: string
-//  *                   example: Team or player not found
-//  *       400:
-//  *         description: Bad request due to an error
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               type: object
-//  *               properties:
-//  *                 message:
-//  *                   type: string
-//  *                   example: Error removing player from team
-//  */
+/**
+ * @swagger
+ * /teams/{teamId}/removePlayer{playerId}:
+ *   delete:
+ *     summary: Remove a player from a team
+ *     tags: [Teams]
+ *     parameters:
+ *       - in: path
+ *         name: teamId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The unique identifier of the team
+ *       - in: path
+ *         name: playerId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The unique identifier of the player
+ *     responses:
+ *       200:
+ *         description: Player removed from team successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Player removed from team successfully
+ *       404:
+ *         description: Team or player not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Team or player not found
+ *       400:
+ *         description: Bad request due to an error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Error removing player from team
+ */
 teamRouter.delete(
     '/:teamId/removePlayer/:playerId',
     async (req: Request, res: Response, next: NextFunction) => {
